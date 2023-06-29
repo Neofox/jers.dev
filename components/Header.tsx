@@ -12,7 +12,7 @@ const Header: React.FC = () => (
                 width={200}
                 height={200}
             />
-            <div className="mt-10 self-center text-3xl">Jerome Schaeffer</div>
+            <div className=" mt-10 self-center text-3xl text-gray-900 dark:text-white">Jerome Schaeffer</div>
             <div className="mt-2 self-center text-xl text-gray-400 drop-shadow-sm">Senior Web Developer</div>
 
             <div className="mt-8 self-center">

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Availability from "./Utils/Availability";
 import { MdModeNight, MdLightMode } from "react-icons/md";
+import DarkModeButton from "./Utils/DarkModeButton";
 
 const languages: { flag: string; name: string; code: string }[] = [
     { flag: "🇺🇸", name: "English", code: "en" },
@@ -31,12 +32,7 @@ const Navbar: React.FC = () => {
                             <span className="ml-2 hidden md:inline">{languages[0].name}</span>
                         </button>
 
-                        <button
-                            type="button"
-                            className="mr-2 inline-flex items-center rounded-lg p-2 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-                        >
-                            <MdModeNight className="h-10 w-10 rounded-full border p-1" />
-                        </button>
+                        <DarkModeButton />
                     </div>
                 </div>
             </nav>

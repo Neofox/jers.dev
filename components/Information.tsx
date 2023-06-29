@@ -22,7 +22,7 @@ const Information: React.FC = () => (
                 })}
                 {informations.map((info, i) => {
                     return (
-                        <div key={i} className="w-36 py-2 font-semibold">
+                        <div key={i} className=" text-gray-900 dark:text-white w-36 py-2 font-semibold">
                             {info.value}
                         </div>
                     );

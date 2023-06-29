@@ -17,7 +17,7 @@ const NavbarBase: React.FC<{ lng: LanguageType }> = ({ lng = "en" }) => {
         <>
             <nav className="shadow-md border-gray-200 bg-transparent backdrop-blur-md">
                 <div className="mx-auto flex flex-wrap items-center justify-between p-1">
-                    <Availability isAvailable />
+                    <Availability lng={lng} isAvailable />
 
                     <div className="flex items-center ">
                         <button

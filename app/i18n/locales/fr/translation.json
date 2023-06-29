@@ -1,5 +1,24 @@
 {
     "common.en": "Anglais",
     "common.fr": "Français",
-    "common.ko": "Coréen"
+    "common.ko": "Coréen",
+    "common.de": "Allemand",
+    "common.yes": "Oui",
+    "common.no": "Non",
+    "header.job-title": "Développeur Web Senior",
+    "header.download-cv": "Télécharger mon cv",
+    "information.location.key": "Location",
+    "information.location.value": "Séoul, Corée du Sud",
+    "information.experience.key": "Expérience",
+    "information.experience.value": "8+ ans",
+    "information.remote.key": "Télétravail",
+    "information.remote.value": "Non/Hybride",
+    "information.relocation.key": "Relocation",
+    "aboutme.title": "A propos de moi",
+    "aboutme.text": "After now many years improving my craft by working on many projects as a consultant or not, I have now enough experience to lead a little team of developers in my current job. I had the chance to work on many different technologies, front or back ones but never stopped getting interest in new emerging technologies. I'm still very specialized in web technologies and even have an official certification from Zend Technologies in PHP. I'm now mostly doing javascript in my work but I'm always open to learn new things.",
+    "skills.title": "Compétences",
+    "language.title": "Languages parlés",
+    "experiences.title": "Expériences",
+    "education.title": "Education",
+    "availability.open": "Je cherche un emploi !"
 }

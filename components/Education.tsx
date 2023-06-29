@@ -1,7 +1,9 @@
+import { LanguageType } from "@/types/Language";
 import { EducationType } from "../types/Education";
 import Block from "./Utils/Block";
 import ListEducation from "./Utils/ListEducation";
 import Title from "./Utils/Title";
+import { useTranslation } from "@/app/i18n";
 
 const educations: EducationType[] = [
     {
@@ -18,11 +20,13 @@ const educations: EducationType[] = [
     },
 ];
 
-const Education: React.FC = () => {
+const Education: React.FC<{ lng: LanguageType }> = async ({ lng }) => {
+    const { t } = await useTranslation(lng);
+
     return (
         <div className="h-fit md:col-span-2 lg:col-span-1 lg:col-start-1  ">
             <Block>
-                <Title>Education</Title>
+                <Title>{t("education.title")}</Title>
 
                 <ol className="relative m-2">
                     {educations

@@ -1,7 +1,9 @@
+import { LanguageType } from "@/types/Language";
 import { ExperienceType } from "../types/Experience";
 import Block from "./Utils/Block";
 import TimelineElement from "./Utils/TimelineElement";
 import Title from "./Utils/Title";
+import { useTranslation } from "@/app/i18n";
 
 const experiences: ExperienceType[] = [
     {
@@ -49,11 +51,13 @@ const experiences: ExperienceType[] = [
     },
 ];
 
-const Experiences: React.FC = () => {
+const Experiences: React.FC<{ lng: LanguageType }> = async ({ lng }) => {
+    const { t } = await useTranslation(lng);
+
     return (
         <div className="h-fit md:col-span-2 lg:row-span-3 lg:row-start-2 lg:h-full">
             <Block>
-                <Title>Experiences</Title>
+                <Title>{t("experiences.title")}</Title>
                 <ol className="relative border-l border-gray-200 py-2 dark:border-gray-700">
                     {experiences
                         .sort((expA, expB) => expB.begin.getTime() - expA.begin.getTime())

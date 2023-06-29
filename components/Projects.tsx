@@ -1,7 +1,9 @@
+import { LanguageType } from "@/types/Language";
 import { ProjectType } from "../types/Project";
 import Block from "./Utils/Block";
 import ListProject from "./Utils/ListProject";
 import Title from "./Utils/Title";
+import { useTranslation } from "@/app/i18n";
 
 const projects: ProjectType[] = [
     {
@@ -54,7 +56,9 @@ const projects: ProjectType[] = [
     },
 ];
 
-const Projects: React.FC = () => {
+const Projects: React.FC<{ lng: LanguageType }> = async ({ lng }) => {
+    const { t } = await useTranslation(lng);
+
     return (
         <div className="h-fit md:col-span-2 lg:col-start-2">
             <Block>

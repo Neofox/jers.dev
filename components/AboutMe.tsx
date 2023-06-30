@@ -4,6 +4,7 @@ import Block from "./Utils/Block";
 import Title from "./Utils/Title";
 import { LanguageType } from "@/types/Language";
 import { useTranslation } from "@/app/i18n";
+import Link from "next/link";
 
 const AboutMe: React.FC<{ lng: LanguageType }> = async ({ lng }) => {
     const { t } = await useTranslation(lng);
@@ -14,13 +15,13 @@ const AboutMe: React.FC<{ lng: LanguageType }> = async ({ lng }) => {
                 <Title>{t("aboutme.title")}</Title>
                 <p className="lg:h-full">{t("aboutme.text")}</p>
                 <div>
-                    <a
+                    <Link
                         href="mailto:jer.schaeffer@gmail.com"
                         className="mt-5 inline-flex items-center font-medium text-blue-600 hover:underline dark:text-blue-500"
                     >
                         <MdContactMail className="ml-1 h-5 w-5" />
                         &nbsp; jer.schaeffer@gmail.com
-                    </a>
+                    </Link>
                 </div>
 
                 <hr className="my-8 h-px border-0 bg-gray-200 dark:bg-gray-700" />
@@ -45,21 +46,21 @@ const AboutMe: React.FC<{ lng: LanguageType }> = async ({ lng }) => {
                     </svg>
                     Email
                 </a> */}
-                    <a
+                    <Link
                         href="https://www.linkedin.com/in/j%C3%A9r%C3%B4me-schaeffer-989260119/"
                         className="inline-flex items-center rounded-l-lg border border-gray-900 bg-transparent px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-2 focus:ring-gray-500 dark:border-white dark:text-white dark:hover:bg-gray-700 dark:hover:text-white dark:focus:bg-gray-700"
                         // className="inline-flex items-center border-b border-t border-gray-900 bg-transparent px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-2 focus:ring-gray-500 dark:border-white dark:text-white dark:hover:bg-gray-700 dark:hover:text-white dark:focus:bg-gray-700"
                     >
                         <FaLinkedinIn className="mr-2 h-4 w-4 fill-current" />
                         Linkedin
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                         href="https://github.com/Neofox"
                         className="inline-flex items-center rounded-r-md border border-gray-900 bg-transparent px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-2 focus:ring-gray-500 dark:border-white dark:text-white dark:hover:bg-gray-700 dark:hover:text-white dark:focus:bg-gray-700"
                     >
                         <FaGithub className="mr-2 h-4 w-4 fill-current" />
                         Github
-                    </a>
+                    </Link>
                 </div>
             </Block>
         </div>

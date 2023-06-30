@@ -1,6 +1,7 @@
 import { MdCalendarMonth } from "react-icons/md";
 import { ProjectType } from "../../types/Project";
 import Badge from "./Badge";
+import Link from "next/link";
 
 const ListProject: React.FC<{ project: ProjectType }> = ({ project }) => {
     const formatDate = (date: Date, format = "en-GB"): string => {
@@ -25,9 +26,9 @@ const ListProject: React.FC<{ project: ProjectType }> = ({ project }) => {
             <p className="my-2 text-base font-normal text-gray-500 dark:text-gray-400">{project.description}</p>
             <div className="mb-3">
                 Link to the project:{" "}
-                <a className="font-medium text-blue-600 hover:underline dark:text-blue-500" href={project.link}>
+                <Link className="font-medium text-blue-600 hover:underline dark:text-blue-500" href={project.link}>
                     {project.name}
-                </a>
+                </Link>
             </div>
             <div className="mb-7">
                 <div className="flex flex-wrap gap-y-2">

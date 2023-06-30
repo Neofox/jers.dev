@@ -7,12 +7,9 @@ import Languages from "@/components/Languages";
 import Projects from "@/components/Projects";
 import Skills from "@/components/Skills";
 import Navbar from "@/components/Navbar";
-import { useTranslation } from "../i18n";
 import { LanguageType } from "@/types/Language";
 
-export default async function Home({ params: { lng } }: { params: { lng: LanguageType } }) {
-    const { t } = await useTranslation(lng);
-
+export default function Home({ params: { lng } }: { params: { lng: LanguageType } }) {
     return (
         <div className="bg-[url('/assets/background-light-v1.svg')] dark:bg-[url('/assets/background-dark-v1.svg')]">
             <Navbar lng={lng} />

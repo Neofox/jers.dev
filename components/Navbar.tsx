@@ -1,15 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import Availability from "../Utils/Availability";
-import DarkModeButton from "../Utils/DarkModeButton";
-import { languages } from "../../app/i18n/settings";
+import Availability from "./Utils/Availability";
+import DarkModeButton from "./Utils/DarkModeButton";
+import { languages } from "../app/i18n/settings";
 import { getFlagFromLang } from "@/app/i18n";
 import { useTranslation } from "@/app/i18n/client";
 import { LanguageType } from "@/types/Language";
 import Link from "next/link";
 
-const NavbarBase: React.FC<{ lng: LanguageType }> = ({ lng = "en" }) => {
+const Navbar: React.FC<{ lng: LanguageType }> = ({ lng = "en" }) => {
     const [langOpen, setLangOpen] = useState(false);
     const { t } = useTranslation(lng);
 
@@ -17,7 +17,7 @@ const NavbarBase: React.FC<{ lng: LanguageType }> = ({ lng = "en" }) => {
         <>
             <nav className="shadow-md border-gray-200 bg-transparent backdrop-blur-md">
                 <div className="mx-auto flex flex-wrap items-center justify-between p-1">
-                    <Availability lng={lng} isAvailable />
+                    <Availability lng={lng} />
 
                     <div className="flex items-center ">
                         <button
@@ -63,4 +63,4 @@ const NavbarBase: React.FC<{ lng: LanguageType }> = ({ lng = "en" }) => {
     );
 };
 
-export default NavbarBase;
+export default Navbar;

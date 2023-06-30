@@ -1,12 +1,13 @@
+import { useTranslation } from "@/app/i18n";
 import { LanguageType } from "@/types/Language";
-import { useTranslation } from "react-i18next";
+import Link from "next/link";
 import { MdEventAvailable } from "react-icons/md";
 
 const Availability: React.FC<{ isAvailable?: boolean; lng: LanguageType }> = async ({ isAvailable = false, lng }) => {
-    const { t } = useTranslation(lng);
+    const { t } = await useTranslation(lng);
 
     return (
-        <a
+        <Link
             href="mailto:jer.schaeffer@gmail.com"
             className={`${
                 !isAvailable ? "opacity-0" : ""
@@ -14,7 +15,7 @@ const Availability: React.FC<{ isAvailable?: boolean; lng: LanguageType }> = asy
         >
             <MdEventAvailable className="mr-3 h-6 w-6" />
             <span className="w-full">{t("availability.open")}</span>
-        </a>
+        </Link>
     );
 };
 

@@ -1,10 +1,12 @@
-import { useTranslation } from "@/app/i18n";
+"use client";
+
+import { useTranslation } from "@/app/i18n/client";
 import { LanguageType } from "@/types/Language";
 import Link from "next/link";
 import { MdEventAvailable } from "react-icons/md";
 
-const Availability: React.FC<{ isAvailable?: boolean; lng: LanguageType }> = async ({ isAvailable = false, lng }) => {
-    const { t } = await useTranslation(lng);
+const Availability: React.FC<{ isAvailable?: boolean; lng: LanguageType }> = ({ isAvailable = false, lng }) => {
+    const { t } = useTranslation(lng);
 
     return (
         <Link

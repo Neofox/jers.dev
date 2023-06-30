@@ -9,7 +9,7 @@ import Skills from "@/components/Skills";
 import Navbar from "@/components/Navbar";
 import { LanguageType } from "@/types/Language";
 
-export default function Home({ params: { lng } }: { params: { lng: LanguageType } }) {
+export default async function Home({ params: { lng } }: { params: { lng: LanguageType } }) {
     return (
         <div className="bg-[url('/assets/background-light-v1.svg')] dark:bg-[url('/assets/background-dark-v1.svg')]">
             <Navbar lng={lng} />

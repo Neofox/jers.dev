@@ -13,7 +13,7 @@ const Header: React.FC<{ lng: LanguageType }> = async ({ lng }) => {
             <Block>
                 <Image
                     className="w-44 self-center rounded-full"
-                    src={"/pict210113.jpeg"}
+                    src={"/assets/pict210113.jpeg"}
                     alt="profile picture"
                     width={200}
                     height={200}

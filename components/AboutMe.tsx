@@ -47,6 +47,7 @@ const AboutMe: React.FC<{ lng: LanguageType }> = async ({ lng }) => {
                     Email
                 </a> */}
                     <Link
+                        target="_blank"
                         href="https://www.linkedin.com/in/j%C3%A9r%C3%B4me-schaeffer-989260119/"
                         className="inline-flex items-center rounded-l-lg border border-gray-900 bg-transparent px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-2 focus:ring-gray-500 dark:border-white dark:text-white dark:hover:bg-gray-700 dark:hover:text-white dark:focus:bg-gray-700"
                         // className="inline-flex items-center border-b border-t border-gray-900 bg-transparent px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-2 focus:ring-gray-500 dark:border-white dark:text-white dark:hover:bg-gray-700 dark:hover:text-white dark:focus:bg-gray-700"
@@ -55,6 +56,7 @@ const AboutMe: React.FC<{ lng: LanguageType }> = async ({ lng }) => {
                         Linkedin
                     </Link>
                     <Link
+                        target="_blank"
                         href="https://github.com/Neofox"
                         className="inline-flex items-center rounded-r-md border border-gray-900 bg-transparent px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-2 focus:ring-gray-500 dark:border-white dark:text-white dark:hover:bg-gray-700 dark:hover:text-white dark:focus:bg-gray-700"
                     >

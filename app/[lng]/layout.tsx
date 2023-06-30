@@ -5,6 +5,7 @@ import Providers from "../Providers";
 import { dir } from "i18next";
 import { languages } from "../i18n/settings";
 import GoogleAnalytics from "@/components/Utils/GoogleAnalytics";
+import CookieBanner from "@/components/CookieBanner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,7 +30,10 @@ export default function RootLayout({
             <Head />
             <GoogleAnalytics GA_MEASUREMENT_ID="G-MLEGW0GG4H" />
             <body className={inter.className}>
-                <Providers>{children}</Providers>
+                <Providers>
+                    {children}
+                    <CookieBanner />
+                </Providers>
             </body>
         </html>
     );

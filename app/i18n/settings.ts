@@ -4,11 +4,22 @@ export const fallbackLng = "en";
 export const languages: Array<LanguageType> = [fallbackLng, "fr", "ko"];
 export const defaultNS = "translation";
 
-export function getOptions(lng = fallbackLng, ns = defaultNS) {
+export function getOptions(
+    lng = fallbackLng,
+    ns = defaultNS
+): {
+    debug: boolean;
+    supportedLngs: Array<LanguageType>;
+    fallbackLng: false | string;
+    lng: string;
+    fallbackNS: string;
+    defaultNS: string;
+    ns: string;
+} {
     return {
-        debug: process.env.NODE_ENV === "development" ? true : false,
+        debug: false,
         supportedLngs: languages,
-        fallbackLng,
+        fallbackLng: false,
         lng,
         fallbackNS: defaultNS,
         defaultNS,

@@ -1,13 +1,16 @@
 import { MdCalendarMonth, MdLocationPin, MdWork } from "react-icons/md";
-import { ExperienceType } from "../../types/Experience";
+import { ExperienceType } from "@/types/Experience";
+import { LanguageType } from "@/types/Language";
+import { useTranslation } from "@/app/i18n";
 
-const TimelineElement: React.FC<{ experience: ExperienceType }> = ({ experience }) => {
-    const formatDate = (date: Date, format = "en-GB"): string => {
+const TimelineElement: React.FC<{ experience: ExperienceType; lng: LanguageType }> = async ({ experience, lng }) => {
+    const formatDate = (date: Date, format = lng): string => {
         return new Intl.DateTimeFormat(format, {
             month: "long",
             year: "numeric",
         }).format(date);
     };
+    const { t } = await useTranslation(lng);
 
     return (
         <li className="mb-10 ml-6">
@@ -15,15 +18,15 @@ const TimelineElement: React.FC<{ experience: ExperienceType }> = ({ experience 
                 <MdCalendarMonth className="h-3 w-3 text-blue-800 dark:text-blue-300" />
             </span>
             <h3 className="mb-1 flex items-center text-lg font-semibold text-gray-900 dark:text-white">
-                {experience.jobTitle}&nbsp;
+                {t(experience.jobTitle)}&nbsp;
                 {!experience.end && (
                     <span className="ml-3 mr-2 rounded bg-blue-100 px-2.5 py-0.5 text-sm font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                        Current
+                        {t("common.current")}
                     </span>
                 )}
             </h3>
             <time className="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
-                {formatDate(experience.begin)} - {experience.end ? formatDate(experience.end) : "Today"}
+                {formatDate(experience.begin)} - {experience.end ? formatDate(experience.end) : t("common.today")}
             </time>
             <div className="text-gray-700">
                 <MdWork className="inline h-4 w-4" />
@@ -31,9 +34,16 @@ const TimelineElement: React.FC<{ experience: ExperienceType }> = ({ experience 
             </div>
             <div className="text-gray-700">
                 <MdLocationPin className="inline h-4 w-4" />
-                <span className="text-sm">&nbsp;{experience.location}</span>
+                <span className="text-sm">
+                    &nbsp;{t(experience.location.city)} - {t(experience.location.country)}
+                </span>
             </div>
-            <p className="my-2 text-base font-normal text-gray-500 dark:text-gray-400">{experience.description}</p>
+            {experience.description && (
+                <p
+                    className="my-2 text-base font-normal text-gray-500 dark:text-gray-400"
+                    dangerouslySetInnerHTML={{ __html: t(experience.description) }}
+                ></p>
+            )}
         </li>
     );
 };

@@ -3,6 +3,6 @@ export type ExperienceType = {
     end?: Date;
     jobTitle: string;
     companyName: string;
-    location: string;
+    location: { city: string; country: string };
     description?: string;
-}
+};

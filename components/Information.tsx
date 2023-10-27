@@ -16,7 +16,7 @@ const Information: React.FC<{ lng: LanguageType }> = async ({ lng }) => {
     return (
         <div className="h-fit md:h-full lg:col-start-1 lg:row-start-2 lg:h-fit">
             <Block>
-                <Title>Informations</Title>
+                <Title>{t("information.title")}</Title>
                 <div className="columns-2">
                     {informations.map((info, i) => {
                         return (

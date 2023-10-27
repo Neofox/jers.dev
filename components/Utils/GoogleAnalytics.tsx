@@ -37,6 +37,7 @@ export default function GoogleAnalytics({ GA_MEASUREMENT_ID }: { GA_MEASUREMENT_
                 
                 gtag('config', '${GA_MEASUREMENT_ID}', {
                     page_path: window.location.pathname,
+                    cookie_flags: 'max-age=7200;secure;samesite=none'
                 });
                 `,
                 }}

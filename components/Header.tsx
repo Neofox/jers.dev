@@ -17,7 +17,7 @@ const Header: React.FC<{ lng: LanguageType }> = async ({ lng }) => {
                     alt="profile picture"
                     width={200}
                     height={200}
-                    priority={false}
+                    priority={true}
                 />
                 <div className=" mt-10 self-center text-3xl text-gray-900 dark:text-white">Jérôme Schaeffer</div>
                 <div className="mt-2 self-center text-xl text-gray-400 drop-shadow-sm">{t("header.job-title")}</div>

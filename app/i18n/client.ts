@@ -7,8 +7,10 @@ import resourcesToBackend from "i18next-resources-to-backend";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { getOptions, languages } from "./settings";
 import { LanguageType } from "@/types/Language";
+import cookie from "js-cookie";
 
 const runsOnServerSide = typeof window === "undefined";
+export const cookieName = "i18next";
 
 //
 i18next
@@ -29,11 +31,13 @@ export function useTranslation(lng: LanguageType, ns?: string, options = {}) {
     const { i18n } = ret;
     if (runsOnServerSide && i18n.resolvedLanguage !== lng) {
         i18n.changeLanguage(lng);
+        cookie.set(cookieName, lng);
     } else {
         // eslint-disable-next-line react-hooks/rules-of-hooks
         useEffect(() => {
             if (i18n.resolvedLanguage === lng) return;
             i18n.changeLanguage(lng);
+            cookie.set(cookieName, lng);
         }, [lng, i18n]);
     }
     return ret;

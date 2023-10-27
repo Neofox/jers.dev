@@ -28,14 +28,12 @@ export function middleware(req: NextRequest) {
         !languages.some(loc => req.nextUrl.pathname.startsWith(`/${loc}`)) &&
         !req.nextUrl.pathname.startsWith("/_next")
     ) {
-        return NextResponse.redirect(`${req.url}${lng}${req.nextUrl.pathname}`);
-
-        //TODO: doesnt work since next 14.0
-        // return NextResponse.redirect(new URL(`/${lng}${req.nextUrl.pathname}`, req.url));
+        return NextResponse.redirect(new URL(`/${lng}${req.nextUrl.pathname}`, req.url));
     }
 
     if (req.headers.has("referer")) {
-        const lngInReferer = languages.find((l: string) => req.headers.get("Next-Url")?.slice(-2).includes(l));
+        const refererUrl = new URL(req.headers.get("referer") || "");
+        const lngInReferer = languages.find((l: string) => refererUrl.pathname.startsWith(`/${l}`));
         const response = NextResponse.next();
         if (lngInReferer) {
             response.cookies.set(cookieName, lngInReferer);

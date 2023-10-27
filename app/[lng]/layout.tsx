@@ -29,7 +29,7 @@ export default function RootLayout({
     return (
         <html lang={lng} dir={dir(lng)} className="h-full scroll-smooth" suppressHydrationWarning>
             <Head />
-            <Suspense>
+            <Suspense fallback={<></>}>
                 <GoogleAnalytics GA_MEASUREMENT_ID="G-MLEGW0GG4H" />
             </Suspense>
             <body className={inter.className}>

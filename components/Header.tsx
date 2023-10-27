@@ -24,7 +24,9 @@ const Header: React.FC<{ lng: LanguageType }> = async ({ lng }) => {
 
                 <div className="mt-8 self-center">
                     <Link
+                        download
                         href={"/assets/resume.pdf"}
+                        prefetch={false}
                         target="_blank"
                         className="mr-2 inline-flex items-center rounded-lg bg-blue-600 px-5 py-1 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                     >

@@ -9,13 +9,13 @@ const educations: EducationType[] = [
     {
         begin: new Date("2009"),
         end: new Date("2012"),
-        name: "Professional Baccalaureate in Electronic Engineering",
+        name: "education.bac",
         schoolName: "Lycée Polyvalent Jean-Baptiste Schwilgué",
     },
     {
         begin: new Date("2012"),
         end: new Date("2014"),
-        name: "BTEC Higher National Diploma, IT",
+        name: "education.dut",
         schoolName: "IUT Robert SCHUMAN",
     },
 ];
@@ -32,7 +32,7 @@ const Education: React.FC<{ lng: LanguageType }> = async ({ lng }) => {
                     {educations
                         .sort((a, b) => b.begin.getTime() - a.begin.getTime())
                         .map((education, i) => (
-                            <ListEducation key={i} education={education} />
+                            <ListEducation key={i} education={education} lng={lng} />
                         ))}
                 </ol>
             </Block>

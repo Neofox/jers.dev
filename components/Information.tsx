@@ -4,7 +4,7 @@ import Title from "./Utils/Title";
 import { useTranslation } from "@/app/i18n";
 
 const informations: { key: string; value: string }[] = [
-    { key: "information.location.key", value: "information.location.value" },
+    { key: "information.location.key", value: "$t(common.city.seoul), $t(common.country.ko)" },
     { key: "information.experience.key", value: "information.experience.value" },
     { key: "information.remote.key", value: "information.remote.value" },
     { key: "information.relocation.key", value: "common.no" },

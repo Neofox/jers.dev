@@ -33,18 +33,23 @@ export default function CookieBanner() {
         >
             <div className="text-center">
                 <p className="dark:text-white">
-                    We use <span className="font-bold text-sky-400">cookies</span> on our site.
+                    We use <span className="font-bold dark:text-sky-300 text-sky-700">cookies</span> on our site.
                 </p>
             </div>
 
             <div className="flex gap-2">
                 <button
+                    aria-label="decline cookies"
                     className="px-5 py-2 dark:text-gray-300 text-gray-900 rounded-md border-gray-900"
                     onClick={() => setCookieConsent(false)}
                 >
                     Decline
                 </button>
-                <button className="bg-gray-900 px-5 py-2 text-white rounded-lg" onClick={() => setCookieConsent(true)}>
+                <button
+                    aria-label="allow cookies"
+                    className="bg-gray-900 px-5 py-2 text-white rounded-lg"
+                    onClick={() => setCookieConsent(true)}
+                >
                     Allow Cookies
                 </button>
             </div>

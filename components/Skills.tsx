@@ -6,8 +6,8 @@ import Title from "./Utils/Title";
 import { useTranslation } from "@/app/i18n";
 
 const skills: { key: string; value: number; tags: string[] }[] = [
-    { key: "PHP", value: 80, tags: ["Symfony", "Laravel", "PHPUnit"] },
-    { key: "Javascript", value: 70, tags: ["ReactJS", "Svelte", "Node.js", "jest", "typescript"] },
+    { key: "PHP", value: 90, tags: ["Symfony", "Laravel", "PHPUnit"] },
+    { key: "Javascript", value: 80, tags: ["ReactJS", "Svelte", "Node.js", "jest", "typescript", "jQuery"] },
     { key: "Devops", value: 50, tags: ["docker", "Redis", "PostgreSQL", "MariaDB", "git"] },
     { key: "HTML/CSS", value: 50, tags: ["tailwind", "bootstrap", "material-UI"] },
 ];

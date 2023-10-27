@@ -19,7 +19,7 @@ export function getOptions(
     return {
         debug: false,
         supportedLngs: languages,
-        fallbackLng: false,
+        fallbackLng: process.env.NODE_ENV === "development" ? false : fallbackLng,
         lng,
         fallbackNS: defaultNS,
         defaultNS,

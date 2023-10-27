@@ -5,9 +5,9 @@ import Title from "./Utils/Title";
 import { useTranslation } from "@/app/i18n";
 
 const languages: { key: string; value: number }[] = [
-    { key: "common.fr", value: 95 },
-    { key: "common.en", value: 75 },
-    { key: "common.ko", value: 40 },
+    { key: "common.fr", value: 100 },
+    { key: "common.en", value: 85 },
+    { key: "common.ko", value: 50 },
     { key: "common.de", value: 10 },
 ];
 

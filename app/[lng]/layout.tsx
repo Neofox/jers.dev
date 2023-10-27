@@ -6,6 +6,7 @@ import { dir } from "i18next";
 import { languages } from "../i18n/settings";
 import GoogleAnalytics from "@/components/Utils/GoogleAnalytics";
 import CookieBanner from "@/components/CookieBanner";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,12 +29,12 @@ export default function RootLayout({
     return (
         <html lang={lng} dir={dir(lng)} className="h-full scroll-smooth" suppressHydrationWarning>
             <Head />
-            <GoogleAnalytics GA_MEASUREMENT_ID="G-MLEGW0GG4H" />
+            <Suspense>
+                <GoogleAnalytics GA_MEASUREMENT_ID="G-MLEGW0GG4H" />
+            </Suspense>
             <body className={inter.className}>
-                <Providers>
-                    {children}
-                    <CookieBanner />
-                </Providers>
+                <Providers>{children}</Providers>
+                <CookieBanner />
             </body>
         </html>
     );

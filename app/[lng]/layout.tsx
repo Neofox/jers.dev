@@ -7,6 +7,7 @@ import { languages } from "../i18n/settings";
 import GoogleAnalytics from "@/components/Utils/GoogleAnalytics";
 import CookieBanner from "@/components/CookieBanner";
 import { Suspense } from "react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,6 +36,7 @@ export default function RootLayout({
             <body className={inter.className}>
                 <Providers>{children}</Providers>
                 <CookieBanner />
+                <SpeedInsights />
             </body>
         </html>
     );

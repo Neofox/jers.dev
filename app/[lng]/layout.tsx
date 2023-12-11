@@ -8,6 +8,7 @@ import GoogleAnalytics from "@/components/Utils/GoogleAnalytics";
 import CookieBanner from "@/components/CookieBanner";
 import { Suspense } from "react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -37,6 +38,7 @@ export default function RootLayout({
                 <Providers>{children}</Providers>
                 <CookieBanner />
                 <SpeedInsights />
+                <Analytics />
             </body>
         </html>
     );

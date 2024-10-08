@@ -41,6 +41,7 @@
     "jobdesc.teacher": "Teaching to complete beginner and experienced people CSS, HTML, PHP, Javascript and MySQL",
     "jobdesc.dev.senior": "Implementation of technical services in legacy applications <br> Migrating a PHP 5 application park in PHP 7 <br> Modernization of a legacy stack <br> Training developers to new tools throughout their implementation <br> Upgrading the development stack with the usage of Docker",
     "jobdesc.dev.junior": "Development of a payment application using the Symfony 2 framework. <br> Implementation of monitoring of servers and webservices.",
+    "jobdesc.enhans": "Development of multiple web applications and tools oriented mainly around AI tools/chat (GPT-4, Gemini, Claude).",
     "projects.title": "Personal projects",
     "project.link": "Link to the project",
     "project.type.webapp": "Web Application",

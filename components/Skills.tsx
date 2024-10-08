@@ -6,10 +6,10 @@ import Title from "./Utils/Title";
 import { useTranslation } from "@/app/i18n";
 
 const skills: { key: string; value: number; tags: string[] }[] = [
-    { key: "PHP", value: 90, tags: ["Symfony", "Laravel", "PHPUnit"] },
-    { key: "Javascript", value: 80, tags: ["ReactJS", "Svelte", "Node.js", "jest", "typescript", "jQuery"] },
+    { key: "Javascript", value: 90, tags: ["Next", "ReactJS", "Svelte", "Node.js", "jest", "typescript", "jQuery"] },
+    { key: "PHP", value: 75, tags: ["Symfony", "Laravel", "PHPUnit"] },
     { key: "Devops", value: 50, tags: ["docker", "Redis", "PostgreSQL", "MariaDB", "git"] },
-    { key: "HTML/CSS", value: 50, tags: ["tailwind", "bootstrap", "material-UI"] },
+    { key: "HTML/CSS", value: 60, tags: ["Sass", "tailwind", "bootstrap", "material-UI"] },
 ];
 
 const Skills: React.FC<{ lng: LanguageType }> = async ({ lng }) => {

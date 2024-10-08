@@ -50,6 +50,7 @@ const experiences: ExperienceType[] = [
     },
     {
         begin: new Date("2023-03"),
+        end: new Date("2023-12"),
         jobTitle: "jobtitle.teacher",
         companyName: "WCODING",
         location: {
@@ -57,6 +58,16 @@ const experiences: ExperienceType[] = [
             country: "common.country.ko",
         },
         description: "jobdesc.teacher",
+    },
+    {
+        begin: new Date("2024-03"),
+        jobTitle: "jobtitle.dev.senior",
+        companyName: "인핸스",
+        location: {
+            city: "common.city.seoul",
+            country: "common.country.ko",
+        },
+        description: "jobdesc.enhans",
     },
 ];
 

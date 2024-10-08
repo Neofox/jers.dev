@@ -33,7 +33,7 @@ export default function CookieBanner() {
         >
             <div className="text-center">
                 <p className="dark:text-white">
-                    We use <span className="font-bold dark:text-sky-300 text-sky-700">cookies</span> on our site.
+                    I use <span className="font-bold dark:text-sky-300 text-sky-700">cookies</span> on my site.
                 </p>
             </div>
 

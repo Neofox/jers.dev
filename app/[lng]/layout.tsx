@@ -1,4 +1,3 @@
-import "./globals.css"
 import { Inter } from "next/font/google"
 import Head from "../head"
 import Providers from "../Providers"
@@ -11,6 +10,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/react"
 import { Metadata } from "next"
 
+import "./globals.css"
+
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
@@ -22,13 +23,15 @@ export async function generateStaticParams() {
   return languages.map((lng) => ({ lng }))
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-  params: { lng },
+  params,
 }: {
   children: React.ReactNode
-  params: { lng: string }
+  params: Promise<{ lng: string }>
 }) {
+  const { lng } = await params
+
   return (
     <html lang={lng} dir={dir(lng)} className="h-full scroll-smooth" suppressHydrationWarning>
       <Head />

@@ -1,28 +1,28 @@
-import { LanguageType } from "@/types/Language";
+import { LanguageType } from "@/types/Language"
 
-export const fallbackLng = "en";
-export const languages: Array<LanguageType> = [fallbackLng, "fr", "ko"];
-export const defaultNS = "translation";
+export const fallbackLng = "en"
+export const languages: Array<LanguageType> = [fallbackLng, "fr", "ko"]
+export const defaultNS = "translation"
 
 export function getOptions(
-    lng = fallbackLng,
-    ns = defaultNS
+  lng = fallbackLng,
+  ns = defaultNS,
 ): {
-    debug: boolean;
-    supportedLngs: Array<LanguageType>;
-    fallbackLng: false | string;
-    lng: string;
-    fallbackNS: string;
-    defaultNS: string;
-    ns: string;
+  debug: boolean
+  supportedLngs: Array<LanguageType>
+  fallbackLng: false | string
+  lng: string
+  fallbackNS: string
+  defaultNS: string
+  ns: string
 } {
-    return {
-        debug: false,
-        supportedLngs: languages,
-        fallbackLng: process.env.NODE_ENV === "development" ? false : fallbackLng,
-        lng,
-        fallbackNS: defaultNS,
-        defaultNS,
-        ns,
-    };
+  return {
+    debug: false,
+    supportedLngs: languages,
+    fallbackLng: process.env.NODE_ENV === "development" ? false : fallbackLng,
+    lng,
+    fallbackNS: defaultNS,
+    defaultNS,
+    ns,
+  }
 }

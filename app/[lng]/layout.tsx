@@ -4,11 +4,12 @@ import Providers from "../Providers"
 import { dir } from "i18next"
 import { languages } from "../i18n/settings"
 import GoogleAnalytics from "@/components/Utils/GoogleAnalytics"
-import CookieBanner from "@/components/CookieBanner"
 import { Suspense } from "react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/react"
 import { Metadata } from "next"
+
+import CookieBanner from "@/components/ui/cookie-banner"
 
 import "./globals.css"
 

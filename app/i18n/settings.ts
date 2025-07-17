@@ -1,8 +1,12 @@
 import { LanguageType } from "@/types/Language"
 
+export const cookieName = "i18next"
+export const headerName = "x-i18next-current-language"
 export const fallbackLng = "en"
 export const languages: Array<LanguageType> = [fallbackLng, "fr", "ko"]
 export const defaultNS = "translation"
+
+const runsOnServerSide = typeof window === "undefined"
 
 export function getOptions(
   lng = fallbackLng,
@@ -15,6 +19,7 @@ export function getOptions(
   fallbackNS: string
   defaultNS: string
   ns: string
+  preload: Array<LanguageType>
 } {
   return {
     debug: false,
@@ -24,5 +29,17 @@ export function getOptions(
     fallbackNS: defaultNS,
     defaultNS,
     ns,
+    preload: runsOnServerSide ? languages : [],
   }
+}
+
+export function getFlagFromLang(country: LanguageType): string {
+  // TODO: improve that
+  const flags = {
+    en: "🇺🇸",
+    fr: "🇫🇷",
+    ko: "🇰🇷",
+  }
+
+  return flags[country]
 }

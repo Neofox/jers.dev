@@ -1,6 +1,6 @@
 import { Inter } from "next/font/google"
 import Head from "@/app/head"
-import Providers from "@/app/providers"
+import Providers from "@/app/provider"
 import { dir } from "i18next"
 import { languages } from "@/app/i18n/settings"
 import GoogleAnalytics from "@/components/Utils/GoogleAnalytics"

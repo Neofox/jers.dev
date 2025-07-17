@@ -8,7 +8,7 @@ import { Projects } from "@/components/Projects"
 import { Skills } from "@/components/Skills"
 import { Information } from "@/components/Information"
 
-export default async function Home() {
+export default function Home() {
   return (
     <div className="bg-[url('/assets/background-light-v1.svg')] dark:bg-[url('/assets/background-dark-v1.svg')]">
       <Navbar />

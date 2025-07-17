@@ -12,7 +12,7 @@ type Props = SVGProps<SVGSVGElement> & {
   eager?: boolean
 }
 
-export default function Icon({ code, className, eager = false, ...props }: Props) {
+export function CustomIcon({ code, className, eager = false, ...props }: Props) {
   const ref = useRef<SVGSVGElement>(null)
   const [inView, setInView] = useState(eager)
 

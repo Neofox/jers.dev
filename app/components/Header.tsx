@@ -1,9 +1,9 @@
 import Link from "next/link"
 import Image from "next/image"
-import { MdDownload } from "react-icons/md"
+import { CloudDownload } from "lucide-react"
 
 import Block from "./Utils/Block"
-import { useTranslation } from "../i18n"
+import { useTranslation } from "@/app/i18n"
 
 export async function Header() {
   const { t } = await useTranslation()
@@ -13,7 +13,7 @@ export async function Header() {
       <Block>
         <Image
           className="w-44 self-center rounded-full"
-          src={"/assets/pict210113.jpeg"}
+          src="/assets/pict210113.jpeg"
           alt="profile picture"
           width={200}
           height={200}
@@ -25,12 +25,12 @@ export async function Header() {
         <div className="mt-8 self-center">
           <Link
             download
-            href={"/assets/resume.pdf"}
+            href="/assets/resume.pdf"
             prefetch={false}
             target="_blank"
             className="mr-2 inline-flex items-center rounded-lg bg-blue-600 px-5 py-1 text-center text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
-            <MdDownload className="mr-4 h-10 w-10 border-r-2 pr-4" />
+            <CloudDownload className="mr-4 h-10 w-10 border-r-2 pr-4" />
             {t("header.download-cv")}
           </Link>
         </div>

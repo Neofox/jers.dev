@@ -1,14 +1,12 @@
-import { Inter } from "next/font/google"
-import Head from "@/app/head"
-import Providers from "@/app/provider"
-import { dir } from "i18next"
-import { languages } from "@/app/i18n/settings"
-import GoogleAnalytics from "@/components/Utils/GoogleAnalytics"
-import { Suspense } from "react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/react"
 import { Metadata } from "next"
+import { Inter } from "next/font/google"
+import { dir } from "i18next"
 
+import Head from "@/app/head"
+import Providers from "@/app/provider"
+import { languages } from "@/app/i18n/settings"
 import CookieBanner from "@/components/ui/cookie-banner"
 
 import "./globals.css"
@@ -36,12 +34,9 @@ export default async function RootLayout({
   return (
     <html lang={lng} dir={dir(lng)} className="h-full scroll-smooth" suppressHydrationWarning>
       <Head />
-      <Suspense fallback={<></>}>
-        <GoogleAnalytics GA_MEASUREMENT_ID="G-MLEGW0GG4H" />
-      </Suspense>
       <body className={inter.className}>
         <Providers>{children}</Providers>
-        <CookieBanner />
+        {/* <CookieBanner /> */}
         <SpeedInsights />
         <Analytics />
       </body>

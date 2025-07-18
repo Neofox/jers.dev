@@ -7,7 +7,6 @@ import { dir } from "i18next"
 import Head from "@/app/head"
 import Providers from "@/app/provider"
 import { languages } from "@/app/i18n/settings"
-import CookieBanner from "@/components/ui/cookie-banner"
 
 import "./globals.css"
 
@@ -36,7 +35,6 @@ export default async function RootLayout({
       <Head />
       <body className={inter.className}>
         <Providers>{children}</Providers>
-        {/* <CookieBanner /> */}
         <SpeedInsights />
         <Analytics />
       </body>

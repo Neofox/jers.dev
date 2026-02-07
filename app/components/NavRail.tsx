@@ -262,24 +262,24 @@ export default function NavRail() {
             <a
               href="https://github.com/Neofox"
               target="_blank"
+              aria-label="GitHub"
               rel="noopener noreferrer"
               className="transition-colors"
               style={{ color: "var(--text-muted)" }}
               onMouseEnter={(e) => (e.currentTarget.style.color = "var(--accent)")}
               onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
-              aria-label="GitHub"
             >
               <Github size={16} />
             </a>
             <a
               href="https://www.linkedin.com/in/jerome-schaeffer/"
               target="_blank"
+              aria-label="LinkedIn"
               rel="noopener noreferrer"
               className="transition-colors"
               style={{ color: "var(--text-muted)" }}
               onMouseEnter={(e) => (e.currentTarget.style.color = "var(--accent)")}
               onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
-              aria-label="LinkedIn"
             >
               <Linkedin size={16} />
             </a>

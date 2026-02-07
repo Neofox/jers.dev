@@ -161,6 +161,7 @@ export default function HeroSection() {
           </Link>
           <a
             href="mailto:jer.schaeffer@gmail.com"
+            aria-label="Send Email"
             className="btn-secondary flex flex-1 items-center justify-center gap-2"
           >
             <Mail size={14} />

@@ -20,7 +20,7 @@ const skillCategories = [
   },
   {
     titleKey: "skills.realtime",
-    skills: ["Three.js", "Agora", "TanStack Query", "TanStack Router", "Pinia"],
+    skills: ["Three.js", "Agora", "TanStack Query", "TanStack Router", "GSAP"],
   },
   {
     titleKey: "skills.devops",
@@ -29,6 +29,10 @@ const skillCategories = [
   {
     titleKey: "skills.testing",
     skills: ["Jest", "PHPUnit", "Cypress", "Playwright"],
+  },
+  {
+    titleKey: "skills.ai",
+    skills: ["LLM", "RAG", "Ollama", "LangChain", "Prompt Engineering"],
   },
 ]
 
@@ -103,7 +107,7 @@ export default function SkillsSection() {
       <div ref={cardRef} className="glass-card p-4 md:w-[min(500px,42vw)] md:self-end md:justify-self-end md:p-8">
         <span className="micro-label mb-5 block">{t("skills.technologies").toUpperCase()}</span>
 
-        <div ref={skillsRef} className="space-y-4">
+        <div ref={skillsRef} className="space-y-2">
           {skillCategories.map((category, index) => (
             <div key={index} className="skill-category">
               <div className="mb-2 font-mono text-xs" style={{ color: "var(--text-muted)" }}>

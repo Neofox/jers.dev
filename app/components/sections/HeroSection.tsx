@@ -117,7 +117,7 @@ export default function HeroSection() {
           </div>
         </div>
 
-        <div className="mb-5 space-y-3">
+        <div className="mb-4 space-y-2.5">
           <div className="flex items-center justify-between text-sm">
             <span className="font-mono text-xs" style={{ color: "var(--text-muted)" }}>
               {t("information.location.key").toUpperCase()}
@@ -138,6 +138,14 @@ export default function HeroSection() {
             </span>
             <span style={{ color: "var(--text-primary)" }}>{t("information.focus.value")}</span>
           </div>
+        </div>
+
+        <div className="mb-5 flex flex-wrap gap-1.5">
+          {["React", "Vue.js", "Next.js", "TypeScript", "Node.js", "Tailwind"].map((skill) => (
+            <span key={skill} className="skill-tag" style={{ fontSize: "10px", padding: "0.25rem 0.5rem" }}>
+              {skill}
+            </span>
+          ))}
         </div>
 
         <div className="flex gap-2">

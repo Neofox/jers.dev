@@ -2,7 +2,7 @@ import i18next from "./i18n"
 import { headerName } from "./settings"
 import { headers } from "next/headers"
 
-export async function useTranslation(ns?: string | string[], options?: Record<string, string>) {
+export async function getTranslation(ns?: string | string[], options?: Record<string, string>) {
   const headerList = await headers()
   const lng = headerList.get(headerName)
 

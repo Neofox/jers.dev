@@ -1,4 +1,4 @@
-import { useTranslation } from "@/app/i18n"
+import { getTranslation } from "@/app/i18n"
 import Badge from "./Utils/Badge"
 import Block from "./Utils/Block"
 import { ProgressBar } from "./Utils/ProgressBar"
@@ -12,7 +12,7 @@ const skills: { key: string; value: number; tags: string[] }[] = [
 ]
 
 export async function Skills() {
-  const { t } = await useTranslation()
+  const { t } = await getTranslation()
 
   return (
     <div className="h-fit lg:col-start-1 lg:row-start-3">

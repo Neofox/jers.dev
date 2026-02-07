@@ -3,7 +3,7 @@ import type { ProjectType } from "@/types/Project"
 import Block from "./Utils/Block"
 import { Title } from "@/components/Utils/Title"
 import { ListProject } from "@/components/Utils/ListProject"
-import { useTranslation } from "@/app/i18n"
+import { getTranslation } from "@/app/i18n"
 
 const projects: ProjectType[] = [
   {
@@ -57,7 +57,7 @@ const projects: ProjectType[] = [
 ]
 
 export async function Projects() {
-  const { t } = await useTranslation()
+  const { t } = await getTranslation()
 
   return (
     <div className="h-fit md:col-span-2 lg:col-start-2">

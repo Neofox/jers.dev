@@ -1,4 +1,4 @@
-import { useTranslation } from "@/app/i18n"
+import { getTranslation } from "@/app/i18n"
 import Block from "./Utils/Block"
 import { ProgressBar } from "./Utils/ProgressBar"
 import { Title } from "@/components/Utils/Title"
@@ -11,7 +11,7 @@ const languages: { key: string; value: number }[] = [
 ]
 
 export async function Languages() {
-  const { t } = await useTranslation()
+  const { t } = await getTranslation()
 
   return (
     <div className="h-fit md:h-full lg:h-fit">

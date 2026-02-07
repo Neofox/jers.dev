@@ -9,7 +9,7 @@ export const config = {
   matcher: ["/((?!api|_next/static|_next/image|assets|favicon.ico|sw.js|site.webmanifest).*)"],
 }
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   // Ignore paths with "icon" or "chrome"
   if (req.nextUrl.pathname.indexOf("icon") > -1 || req.nextUrl.pathname.indexOf("chrome") > -1)
     return NextResponse.next()

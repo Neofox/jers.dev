@@ -1,11 +1,11 @@
 import Link from "next/link"
 import { Github, Linkedin, Mail } from "lucide-react"
 import Block from "./Utils/Block"
-import { useTranslation } from "@/app/i18n"
+import { getTranslation } from "@/app/i18n"
 import { Title } from "@/components/Utils/Title"
 
 export async function AboutMe() {
-  const { t } = await useTranslation()
+  const { t } = await getTranslation()
 
   return (
     <div id="aboutme" className="h-fit md:col-span-2 md:row-start-2 lg:row-start-1 lg:h-full">

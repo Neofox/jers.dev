@@ -1,21 +1,19 @@
-import { FlatCompat } from "@eslint/eslintrc"
-// import pluginQuery from "@tanstack/eslint-plugin-query";
+import { defineConfig, globalIgnores } from "eslint/config"
+import nextVitals from "eslint-config-next/core-web-vitals"
+import nextTs from "eslint-config-next/typescript"
 import eslintConfigPrettier from "eslint-config-prettier/flat"
 
-const compat = new FlatCompat({
-  baseDirectory: import.meta.dirname,
-})
-
-const eslintConfig = [
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  ...nextTs,
   {
     rules: {
       semi: ["warn", "never"],
+      "react-hooks/set-state-in-effect": "off",
     },
-    ignores: ["node_modules/**", ".next/**", "out/**", "dist/**"],
   },
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
-  // ...pluginQuery.configs["flat/recommended"],
   eslintConfigPrettier,
-]
+  globalIgnores([".next/**", "out/**", "build/**", "dist/**", "next-env.d.ts", "new-design-app/**"]),
+])
 
 export default eslintConfig

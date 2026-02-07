@@ -3,10 +3,10 @@ import Image from "next/image"
 import { CloudDownload } from "lucide-react"
 
 import Block from "./Utils/Block"
-import { useTranslation } from "@/app/i18n"
+import { getTranslation } from "@/app/i18n"
 
 export async function Header() {
-  const { t } = await useTranslation()
+  const { t } = await getTranslation()
 
   return (
     <div className="col-start-1 row-start-1 h-fit lg:h-full">

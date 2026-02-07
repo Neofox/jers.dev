@@ -2,7 +2,7 @@ import { EducationType } from "../../types/Education"
 import Block from "./Utils/Block"
 import { Title } from "@/components/Utils/Title"
 import { ListEducation } from "@/components/Utils/ListEducation"
-import { useTranslation } from "@/app/i18n"
+import { getTranslation } from "@/app/i18n"
 
 const educations: EducationType[] = [
   {
@@ -20,7 +20,7 @@ const educations: EducationType[] = [
 ]
 
 export async function Education() {
-  const { t } = await useTranslation()
+  const { t } = await getTranslation()
 
   return (
     <div className="h-fit md:col-span-2 lg:col-span-1 lg:col-start-1">

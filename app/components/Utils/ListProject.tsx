@@ -2,7 +2,7 @@ import Link from "next/link"
 
 import type { ProjectType } from "@/types/Project"
 import Badge from "./Badge"
-import { useTranslation } from "@/app/i18n"
+import { getTranslation } from "@/app/i18n"
 import { Calendar1 } from "lucide-react"
 
 type ListProjectProps = {
@@ -10,7 +10,7 @@ type ListProjectProps = {
 }
 
 export async function ListProject({ project }: ListProjectProps) {
-  const { t, i18n } = await useTranslation()
+  const { t, i18n } = await getTranslation()
 
   const formatDate = (date: Date, format = i18n.language): string => {
     return new Intl.DateTimeFormat(format, {

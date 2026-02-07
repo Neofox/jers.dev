@@ -1,6 +1,6 @@
 import Block from "./Utils/Block"
 import { Title } from "@/components/Utils/Title"
-import { useTranslation } from "@/app/i18n"
+import { getTranslation } from "@/app/i18n"
 
 const informations: { key: string; value: string }[] = [
   { key: "information.location.key", value: "$t(common.city.seoul), $t(common.country.ko)" },
@@ -10,7 +10,7 @@ const informations: { key: string; value: string }[] = [
 ]
 
 export async function Information() {
-  const { t } = await useTranslation()
+  const { t } = await getTranslation()
 
   return (
     <div className="h-fit md:h-full lg:col-start-1 lg:row-start-2 lg:h-fit">

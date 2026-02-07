@@ -3,7 +3,7 @@ import type { ExperienceType } from "@/types/Experience"
 import Block from "./Utils/Block"
 import { Title } from "@/components/Utils/Title"
 import { TimelineElement } from "@/components/Utils/TimelineElement"
-import { useTranslation } from "@/app/i18n"
+import { getTranslation } from "@/app/i18n"
 
 const experiences: ExperienceType[] = [
   {
@@ -72,7 +72,7 @@ const experiences: ExperienceType[] = [
 ]
 
 export async function Experiences() {
-  const { t } = await useTranslation()
+  const { t } = await getTranslation()
 
   return (
     <div className="h-fit md:col-span-2 lg:row-span-3 lg:row-start-2 lg:h-full">

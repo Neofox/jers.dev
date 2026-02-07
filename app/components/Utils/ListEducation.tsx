@@ -1,5 +1,5 @@
 import { EducationType } from "@/types/Education"
-import { useTranslation } from "@/app/i18n"
+import { getTranslation } from "@/app/i18n"
 import { Calendar1, School } from "lucide-react"
 
 type ListEducationProps = {
@@ -7,7 +7,7 @@ type ListEducationProps = {
 }
 
 export async function ListEducation({ education }: ListEducationProps) {
-  const { t, i18n } = await useTranslation()
+  const { t, i18n } = await getTranslation()
 
   const formatDate = (date: Date, format = i18n.language): string => {
     return new Intl.DateTimeFormat(format, {

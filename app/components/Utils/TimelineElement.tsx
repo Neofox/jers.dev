@@ -1,5 +1,5 @@
 import { ExperienceType } from "@/types/Experience"
-import { useTranslation } from "@/app/i18n"
+import { getTranslation } from "@/app/i18n"
 import { Building2, Calendar1, MapPin } from "lucide-react"
 
 type TimelineElementProps = {
@@ -7,7 +7,7 @@ type TimelineElementProps = {
 }
 
 export async function TimelineElement({ experience }: TimelineElementProps) {
-  const { t, i18n } = await useTranslation()
+  const { t, i18n } = await getTranslation()
 
   const formatDate = (date: Date, format = i18n.language): string => {
     return new Intl.DateTimeFormat(format, {

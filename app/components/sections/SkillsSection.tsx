@@ -12,11 +12,15 @@ gsap.registerPlugin(ScrollTrigger)
 const skillCategories = [
   {
     titleKey: "skills.frontend",
-    skills: ["Next.js", "React", "Svelte", "TypeScript", "Tailwind"],
+    skills: ["Next.js", "React", "Vue.js", "Svelte", "TypeScript", "Tailwind"],
   },
   {
     titleKey: "skills.backend",
     skills: ["Node.js", "Symfony", "Laravel", "PostgreSQL", "Redis"],
+  },
+  {
+    titleKey: "skills.realtime",
+    skills: ["Three.js", "Agora", "TanStack Query", "TanStack Router", "Pinia"],
   },
   {
     titleKey: "skills.devops",

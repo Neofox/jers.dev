@@ -12,8 +12,15 @@ gsap.registerPlugin(ScrollTrigger)
 
 const experiences = [
   {
-    beginKey: "2024",
+    beginKey: "2025",
     endKey: null,
+    titleKey: "jobtitle.dev.frontend",
+    company: "3i",
+    descriptionKey: "jobdesc.3i",
+  },
+  {
+    beginKey: "2024",
+    endKey: "2025",
     titleKey: "jobtitle.dev.senior",
     company: "인핸스",
     descriptionKey: "jobdesc.enhans",

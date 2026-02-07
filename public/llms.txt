@@ -1,0 +1,20 @@
+# Jérôme Schaeffer — Personal Portfolio
+
+> Software engineer based in Seoul, South Korea. Portfolio and resume site.
+
+## About
+
+Jérôme Schaeffer is a software engineer specializing in TypeScript, React, Next.js, and cloud-native technologies (AWS). This site serves as his personal portfolio and online resume.
+
+## Pages
+
+- [English](https://jers.dev/en): Portfolio in English
+- [French](https://jers.dev/fr): Portfolio en français
+- [Korean](https://jers.dev/ko): 한국어 포트폴리오
+
+## Contact & Social
+
+- Email: jerome@jers.dev
+- GitHub: https://github.com/Neofox
+- LinkedIn: https://www.linkedin.com/in/jerschaeffer/
+- X/Twitter: https://x.com/neofox_

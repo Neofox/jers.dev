@@ -77,9 +77,8 @@ export default function ExperienceSection() {
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          end: "+=50%",
+          end: "+=80%",
           pin: true,
-          pinSpacing: false,
           scrub: 0.6,
         },
       })
@@ -108,62 +107,63 @@ export default function ExperienceSection() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="section-pinned z-40">
-      <div className="absolute inset-0 flex items-center">
-        <div ref={headlineRef} className="headline-display-wrapper absolute top-[22vh] left-[8vw] w-[38vw]">
-          <div className="mb-4 flex items-center gap-2">
-            <Briefcase size={16} style={{ color: "var(--accent)" }} />
-            <span className="font-mono text-xs tracking-widest" style={{ color: "var(--text-secondary)" }}>
-              {t("experiences.title").toUpperCase()}
-            </span>
-          </div>
-          <h1 className="headline-display text-display-md mb-6">
-            <span style={{ color: "var(--text-primary)" }}>{t("experiences.subtitle")}</span>
-            <br />
-            <span style={{ color: "var(--accent)" }}>{t("experiences.subtitle.highlight")}</span>
-          </h1>
-          <p className="max-w-md text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-            {t("experiences.tagline")}
-          </p>
+    <section
+      ref={sectionRef}
+      className="section-pinned z-40 grid grid-cols-1 gap-6 px-[4vw] pt-[10vh] pb-[72px] md:grid-cols-2 md:grid-rows-[1fr] md:gap-0 md:pt-[22vh] md:pr-[6vw] md:pb-[12vh] md:pl-[8vw]"
+    >
+      <div ref={headlineRef} className="md:w-[38vw] md:self-start">
+        <div className="mb-4 flex items-center gap-2">
+          <Briefcase size={16} style={{ color: "var(--accent)" }} />
+          <span className="font-mono text-xs tracking-widest" style={{ color: "var(--text-secondary)" }}>
+            {t("experiences.title").toUpperCase()}
+          </span>
         </div>
+        <h1 className="headline-display text-display-md mb-6">
+          <span style={{ color: "var(--text-primary)" }}>{t("experiences.subtitle")}</span>
+          <br />
+          <span style={{ color: "var(--accent)" }}>{t("experiences.subtitle.highlight")}</span>
+        </h1>
+        <p className="max-w-md text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+          {t("experiences.tagline")}
+        </p>
+      </div>
 
-        <div ref={cardRef} className="glass-card absolute right-[6vw] bottom-[12vh] w-[min(520px,44vw)] p-8">
-          <span className="micro-label mb-5 block">{t("experiences.timeline").toUpperCase()}</span>
+      <div ref={cardRef} className="glass-card p-4 md:w-[min(520px,44vw)] md:self-end md:justify-self-end md:p-8">
+        <span className="micro-label mb-5 block">{t("experiences.timeline").toUpperCase()}</span>
 
-          <div ref={timelineRef} className="max-h-[48vh] space-y-0 overflow-y-auto pr-2">
-            {experiences.map((exp, index) => (
-              <div key={index} className="timeline-entry timeline-item">
-                <div className="mb-1 font-mono text-xs" style={{ color: "var(--accent)" }}>
-                  {exp.beginKey} – {exp.endKey ?? t("common.today").toUpperCase()}
-                </div>
-                <div className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
-                  {t(exp.titleKey)}
-                </div>
-                <div className="mb-1 text-xs" style={{ color: "var(--text-muted)" }}>
-                  {exp.company}
-                </div>
-                {exp.descriptionKey && (
-                  <div
-                    className="text-xs leading-relaxed"
-                    style={{ color: "var(--text-secondary)" }}
-                    dangerouslySetInnerHTML={{ __html: t(exp.descriptionKey) }}
-                  />
-                )}
+        <div ref={timelineRef} className="space-y-0 p-2 md:max-h-[48vh] md:overflow-y-auto">
+          {experiences.map((exp, index) => (
+            <div key={index} className="timeline-entry timeline-item">
+              <div className="mb-1 font-mono text-xs" style={{ color: "var(--accent)" }}>
+                {exp.beginKey} – {exp.endKey ?? t("common.today").toUpperCase()}
               </div>
-            ))}
-          </div>
-
-          <Link
-            href="/assets/resume.pdf"
-            target="_blank"
-            prefetch={false}
-            className="link-hover mt-4 inline-flex items-center gap-2 font-mono text-xs"
-            style={{ color: "var(--accent)" }}
-          >
-            {t("experiences.full-resume")}
-            <ExternalLink size={12} />
-          </Link>
+              <div className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+                {t(exp.titleKey)}
+              </div>
+              <div className="mb-1 text-xs" style={{ color: "var(--text-muted)" }}>
+                {exp.company}
+              </div>
+              {exp.descriptionKey && (
+                <div
+                  className="text-xs leading-relaxed"
+                  style={{ color: "var(--text-secondary)" }}
+                  dangerouslySetInnerHTML={{ __html: t(exp.descriptionKey) }}
+                />
+              )}
+            </div>
+          ))}
         </div>
+
+        <Link
+          href="/assets/resume.pdf"
+          target="_blank"
+          style={{ color: "var(--accent)" }}
+          prefetch={false}
+          className="link-hover mt-4 font-mono text-xs"
+        >
+          {t("experiences.full-resume")}
+          <ExternalLink size={12} />
+        </Link>
       </div>
     </section>
   )

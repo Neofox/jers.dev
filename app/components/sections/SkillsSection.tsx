@@ -50,9 +50,8 @@ export default function SkillsSection() {
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          end: "+=50%",
+          end: "+=80%",
           pin: true,
-          pinSpacing: false,
           scrub: 0.6,
         },
       })
@@ -65,12 +64,7 @@ export default function SkillsSection() {
         0,
       )
       scrollTl.fromTo(card, { y: 50, opacity: 0 }, { y: 0, opacity: 1, ease: "power2.out" }, 0.03)
-      scrollTl.fromTo(
-        skillItems,
-        { y: 12, opacity: 0 },
-        { y: 0, opacity: 1, ease: "power2.out", stagger: 0.03 },
-        0.08,
-      )
+      scrollTl.fromTo(skillItems, { y: 12, opacity: 0 }, { y: 0, opacity: 1, ease: "power2.out", stagger: 0.03 }, 0.08)
 
       // EXIT (0.85 → 1.0)
       scrollTl.fromTo(headline.children, { y: 0, opacity: 1 }, { y: -30, opacity: 0, ease: "power2.in" }, 0.85)
@@ -81,44 +75,45 @@ export default function SkillsSection() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="section-pinned z-30">
-      <div className="absolute inset-0 flex items-center">
-        <div ref={headlineRef} className="headline-display-wrapper absolute top-[22vh] left-[8vw] w-[38vw]">
-          <div className="mb-4 flex items-center gap-2">
-            <Code2 size={16} style={{ color: "var(--accent)" }} />
-            <span className="font-mono text-xs tracking-widest" style={{ color: "var(--text-secondary)" }}>
-              {t("skills.technologies").toUpperCase()}
-            </span>
-          </div>
-          <h1 className="headline-display text-display-md mb-6">
-            <span style={{ color: "var(--text-primary)" }}>{t("skills.subtitle")}</span>
-            <br />
-            <span style={{ color: "var(--accent)" }}>{t("skills.subtitle.highlight")}</span>
-          </h1>
-          <p className="max-w-md text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-            {t("skills.tagline")}
-          </p>
+    <section
+      ref={sectionRef}
+      className="section-pinned z-30 grid grid-cols-1 gap-6 px-[4vw] pt-[10vh] pb-[72px] md:grid-cols-2 md:grid-rows-[1fr] md:gap-0 md:pt-[22vh] md:pr-[6vw] md:pb-[12vh] md:pl-[8vw]"
+    >
+      <div ref={headlineRef} className="md:w-[38vw] md:self-start">
+        <div className="mb-4 flex items-center gap-2">
+          <Code2 size={16} style={{ color: "var(--accent)" }} />
+          <span className="font-mono text-xs tracking-widest" style={{ color: "var(--text-secondary)" }}>
+            {t("skills.technologies").toUpperCase()}
+          </span>
         </div>
+        <h1 className="headline-display text-display-md mb-6">
+          <span style={{ color: "var(--text-primary)" }}>{t("skills.subtitle")}</span>
+          <br />
+          <span style={{ color: "var(--accent)" }}>{t("skills.subtitle.highlight")}</span>
+        </h1>
+        <p className="max-w-md text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+          {t("skills.tagline")}
+        </p>
+      </div>
 
-        <div ref={cardRef} className="glass-card absolute right-[6vw] bottom-[12vh] w-[min(500px,42vw)] p-8">
-          <span className="micro-label mb-5 block">{t("skills.technologies").toUpperCase()}</span>
+      <div ref={cardRef} className="glass-card p-4 md:w-[min(500px,42vw)] md:self-end md:justify-self-end md:p-8">
+        <span className="micro-label mb-5 block">{t("skills.technologies").toUpperCase()}</span>
 
-          <div ref={skillsRef} className="space-y-4">
-            {skillCategories.map((category, index) => (
-              <div key={index} className="skill-category">
-                <div className="mb-2 font-mono text-xs" style={{ color: "var(--text-muted)" }}>
-                  {t(category.titleKey)}
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {category.skills.map((skill, skillIndex) => (
-                    <span key={skillIndex} className="skill-tag">
-                      {skill}
-                    </span>
-                  ))}
-                </div>
+        <div ref={skillsRef} className="space-y-4">
+          {skillCategories.map((category, index) => (
+            <div key={index} className="skill-category">
+              <div className="mb-2 font-mono text-xs" style={{ color: "var(--text-muted)" }}>
+                {t(category.titleKey)}
               </div>
-            ))}
-          </div>
+              <div className="flex flex-wrap gap-2">
+                {category.skills.map((skill, skillIndex) => (
+                  <span key={skillIndex} className="skill-tag">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

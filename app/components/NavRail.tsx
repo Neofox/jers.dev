@@ -81,6 +81,72 @@ export default function NavRail() {
 
   return (
     <>
+      <div
+        className={`utility-cluster fixed top-4 right-4 z-[100] flex items-center gap-1 px-2 py-1.5 transition-all duration-500 md:top-5 md:right-5 ${
+          isVisible ? "pointer-events-none translate-y-2 opacity-0" : "translate-y-0 opacity-100"
+        }`}
+      >
+        {/* Language switcher */}
+        <div className="relative">
+          <button
+            onClick={() => setLangOpen(!langOpen)}
+            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-base transition-colors"
+            style={{ color: "var(--text-muted)" }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--accent)")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
+          >
+            {getFlagFromLang(i18n.language as LanguageType)}
+          </button>
+          {langOpen && !isVisible && (
+            <div
+              className="absolute top-full right-0 mt-1 overflow-hidden rounded-lg py-1"
+              style={{
+                background: "var(--bg-card)",
+                border: "1px solid var(--card-border)",
+                backdropFilter: "blur(12px)",
+              }}
+            >
+              {languages
+                .filter((lang) => lang !== i18n.language)
+                .map((lang) => (
+                  <Link
+                    key={lang}
+                    href={`/${lang}`}
+                    onClick={() => setLangOpen(false)}
+                    className="flex items-center gap-2 px-3 py-1.5 text-sm transition-colors"
+                    style={{ color: "var(--text-secondary)" }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "var(--skill-bg)"
+                      e.currentTarget.style.color = "var(--accent)"
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "transparent"
+                      e.currentTarget.style.color = "var(--text-secondary)"
+                    }}
+                  >
+                    <span>{getFlagFromLang(lang)}</span>
+                    <span className="font-mono text-xs break-keep">{t(`common.${lang}`)}</span>
+                  </Link>
+                ))}
+            </div>
+          )}
+        </div>
+
+        {/* Theme toggle */}
+        {mounted && (
+          <button
+            onClick={() => setTheme(currentTheme === "dark" ? "light" : "dark")}
+            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md transition-colors"
+            style={{ color: "var(--text-muted)" }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--accent)")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
+            aria-label="Toggle theme"
+          >
+            {currentTheme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+        )}
+      </div>
+
       {/* Desktop: Left rail */}
       <nav
         className={`nav-rail fixed top-0 left-0 z-[100] hidden h-full transition-all duration-500 md:block ${
@@ -114,7 +180,7 @@ export default function NavRail() {
               >
                 <div className={`nav-dot ${activeSection === section.id ? "active" : ""}`} />
                 <span
-                  className="pointer-events-none absolute left-full ml-3 whitespace-nowrap rounded px-2 py-1 font-mono text-[10px] opacity-0 transition-opacity group-hover:opacity-100"
+                  className="pointer-events-none absolute left-full ml-3 rounded px-2 py-1 font-mono text-[10px] whitespace-nowrap opacity-0 transition-opacity group-hover:opacity-100"
                   style={{
                     background: "var(--bg-secondary)",
                     border: "1px solid var(--border-accent)",
@@ -168,7 +234,7 @@ export default function NavRail() {
                         }}
                       >
                         <span>{getFlagFromLang(lang)}</span>
-                        <span className="font-mono text-xs">{t(`common.${lang}`)}</span>
+                        <span className="font-mono text-xs break-keep">{t(`common.${lang}`)}</span>
                       </Link>
                     ))}
                 </div>
@@ -223,7 +289,7 @@ export default function NavRail() {
 
       {/* Mobile: Bottom bar */}
       <nav
-        className={`nav-mobile fixed bottom-0 left-0 right-0 z-[100] block md:hidden ${
+        className={`nav-mobile fixed right-0 bottom-0 left-0 z-[100] block md:hidden ${
           isVisible ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
         } transition-all duration-500`}
       >
@@ -273,7 +339,7 @@ export default function NavRail() {
                         style={{ color: "var(--text-secondary)" }}
                       >
                         <span>{getFlagFromLang(lang)}</span>
-                        <span className="font-mono text-xs">{t(`common.${lang}`)}</span>
+                        <span className="font-mono text-xs break-keep">{t(`common.${lang}`)}</span>
                       </Link>
                     ))}
                 </div>

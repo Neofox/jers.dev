@@ -70,10 +70,10 @@ export default function ProjectsSection() {
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          end: "+=50%",
+          end: "+=80%",
           pin: true,
-          pinSpacing: false,
           scrub: 0.6,
+
         },
       })
 
@@ -101,9 +101,11 @@ export default function ProjectsSection() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="section-pinned z-50">
-      <div className="absolute inset-0 flex items-center">
-        <div ref={headlineRef} className="headline-display-wrapper absolute top-[22vh] left-[8vw] w-[38vw]">
+    <section
+      ref={sectionRef}
+      className="section-pinned z-50 grid grid-cols-1 gap-6 px-[4vw] pt-[10vh] pb-[72px] md:grid-cols-2 md:grid-rows-[1fr] md:gap-0 md:pl-[8vw] md:pr-[6vw] md:pt-[22vh] md:pb-[12vh]"
+    >
+      <div ref={headlineRef} className="md:self-start md:w-[38vw]">
           <div className="mb-4 flex items-center gap-2">
             <FolderGit2 size={16} style={{ color: "var(--accent)" }} />
             <span className="font-mono text-xs tracking-widest" style={{ color: "var(--text-secondary)" }}>
@@ -120,10 +122,10 @@ export default function ProjectsSection() {
           </p>
         </div>
 
-        <div ref={cardRef} className="glass-card absolute right-[6vw] bottom-[12vh] w-[min(520px,44vw)] p-8">
+      <div ref={cardRef} className="glass-card p-4 md:self-end md:w-[min(520px,44vw)] md:justify-self-end md:p-8">
           <span className="micro-label mb-5 block">{t("projects.personal-work").toUpperCase()}</span>
 
-          <div ref={projectsRef} className="max-h-[44vh] space-y-3 overflow-y-auto pr-2">
+          <div ref={projectsRef} className="space-y-3 pr-2 md:max-h-[44vh] md:overflow-y-auto">
             {projects.map((project, index) => (
               <a
                 key={index}
@@ -178,7 +180,6 @@ export default function ProjectsSection() {
             <Github size={14} />
             {t("projects.view-github")}
           </a>
-        </div>
       </div>
     </section>
   )

@@ -78,10 +78,9 @@ export default function ContactSection() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="relative z-[60] min-h-screen">
-      <div className="relative flex min-h-screen flex-col">
-        <div className="relative flex flex-1 items-center">
-          <div ref={headlineRef} className="headline-display-wrapper absolute top-[22vh] left-[8vw] w-[38vw]">
+    <section ref={sectionRef} className="relative z-[60] grid min-h-screen grid-rows-[1fr_auto]">
+      <div className="grid grid-cols-1 gap-6 px-[4vw] pt-[10vh] pb-[72px] md:grid-cols-2 md:grid-rows-[1fr] md:gap-0 md:pl-[8vw] md:pr-[6vw] md:pt-[22vh] md:pb-[12vh]">
+        <div ref={headlineRef} className="md:self-start md:w-[38vw]">
             <div className="mb-4 flex items-center gap-2">
               <Send size={16} style={{ color: "var(--accent)" }} />
               <span className="font-mono text-xs tracking-widest" style={{ color: "var(--text-secondary)" }}>
@@ -98,7 +97,7 @@ export default function ContactSection() {
             </p>
           </div>
 
-          <div ref={cardRef} className="glass-card absolute right-[6vw] bottom-[12vh] w-[min(460px,38vw)] p-8">
+        <div ref={cardRef} className="glass-card p-4 md:self-end md:w-[min(460px,38vw)] md:justify-self-end md:p-8">
             <div className="mb-5 flex items-center gap-2">
               <div className="status-dot" />
               <span className="font-mono text-xs" style={{ color: "var(--text-secondary)" }}>
@@ -166,7 +165,7 @@ export default function ContactSection() {
         {/* Footer */}
         <div
           ref={footerRef}
-          className="relative border-t px-[6vw] py-5"
+          className="border-t px-[6vw] pt-5 pb-16 md:pb-5"
           style={{ borderColor: "var(--border-accent)" }}
         >
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
@@ -203,7 +202,6 @@ export default function ContactSection() {
               {t("footer.built-with")}
             </div>
           </div>
-        </div>
       </div>
     </section>
   )

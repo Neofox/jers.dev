@@ -315,7 +315,8 @@ body {
 /* ─── LINK HOVER ─── */
 .link-hover {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
+  gap: 0.5rem;
   color: var(--accent);
 }
 
@@ -399,6 +400,26 @@ body {
   }
 }
 
+/* ─── UTILITY CLUSTER ─── */
+.utility-cluster {
+  background: var(--nav-bg);
+  border: 1px solid var(--nav-border);
+  border-radius: 10px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ─── SCROLL INDICATOR ─── */
+@keyframes bounce-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
 /* ─── MOBILE NAV ─── */
 .nav-mobile {
   background: var(--nav-bg);
@@ -416,18 +437,8 @@ body {
 
 @media (max-width: 768px) {
   .glass-card {
-    left: 4vw !important;
-    right: 4vw !important;
-    width: auto !important;
-    bottom: 72px !important;
-    max-height: 48vh !important;
-    overflow-y: auto !important;
-  }
-
-  .headline-display-wrapper {
-    top: 10vh !important;
-    width: 88vw !important;
-    left: 6vw !important;
+    max-height: 54vh;
+    overflow-y: auto;
   }
 
   .text-display-lg {

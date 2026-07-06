@@ -76,24 +76,29 @@ export default function ProjectsSection() {
         },
       })
 
-      // ENTRANCE (0 → 0.18)
+      // ENTRANCE (0 → ~0.25), then a wide stable plateau so small scrolls near the snap point don't fade content
       scrollTl.fromTo(
         headline.children,
         { y: 40, opacity: 0 },
-        { y: 0, opacity: 1, ease: "power2.out", stagger: 0.015 },
+        { y: 0, opacity: 1, duration: 0.15, ease: "power2.out", stagger: 0.01 },
         0,
       )
-      scrollTl.fromTo(card, { y: 50, opacity: 0 }, { y: 0, opacity: 1, ease: "power2.out" }, 0.03)
+      scrollTl.fromTo(card, { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.15, ease: "power2.out" }, 0.03)
       scrollTl.fromTo(
         projectItems,
         { y: 12, opacity: 0 },
-        { y: 0, opacity: 1, ease: "power2.out", stagger: 0.04 },
-        0.08,
+        { y: 0, opacity: 1, duration: 0.12, ease: "power2.out", stagger: 0.015 },
+        0.06,
       )
 
       // EXIT (0.85 → 1.0)
-      scrollTl.fromTo(headline.children, { y: 0, opacity: 1 }, { y: -30, opacity: 0, ease: "power2.in" }, 0.85)
-      scrollTl.fromTo(card, { y: 0, opacity: 1 }, { y: -30, opacity: 0, ease: "power2.in" }, 0.85)
+      scrollTl.fromTo(
+        headline.children,
+        { y: 0, opacity: 1 },
+        { y: -30, opacity: 0, duration: 0.15, ease: "power2.in" },
+        0.85,
+      )
+      scrollTl.fromTo(card, { y: 0, opacity: 1 }, { y: -30, opacity: 0, duration: 0.15, ease: "power2.in" }, 0.85)
     }, section)
 
     return () => ctx.revert()

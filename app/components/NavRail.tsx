@@ -71,9 +71,9 @@ export default function NavRail() {
     const trigger = triggers.find((st) => st.trigger === sectionEl)
 
     if (trigger) {
-      // Offset past the entrance animation so content is fully visible
+      // Mid-pin matches the global snap points, so the snap doesn't shift the page afterwards
       const pinDistance = trigger.end - trigger.start
-      window.scrollTo({ top: trigger.start + pinDistance * 0.25, behavior: "smooth" })
+      window.scrollTo({ top: trigger.start + pinDistance * 0.5, behavior: "smooth" })
     } else {
       wrapperEl.scrollIntoView({ behavior: "smooth" })
     }

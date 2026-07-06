@@ -55,10 +55,16 @@ export default function HeroSection() {
         },
       })
 
-      scrollTl.fromTo(headline.children, { y: 0, opacity: 1 }, { y: -40, opacity: 0, ease: "power2.in" }, 0.82)
-      scrollTl.fromTo(card, { y: 0, opacity: 1 }, { y: -40, opacity: 0, ease: "power2.in" }, 0.82)
+      // EXIT only (0.85 → 1.0) — explicit durations keep the fade confined to the end of the pin
+      scrollTl.fromTo(
+        headline.children,
+        { y: 0, opacity: 1 },
+        { y: -40, opacity: 0, duration: 0.15, ease: "power2.in" },
+        0.85,
+      )
+      scrollTl.fromTo(card, { y: 0, opacity: 1 }, { y: -40, opacity: 0, duration: 0.15, ease: "power2.in" }, 0.85)
       if (scrollIndicator) {
-        scrollTl.fromTo(scrollIndicator, { opacity: 1 }, { opacity: 0, ease: "power2.in" }, 0.82)
+        scrollTl.fromTo(scrollIndicator, { opacity: 1 }, { opacity: 0, duration: 0.15, ease: "power2.in" }, 0.85)
       }
     }, section)
 

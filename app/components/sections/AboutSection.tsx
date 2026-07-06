@@ -3,7 +3,7 @@
 import { useRef, useLayoutEffect } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { Calendar, MapPin, Monitor, Award, User } from "lucide-react"
+import { Calendar, MapPin, Monitor, Bot, User } from "lucide-react"
 
 import { useTranslation } from "@/app/i18n/client"
 
@@ -19,7 +19,7 @@ export default function AboutSection() {
     { icon: Calendar, labelKey: "information.experience.value", sublabelKey: "information.experience.key" },
     { icon: Monitor, labelKey: "information.remote.value", sublabelKey: "information.remote.key" },
     { icon: MapPin, label: "Seoul", sublabelKey: "common.country.ko" },
-    { icon: Award, label: "Zend", sublabel: "Certified PHP" },
+    { icon: Bot, label: "AI Tools", sublabel: "MCP / Claude" },
   ]
 
   useLayoutEffect(() => {

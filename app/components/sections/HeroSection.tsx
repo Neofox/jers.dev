@@ -141,7 +141,7 @@ export default function HeroSection() {
         </div>
 
         <div className="mb-5 flex flex-wrap gap-1.5">
-          {["React", "Vue.js", "Next.js", "TypeScript", "Node.js", "Tailwind"].map((skill) => (
+          {["React", "Next.js", "TypeScript", "Vue.js", "MCP", "Claude"].map((skill) => (
             <span key={skill} className="skill-tag" style={{ fontSize: "10px", padding: "0.25rem 0.5rem" }}>
               {skill}
             </span>

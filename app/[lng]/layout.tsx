@@ -18,15 +18,15 @@ const localeMap: Record<LanguageType, string> = {
 }
 
 const titles: Record<LanguageType, string> = {
-  en: "Jérôme Schaeffer — Software Engineer",
-  fr: "Jérôme Schaeffer — Ingénieur Logiciel",
-  ko: "Jérôme Schaeffer — 소프트웨어 엔지니어",
+  en: "Jérôme Schaeffer — Frontend Engineer",
+  fr: "Jérôme Schaeffer — Ingénieur Frontend",
+  ko: "Jérôme Schaeffer — 프론트엔드 엔지니어",
 }
 
 const descriptions: Record<LanguageType, string> = {
-  en: "Software engineer based in Seoul, South Korea. Building web applications with TypeScript, React, and cloud-native technologies.",
-  fr: "Ingénieur logiciel basé à Séoul, Corée du Sud. Développement d'applications web avec TypeScript, React et technologies cloud-native.",
-  ko: "서울에 기반을 둔 소프트웨어 엔지니어. TypeScript, React 및 클라우드 네이티브 기술로 웹 애플리케이션을 개발합니다.",
+  en: "Frontend engineer based in Seoul, South Korea. Building React, Next.js, TypeScript, Vue, AI tools, and MCP-powered workflows.",
+  fr: "Ingénieur frontend basé à Séoul, Corée du Sud. Développement avec React, Next.js, TypeScript, Vue, outils IA et workflows MCP.",
+  ko: "서울 기반 프론트엔드 엔지니어. React, Next.js, TypeScript, Vue, AI 도구와 MCP 워크플로우를 개발합니다.",
 }
 
 export async function generateStaticParams() {

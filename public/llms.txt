@@ -1,0 +1,20 @@
+# Jérôme Schaeffer — Personal Portfolio
+
+> Frontend engineer based in Seoul, South Korea. Portfolio and resume site.
+
+## About
+
+Jérôme Schaeffer is a frontend engineer based in Seoul, South Korea with 11+ years of experience across startups, international companies, and consulting. He specializes in React, Next.js, TypeScript, Vue.js, product-focused UI, AI tools, MCP servers, and internal Claude workflows. This site serves as his personal portfolio and online resume.
+
+## Pages
+
+- [English](https://jers.dev/en): Portfolio in English
+- [French](https://jers.dev/fr): Portfolio en français
+- [Korean](https://jers.dev/ko): 한국어 포트폴리오
+
+## Contact & Social
+
+- Email: jer.schaeffer@gmail.com
+- GitHub: https://github.com/Neofox
+- LinkedIn: https://www.linkedin.com/in/jerome-schaeffer/
+- X/Twitter: https://x.com/neofox_

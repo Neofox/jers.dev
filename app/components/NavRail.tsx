@@ -71,9 +71,9 @@ export default function NavRail() {
     const trigger = triggers.find((st) => st.trigger === sectionEl)
 
     if (trigger) {
-      // Offset past the entrance animation so content is fully visible
+      // Mid-pin matches the global snap points, so the snap doesn't shift the page afterwards
       const pinDistance = trigger.end - trigger.start
-      window.scrollTo({ top: trigger.start + pinDistance * 0.25, behavior: "smooth" })
+      window.scrollTo({ top: trigger.start + pinDistance * 0.5, behavior: "smooth" })
     } else {
       wrapperEl.scrollIntoView({ behavior: "smooth" })
     }
@@ -262,24 +262,24 @@ export default function NavRail() {
             <a
               href="https://github.com/Neofox"
               target="_blank"
+              aria-label="GitHub"
               rel="noopener noreferrer"
               className="transition-colors"
               style={{ color: "var(--text-muted)" }}
               onMouseEnter={(e) => (e.currentTarget.style.color = "var(--accent)")}
               onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
-              aria-label="GitHub"
             >
               <Github size={16} />
             </a>
             <a
               href="https://www.linkedin.com/in/jerome-schaeffer/"
               target="_blank"
+              aria-label="LinkedIn"
               rel="noopener noreferrer"
               className="transition-colors"
               style={{ color: "var(--text-muted)" }}
               onMouseEnter={(e) => (e.currentTarget.style.color = "var(--accent)")}
               onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
-              aria-label="LinkedIn"
             >
               <Linkedin size={16} />
             </a>

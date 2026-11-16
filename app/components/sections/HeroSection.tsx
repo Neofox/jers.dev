@@ -55,10 +55,16 @@ export default function HeroSection() {
         },
       })
 
-      scrollTl.fromTo(headline.children, { y: 0, opacity: 1 }, { y: -40, opacity: 0, ease: "power2.in" }, 0.82)
-      scrollTl.fromTo(card, { y: 0, opacity: 1 }, { y: -40, opacity: 0, ease: "power2.in" }, 0.82)
+      // EXIT only (0.85 → 1.0) — explicit durations keep the fade confined to the end of the pin
+      scrollTl.fromTo(
+        headline.children,
+        { y: 0, opacity: 1 },
+        { y: -40, opacity: 0, duration: 0.15, ease: "power2.in" },
+        0.85,
+      )
+      scrollTl.fromTo(card, { y: 0, opacity: 1 }, { y: -40, opacity: 0, duration: 0.15, ease: "power2.in" }, 0.85)
       if (scrollIndicator) {
-        scrollTl.fromTo(scrollIndicator, { opacity: 1 }, { opacity: 0, ease: "power2.in" }, 0.82)
+        scrollTl.fromTo(scrollIndicator, { opacity: 1 }, { opacity: 0, duration: 0.15, ease: "power2.in" }, 0.85)
       }
     }, section)
 
@@ -141,7 +147,7 @@ export default function HeroSection() {
         </div>
 
         <div className="mb-5 flex flex-wrap gap-1.5">
-          {["React", "Vue.js", "Next.js", "TypeScript", "Node.js", "Tailwind"].map((skill) => (
+          {["React", "Next.js", "TypeScript", "Vue.js", "MCP", "Claude"].map((skill) => (
             <span key={skill} className="skill-tag" style={{ fontSize: "10px", padding: "0.25rem 0.5rem" }}>
               {skill}
             </span>
@@ -161,6 +167,7 @@ export default function HeroSection() {
           </Link>
           <a
             href="mailto:jer.schaeffer@gmail.com"
+            aria-label="Send Email"
             className="btn-secondary flex flex-1 items-center justify-center gap-2"
           >
             <Mail size={14} />

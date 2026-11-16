@@ -3,7 +3,7 @@
 import { useRef, useLayoutEffect } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { Calendar, MapPin, Monitor, Award, User } from "lucide-react"
+import { Calendar, MapPin, Monitor, Bot, User } from "lucide-react"
 
 import { useTranslation } from "@/app/i18n/client"
 
@@ -19,7 +19,7 @@ export default function AboutSection() {
     { icon: Calendar, labelKey: "information.experience.value", sublabelKey: "information.experience.key" },
     { icon: Monitor, labelKey: "information.remote.value", sublabelKey: "information.remote.key" },
     { icon: MapPin, label: "Seoul", sublabelKey: "common.country.ko" },
-    { icon: Award, label: "Zend", sublabel: "Certified PHP" },
+    { icon: Bot, label: "AI Tools", sublabel: "MCP / Claude" },
   ]
 
   useLayoutEffect(() => {
@@ -40,18 +40,23 @@ export default function AboutSection() {
         },
       })
 
-      // ENTRANCE (0 → 0.18)
+      // ENTRANCE (0 → ~0.2), then a wide stable plateau so small scrolls near the snap point don't fade content
       scrollTl.fromTo(
         headline.children,
         { y: 40, opacity: 0 },
-        { y: 0, opacity: 1, ease: "power2.out", stagger: 0.015 },
+        { y: 0, opacity: 1, duration: 0.15, ease: "power2.out", stagger: 0.01 },
         0,
       )
-      scrollTl.fromTo(card, { y: 50, opacity: 0 }, { y: 0, opacity: 1, ease: "power2.out" }, 0.03)
+      scrollTl.fromTo(card, { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.15, ease: "power2.out" }, 0.03)
 
       // EXIT (0.85 → 1.0)
-      scrollTl.fromTo(headline.children, { y: 0, opacity: 1 }, { y: -30, opacity: 0, ease: "power2.in" }, 0.85)
-      scrollTl.fromTo(card, { y: 0, opacity: 1 }, { y: -30, opacity: 0, ease: "power2.in" }, 0.85)
+      scrollTl.fromTo(
+        headline.children,
+        { y: 0, opacity: 1 },
+        { y: -30, opacity: 0, duration: 0.15, ease: "power2.in" },
+        0.85,
+      )
+      scrollTl.fromTo(card, { y: 0, opacity: 1 }, { y: -30, opacity: 0, duration: 0.15, ease: "power2.in" }, 0.85)
     }, section)
 
     return () => ctx.revert()

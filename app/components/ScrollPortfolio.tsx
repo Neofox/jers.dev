@@ -25,25 +25,20 @@ export default function ScrollPortfolio() {
       const maxScroll = ScrollTrigger.maxScroll(window)
       if (maxScroll === 0 || pinTriggers.length === 0) return
 
-      // Build snap points: top of page, midpoint of each pin, end of last pin, bottom
+      // Build snap points: top of page, midpoint of each pin, bottom (contact in view)
       const snapPoints = [0] // Top of page (hero fully visible)
       pinTriggers.forEach((st) => {
         snapPoints.push((st.start + st.end) / 2 / maxScroll)
       })
-      // End of last pin = where contact section begins
-      const lastTrigger = pinTriggers[pinTriggers.length - 1]
-      if (lastTrigger) {
-        snapPoints.push(lastTrigger.end / maxScroll)
-      }
       snapPoints.push(1) // Bottom of page
 
       ScrollTrigger.create({
         snap: {
           snapTo: snapPoints,
           directional: false,
-          duration: { min: 0.2, max: 0.5 },
-          delay: 0.15,
-          ease: "power1.inOut",
+          duration: { min: 0.15, max: 0.35 },
+          delay: 0.05,
+          ease: "power2.out",
         },
       })
     }, 200)

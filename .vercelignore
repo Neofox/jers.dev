@@ -1,0 +1,11 @@
+.env*
+.git
+.next
+node_modules
+scripts
+new-design-app
+.claude
+.codex
+.vscode
+*.tsbuildinfo
+*.log

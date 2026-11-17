@@ -1,6 +1,6 @@
 # Work demos: source evidence
 
-The Work page has eight working demos. Each one re-implements observed product behaviour in the portfolio's own code, using sample data only. No private code, SVG, screenshots, customer or site data, credentials, or network calls were copied or used.
+The Work page has twelve working demos. Each one re-implements observed product behaviour in the portfolio's own code, using sample data only. No private code, SVG, screenshots, customer or site data, credentials, or network calls were copied or used.
 
 Company repositories were read in read-only mode (CodeGraph first where an index exists). Personal repositories were read locally.
 
@@ -233,4 +233,47 @@ Coaches is one presentation. The working demo is primary, and "View real capture
 
 ## Not given demos
 
-Enhans and Rubiwin/Supplier Portal keep their captures and illustrations, because no local source was available for a grounded demo. Gleamstral keeps its library-interface illustration as a second screen (`#work/gleamstral/interface`).
+Rubiwin/Supplier Portal keeps its captures and illustrations, because no local source was available for a grounded demo. Enhans now has four source-grounded demos. The redundant Model Generator/Product example tabs and the product-range illustration were removed; the old model/usecase routes open Compare models. Gleamstral keeps its library-interface illustration as a second screen (`#work/gleamstral/interface`).
+
+## Enhans ACT-1 (`#work/enhans/act`)
+
+**Sources** (read-only under `Enhans/act-1-front`):
+- `src/app/[lang]/(playground)/chat/[task_id]/_components/{progress,action-log-grouped,step-list}.tsx`
+- `src/app/[lang]/(playground)/chat/[task_id]/_lib/chat.ts`
+
+**Reproduced:** user instruction, task progress, logs grouped into named steps, expandable step details, browser-view history labels and a final completion/result state.
+
+**Simplified or synthetic:** the desk-lamp task, catalog, prices, actions and answer are fictional. The browser is a CSS illustration, not a capture. The demo uses four authored steps rather than streamed backend messages and omits confirmation actions, real screenshots and history. Play/pause, manual stepping and replay are portfolio controls. ACT-1 now leads the case; the external ACT-2 link remains explicitly identified as the successor.
+
+## Enhans AIAP workflow (`#work/enhans/workflow`)
+
+**Sources** (read-only under `Enhans/aimep-prototype`):
+- `src/shared/store/block/defaults.ts`, `interface.ts`, `store.tsx`
+- `src/components/nodes/{TextTranslationNode,UseLLMNode}.tsx`
+- `src/ui/properties/TranslationProperty.tsx`
+- `src/components/patcher/board/Tool.tsx`
+
+**Reproduced:** connected Input → Text Translation → Output blocks, inspecting a selected block, a target-language parameter, passing output to the following block, pending/processing/completed/error states, and failure preventing the output block from completing.
+
+**Simplified or synthetic:** a fixed three-node graph, two sample inputs and pre-written Korean/French translations. No dragging, adding nodes, model requests, save or deployment. The inspector is a compact presentation of the source's settings and outputs. The error toggle and playback controls are portfolio additions. Editing settings resets the sample run.
+
+## Enhans Select LLM (`#work/enhans/compare`)
+
+**Sources** (read-only under `Enhans/compare-ai-models-prototype`):
+- `src/components/ui/panel/form-text-type.tsx`
+- `src/components/ui/experiment/{experiment-result-view,experiment-text,experiment-text-result,evaluation}.tsx`
+
+**Reproduced:** model multiselection, independently arriving results, multiple numbered output variants, price and latency fields, result ordering with Best N badges, and an explanation of the evaluation.
+
+**Simplified or synthetic:** fictional Models A/B/C, invented metrics, two pre-written outputs each and an authored ranking. No benchmark or live model evaluation occurs. The instruction and input are a single sample; image analysis/generation and configurable generation counts are omitted. Evaluation is click-expandable rather than hover-only. Manual stepping and replay are portfolio additions.
+
+## Enhans action recorder (`#work/enhans/recorder`)
+
+**Sources** (read-only under `Enhans/imitation-learning-extension`):
+- `src/ui/components/menu/menu.ts`
+- `src/types/actions.ts`
+- `src/ui/components/log/log-render.ts`
+
+**Reproduced:** explicit tracking toggle, numbered typed events, newest-first log, selecting an event to edit its comment, reset, and a JSONL-shaped export preview with action number, timestamp, image path, comment and action.
+
+**Simplified or synthetic:** tracking starts enabled in the demo, with a labeled browser window and a separate Chrome-extension panel. Tracking is restricted to the demo's search field (on committed change), two destination buttons and an explicit sample screenshot-event button. No extension, page capture, global input listener, API, download or real screenshot is used; imagePath stays null. Only the most recent 30 events are kept. Event data is a simplified subset of the extension schema. Actual demo interactions receive local timestamps. Annotations stay in memory and are cleared on restart, reload, or switching demos.

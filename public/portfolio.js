@@ -196,7 +196,7 @@
         overview: [
           "From instructions to useful work.",
           "At Enhans I worked across a family of AI products: AIAP, Enhans Model and Select LLM for building and comparing models, and ACT-1, Synergy and Chrome extensions for LLM web agents and automation.",
-          "ACT is an AI assistant for carrying out tasks. My work was on ACT-1; the public demo shown here presents its current successor, ACT-2.",
+          "ACT is an AI assistant for carrying out tasks. I built the ACT-1 interface; the working demo below recreates its task progress and grouped action logs with a fictional research task.",
           "Model Generator makes AI models available through a product experience, with public examples for video, image and text annotation.",
         ],
         role: [
@@ -216,26 +216,8 @@
         [
           "act",
           "ACT-1",
-          "ACT-1 interface.",
-          "I built the ACT-1 interface. This official demo shows the current ACT-2 product.",
-        ],
-        [
-          "model",
-          "Model Generator",
-          "Whole project · AI Model Generator.",
-          "I delivered the project end to end, bringing AI models into a usable web product.",
-        ],
-        [
-          "usecase",
-          "Product example",
-          "Make the input and output concrete.",
-          "The public video example shows a URL becoming structured labels and metadata.",
-        ],
-        [
-          "range",
-          "Product range",
-          "Illustrative overview · Enhans products I worked on.",
-          "How the products group by purpose. A designed overview, not a product capture.",
+          "Follow the agent’s work.",
+          "A sample task moves through grouped action logs, illustrated browser snapshots and a final result, based on the ACT-1 interface I built.",
         ],
       ],
       links: [
@@ -246,7 +228,7 @@
         ["ACT-2 · current product", "https://act-2.enhans.ai/en"],
         ["AI Model Generator", "https://model.enhans.ai/"],
       ],
-      note: "My ACT contribution was ACT-1. ACT imagery and the linked demo show ACT-2, the current public version. Model Generator captures show its public product pages. The product-range view is an illustrative overview.",
+      note: "ACT-1, AIAP workflows, Select LLM and the action recorder are source-based working demos with sample data. Responses, rankings and metrics are invented. The linked ACT-2 video shows the successor to my ACT-1 work.",
     },
     rubiwin: {
       name: "Rubiwin & Supplier Portal",
@@ -749,6 +731,7 @@
     if (project === "3i" && parts[2] === "recordings") parts[2] = "live"
     if (project === "3i" && parts[2] === "finder") parts[2] = "coaches"
     if (project === "enhans" && parts[2] === "frontend") parts[2] = "act"
+    if (project === "enhans" && ["model", "usecase"].includes(parts[2])) parts[2] = "compare"
     return {
       stage,
       project,
@@ -897,7 +880,7 @@
       ],
     },
     enhans: {
-      thumb: { image: "enhans-act-demo" },
+      thumb: { demo: "enhansAct", glyph: "cursor" },
       highlights: ["AI products, architecture to deployment", "Multi-LLM workflows", "LLM web agents"],
       did: [
         ["layers", "AI products and SaaS prototypes in React/Next.js, from architecture to deployment."],
@@ -993,13 +976,6 @@
     "Claude access for engineering and HR, MCP servers with role-based access, and agent-assisted migration.",
   )
   setChapter(
-    "enhans",
-    "range",
-    "Product range",
-    "Two families of AI products.",
-    "Building and comparing models on one side; web agents and automation on the other.",
-  )
-  setChapter(
     "rubiwin",
     "supplier",
     "Logistics portal",
@@ -1031,6 +1007,12 @@
     "Thinking, tool calls with results, the reply and the stats bar — or a heartbeat that skips itself.",
   ])
 
+  projects.enhans.chapters.splice(1, 0,
+    ["workflow", "Visual workflows", "Connect the input to something useful.", "Inspect connected blocks, change the translation language and follow processing, completion or an error through an AIAP workflow."],
+    ["compare", "Compare models", "Make different answers comparable.", "Select sample models, watch results arrive, switch output variants and inspect a sample evaluation, based on Select LLM."],
+    ["recorder", "Action recorder", "Make browser actions inspectable.", "Track interactions inside a sample page, inspect the event log and annotate actions, based on the imitation-learning Chrome extension."],
+  )
+
   // What each chapter shows: an authentic capture, the small renderer images, or an illustration.
   const visuals = {
     translater: {
@@ -1060,10 +1042,10 @@
       ax: { illo: "ax" },
     },
     enhans: {
-      act: { image: "enhans-act-demo", source: "ACT-2 public demo · My contribution: the ACT-1 UI" },
-      model: { image: "enhans-model-current", source: "AI Model Generator · public product page" },
-      usecase: { image: "enhans-model-usecase", source: "AI Model Generator · public video example" },
-      range: { illo: "enhans" },
+      act: { demo: "enhansAct" },
+      workflow: { demo: "enhansWorkflow" },
+      compare: { demo: "enhansCompare" },
+      recorder: { demo: "enhansRecorder" },
     },
     rubiwin: {
       rubiwin: { image: "rubiwin-auction", source: "Rubiwin support · product reference" },
@@ -1124,6 +1106,7 @@
     share: '<path d="M12 15V3M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/>',
     download: '<path d="M12 3v12M8 11l4 4 4-4"/><path d="M5 19h14"/>',
     trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>',
+    puzzle: '<path d="M9 3H4v6a3 3 0 1 1 0 6v5h5a3 3 0 1 1 6 0h5v-5a3 3 0 1 0 0-6V3h-5a3 3 0 1 1-6 0Z"/>',
     mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
     video: '<rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/>',
     compass: '<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>',
@@ -3384,6 +3367,419 @@
         advance(false)
       })
       return () => clearTimeout(timer)
+    },
+  }
+  // Enhans demos re-create observed interactions with invented data. See docs/work-demos-evidence.md.
+  const ehEscape = (value) =>
+    String(value).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c])
+  const ehQuery = (root) => (key) => root.querySelector(`[data-eh="${key}"]`)
+  function ehControls(label) {
+    return `<div class="eh-controls"><button type="button" class="button button-primary" data-eh="play">${label}</button><button type="button" class="button button-outline" data-eh="next">Next step</button><span data-eh="status" role="status">Ready to explore</span></div>`
+  }
+  function ehPlayback(root, { label, length, draw }) {
+    const q = ehQuery(root)
+    let step = 0,
+      timer = null
+    function paint() {
+      draw(step)
+      q("play").textContent = timer ? "Pause" : step >= length() ? "Replay" : step ? "Continue" : label
+      q("next").disabled = step >= length()
+    }
+    function stop() {
+      clearTimeout(timer)
+      timer = null
+    }
+    function advance(auto) {
+      stop()
+      step = Math.min(step + 1, length())
+      if (auto && motionEnabled() && !document.hidden && step < length()) {
+        timer = setTimeout(() => advance(motionEnabled() && !document.hidden), 1100)
+      }
+      paint()
+    }
+    q("play").addEventListener("click", () => {
+      if (timer) {
+        stop()
+        paint()
+        return
+      }
+      if (step >= length()) step = 0
+      advance(true)
+    })
+    q("next").addEventListener("click", () => advance(false))
+    const suspend = () => {
+      if (document.hidden || activeStage !== "work" || !motionEnabled()) {
+        stop()
+        paint()
+      }
+    }
+    document.addEventListener("visibilitychange", suspend)
+    const observer = new MutationObserver(suspend)
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-motion"] })
+    observer.observe(document.body, { attributes: true, attributeFilter: ["data-stage"] })
+    paint()
+    return {
+      reset() {
+        stop()
+        step = 0
+        paint()
+      },
+      cleanup() {
+        stop()
+        observer.disconnect()
+        document.removeEventListener("visibilitychange", suspend)
+      },
+    }
+  }
+
+  demos.enhansAct = {
+    glyph: "cursor",
+    render() {
+      return demoShell(
+        "enhans",
+        "ACT-1 task execution",
+        `<div class="eh-head"><span class="eh-eyebrow">ACT-1 / WEB AGENT</span><h3>One request. Every action visible.</h3><p>Follow a sample research task, then open a step to see what happened.</p></div>
+          <div class="eh-split"><div class="eh-panel"><div class="eh-message"><span>You</span><p>Find a compact desk lamp under $80. Compare three options.</p></div>
+            <div class="eh-task-state"><span class="eh-dot" data-eh="dot"></span><b data-eh="activity">Waiting for your instruction</b><span data-eh="count">0 / 4</span></div>
+            <div class="eh-log">${["Open the catalog", "Apply the budget", "Compare the options", "Summarize the findings"].map((label, i) => `<details data-act-step="${i}"><summary><span class="eh-step-number">0${i + 1}</span><b>${label}</b><span class="eh-step-state">Pending</span></summary><p>${["Navigate to the sample lighting catalog. Inspect the available products.", "Set the maximum price to $80. Exclude the $96 Arc lamp.", "Read the price and size of each remaining lamp. Compare the three candidates.", "Return a short recommendation with the compared prices."][i]}</p></details>`).join("")}</div>
+            <p class="eh-answer" data-eh="answer" hidden></p></div>
+            <div class="eh-browser"><div class="eh-browser-bar"><span aria-hidden="true">● ● ●</span><span>studio.example / lighting</span></div><div class="eh-browser-body"><span class="eh-eyebrow">SAMPLE STOREFRONT</span><h4>A brighter workspace.</h4><div class="eh-budget" data-eh="budget">All desk lamps</div><div class="eh-products">${[
+              ["Loop", "58", "loop"],
+              ["Fold", "72", "fold"],
+              ["Pebble", "64", "pebble"],
+              ["Arc", "96", "arc"],
+            ]
+              .map(
+                ([name, price, shape], i) =>
+                  `<div class="eh-product" data-product="${i}"><div class="eh-lamp ${shape}" aria-hidden="true"><i></i><b></b></div><strong>${name}</strong><span>$${price}</span></div>`,
+              )
+              .join(
+                "",
+              )}</div><div class="eh-snapshot" data-eh="snapshot">Illustrated browser view · no real website is opened</div></div></div></div>${ehControls("Run sample task")}`,
+      )
+    },
+    mount(root) {
+      const q = ehQuery(root)
+      const player = ehPlayback(root, {
+        label: "Run sample task",
+        length: () => 4,
+        draw(step) {
+          const labels = [
+            "Waiting for your instruction",
+            "Reading the catalog",
+            "Filtering by price",
+            "Comparing three options",
+            "Task completed",
+          ]
+          q("activity").textContent = labels[step]
+          q("status").textContent =
+            step === 4 ? "Completed · sample recommendation" : step ? `Step ${step} of 4` : "Ready to explore"
+          q("count").textContent = `${step} / 4`
+          q("dot").dataset.state = step === 4 ? "completed" : step ? "processing" : "pending"
+          root.querySelectorAll("[data-act-step]").forEach((el, i) => {
+            el.dataset.state = i < step ? "completed" : "pending"
+            el.querySelector(".eh-step-state").textContent = i < step ? "Done" : "Pending"
+          })
+          q("budget").textContent = step >= 2 ? "Budget ≤ $80 · 3 matches" : "All desk lamps"
+          root.querySelector('[data-product="3"]').hidden = step >= 2
+          root
+            .querySelectorAll("[data-product]")
+            .forEach((el, i) => el.classList.toggle("is-picked", step >= 3 && i === 0))
+          q("snapshot").textContent = [
+            "Illustrated browser view · no real website is opened",
+            "Snapshot 01 · catalog opened",
+            "Snapshot 02 · budget applied",
+            "Snapshot 03 · options compared",
+            "Final view · Loop selected for the sample recommendation",
+          ][step]
+          q("answer").hidden = step < 4
+          q("answer").textContent =
+            "Loop is the lowest-priced option at $58. Fold ($72) and Pebble ($64) also fit the budget. All products and findings are fictional."
+        },
+      })
+      return player.cleanup
+    },
+  }
+
+  demos.enhansWorkflow = {
+    glyph: "layers",
+    render() {
+      return demoShell(
+        "enhans",
+        "AIAP visual workflow",
+        `<div class="eh-head"><span class="eh-eyebrow">AIAP / VISUAL WORKFLOWS</span><h3>Build the path from input to output.</h3><p>Select a block to inspect it. Change the language, run the flow, or try a failed step.</p></div>
+          <div class="eh-flow" aria-label="Workflow blocks">${["Input", "Text Translation", "Output"].map((name, i) => `<button type="button" class="eh-node" data-node="${i}" aria-pressed="${i === 1}"><span class="eh-node-port" aria-hidden="true"></span><span class="eh-eyebrow">BLOCK 0${i + 1}</span><strong>${name}</strong><span class="eh-node-state">pending</span><span class="eh-node-port out" aria-hidden="true"></span></button>${i < 2 ? '<span class="eh-wire" aria-hidden="true"><i></i>→</span>' : ""}`).join("")}</div>
+          <div class="eh-split"><div class="eh-panel eh-form"><span class="eh-eyebrow">FLOW SETTINGS</span><label>Sample input<select data-eh="input"><option value="meeting">The meeting starts at ten.</option><option value="delivery">Your order arrives tomorrow.</option></select></label><label>Target language<select data-eh="language"><option value="ko">Korean</option><option value="fr">French</option></select></label><label class="eh-check"><input type="checkbox" data-eh="failure"> Simulate a translation error</label><p class="eh-footnote">Pre-written translations · no model call</p></div>
+          <div class="eh-panel"><span class="eh-eyebrow">BLOCK INSPECTOR</span><h4 data-eh="node-title">Text Translation</h4><p data-eh="node-description"></p><pre class="eh-output" data-eh="output"></pre></div></div>${ehControls("Run workflow")}`,
+      )
+    },
+    mount(root) {
+      const q = ehQuery(root)
+      let selected = 1,
+        current = 0
+      const samples = {
+        meeting: { ko: "회의는 열 시에 시작합니다.", fr: "La réunion commence à dix heures." },
+        delivery: { ko: "주문하신 상품은 내일 도착합니다.", fr: "Votre commande arrive demain." },
+      }
+      const inputText = () => q("input").selectedOptions[0].textContent
+      function inspect() {
+        q("node-title").textContent = ["Input", "Text Translation", "Output"][selected]
+        q("node-description").textContent = [
+          "Supplies the sample text to the next connected block.",
+          "Uses the previous block’s output and the selected target language.",
+          "Receives the translation when the preceding block completes.",
+        ][selected]
+        q("output").textContent =
+          selected === 0
+            ? inputText()
+            : q("failure").checked && current >= 3
+              ? "No output · translation failed"
+              : current >= (selected === 1 ? 3 : 4)
+                ? samples[q("input").value][q("language").value]
+                : "Output will appear here."
+        root.querySelectorAll("[data-node]").forEach((el, i) => el.setAttribute("aria-pressed", String(i === selected)))
+      }
+      const player = ehPlayback(root, {
+        label: "Run workflow",
+        length: () => (q("failure").checked ? 3 : 4),
+        draw(step) {
+          current = step
+          const failed = q("failure").checked && step >= 3
+          const states = [
+            step ? "completed" : "pending",
+            failed ? "error" : step >= 3 ? "completed" : step >= 2 ? "processing" : "pending",
+            !failed && step >= 4 ? "completed" : !failed && step === 3 ? "processing" : "pending",
+          ]
+          root.querySelectorAll("[data-node]").forEach((el, i) => {
+            el.dataset.state = states[i]
+            el.querySelector(".eh-node-state").textContent = states[i]
+          })
+          root
+            .querySelectorAll(".eh-wire")
+            .forEach((el, i) => el.classList.toggle("is-active", step > i && step < 4 && !failed))
+          q("status").textContent = failed
+            ? "Translation failed · uncheck the error and run again"
+            : step === 4
+              ? "Completed · output received"
+              : step
+                ? "Processing connected blocks"
+                : "Ready to explore"
+          inspect()
+        },
+      })
+      root.querySelectorAll("[data-node]").forEach((el) =>
+        el.addEventListener("click", () => {
+          selected = Number(el.dataset.node)
+          inspect()
+        }),
+      )
+      ;["input", "language", "failure"].forEach((key) => q(key).addEventListener("change", () => player.reset()))
+      return player.cleanup
+    },
+  }
+
+  demos.enhansCompare = {
+    glyph: "layers",
+    render() {
+      return demoShell(
+        "enhans",
+        "Select LLM comparison",
+        `<div class="eh-head"><span class="eh-eyebrow">SELECT LLM / EXPERIMENTS</span><h3>One prompt. Different answers.</h3><p>Run a sample experiment, compare output variants, then inspect the evaluation.</p></div>
+          <div class="eh-experiment"><div><span class="eh-eyebrow">INSTRUCTION</span><p>Summarize this delivery update in one short sentence.</p><blockquote>Order dispatched today. Estimated arrival: Thursday. Tracking becomes available this evening.</blockquote></div><fieldset><legend>Models · fictional candidates</legend>${["A", "B", "C"].map((name) => `<label class="eh-check"><input type="checkbox" data-model="${name}" checked> Model ${name}</label>`).join("")}</fieldset></div>
+          <div class="eh-results" data-eh="results"></div><details class="eh-evaluation" data-eh="evaluation" hidden><summary>Sample evaluation · why this order?</summary><p>Model B keeps the dispatch, arrival and tracking details in one sentence. Model A omits tracking; Model C is less concise. This is an authored example, not an actual model benchmark.</p></details>${ehControls("Run comparison")}<p class="eh-footnote">Pre-written outputs, fictional model names and invented price/latency figures.</p>`,
+      )
+    },
+    mount(root) {
+      const q = ehQuery(root)
+      const records = {
+        A: {
+          price: "$0.002",
+          latency: "820 ms",
+          output: ["Your order shipped today and should arrive Thursday.", "Dispatched today; expected Thursday."],
+        },
+        B: {
+          price: "$0.004",
+          latency: "1,240 ms",
+          output: [
+            "Your order shipped today, arrives Thursday, and can be tracked this evening.",
+            "Expect Thursday delivery for today’s shipment, with tracking available tonight.",
+          ],
+        },
+        C: {
+          price: "$0.001",
+          latency: "640 ms",
+          output: [
+            "Your order has been dispatched today. It is expected on Thursday. Tracking will be available this evening.",
+            "The parcel is on its way; Thursday is the estimated arrival date, and tracking opens this evening.",
+          ],
+        },
+      }
+      const variants = { A: 0, B: 0, C: 0 }
+      const selected = () => [...root.querySelectorAll("[data-model]:checked")].map((el) => el.dataset.model)
+      let current = 0
+      function results(step) {
+        const models = selected()
+        const ranked = models.length > 0 && step > models.length
+        const order = ranked ? ["B", "A", "C"].filter((m) => models.includes(m)) : models
+        const focus = document.activeElement?.dataset.variant
+        q("results").innerHTML = order.length
+          ? order
+              .map((name, i) => {
+                const loaded = step > models.indexOf(name)
+                const record = records[name]
+                return `<article class="eh-result" data-state="${loaded ? "completed" : "pending"}"><div class="eh-result-title"><strong>Model ${name}</strong><span>${ranked ? `Best ${i + 1}` : loaded ? "Ready" : step ? "Processing…" : "Waiting"}</span></div>${loaded ? `<div class="eh-variants" role="group" aria-label="Model ${name} outputs">${[0, 1].map((v) => `<button type="button" data-variant="${name}-${v}" aria-pressed="${variants[name] === v}">Output 0${v + 1}</button>`).join("")}</div><p>${record.output[variants[name]]}</p><div class="eh-metrics"><span>Price <b>${record.price}</b></span><span>Latency <b>${record.latency}</b></span></div>` : '<div class="eh-skeleton" aria-hidden="true"><i></i><i></i><i></i></div>'}</article>`
+              })
+              .join("")
+          : '<p class="eh-empty">Select at least one model to run the experiment.</p>'
+        if (focus) q("results").querySelector(`[data-variant="${focus}"]`)?.focus({ preventScroll: true })
+        q("evaluation").hidden = !ranked
+        q("evaluation").querySelector("p").textContent =
+          (models.length === 1
+            ? "Only one candidate is selected; there is no cross-model comparison. "
+            : "Sample order: " + order.map((m) => "Model " + m).join(" → ") + ". ") +
+          models
+            .map(
+              (m) =>
+                ({
+                  A: "Model A’s first output omits tracking.",
+                  B: "Model B’s first output keeps all three details in one sentence.",
+                  C: "Model C’s first output keeps the details but uses three sentences.",
+                })[m],
+            )
+            .join(" ") +
+          " This authored evaluation uses Output 01; it is not an actual model benchmark."
+        q("play").disabled = !models.length
+        q("status").textContent = ranked
+          ? "Evaluation complete · sample ranking"
+          : step
+            ? `${Math.min(step, models.length)} / ${models.length} results received`
+            : "Ready to compare"
+      }
+      const player = ehPlayback(root, {
+        label: "Run comparison",
+        length: () => (selected().length ? selected().length + 1 : 0),
+        draw(step) {
+          current = step
+          results(step)
+        },
+      })
+      root.querySelectorAll("[data-model]").forEach((el) =>
+        el.addEventListener("change", () => {
+          q("evaluation").open = false
+          player.reset()
+        }),
+      )
+      q("results").addEventListener("click", (event) => {
+        const button = event.target.closest("[data-variant]")
+        if (!button) return
+        const [model, variant] = button.dataset.variant.split("-")
+        variants[model] = Number(variant)
+        results(current)
+      })
+      return player.cleanup
+    },
+  }
+
+  demos.enhansRecorder = {
+    glyph: "cursor",
+    render() {
+      return demoShell(
+        "enhans",
+        "Browser action recorder",
+        `<div class="eh-head"><span class="eh-eyebrow">CHROME EXTENSION / ACTION TRACES</span><h3>Your browser actions, captured as you go.</h3><p>Click a workspace or type a search in the browser. The extension records each action, ready for you to annotate.</p></div>
+          <div class="eh-split eh-recorder-layout">
+            <section class="eh-browser eh-recorder-browser" aria-label="Sample browser window">
+              <div class="eh-window-heading"><span class="eh-window-dots" aria-hidden="true">● ● ●</span><strong>Browser window</strong><span class="eh-window-tab">Workspace</span></div>
+              <div class="eh-address-bar"><span aria-hidden="true">← &nbsp; → &nbsp; ↻</span><span class="eh-address">sample.example/workspace</span><span class="eh-extension-pin" title="Action Recorder extension">${icon("puzzle")}</span></div>
+              <div class="eh-browser-body eh-form"><span class="eh-eyebrow">SAMPLE WEBSITE</span><h4>Your next workspace.</h4><label>Search destinations<input type="text" data-eh="search" maxlength="80" placeholder="Try Seoul, then click a workspace" autocomplete="off"></label><div class="eh-sample-cards"><button type="button" data-destination="Seoul"><span aria-hidden="true">↗</span><b>Seoul</b><small>City studio</small></button><button type="button" data-destination="Busan"><span aria-hidden="true">≈</span><b>Busan</b><small>Coastal desk</small></button></div><p data-eh="selection">Try it: click a workspace and watch the extension log it.</p><p class="eh-footnote">Only interactions in this sample website are recorded.</p></div>
+            </section>
+            <section class="eh-extension" aria-label="Action Recorder Chrome extension">
+              <div class="eh-extension-heading"><span class="eh-extension-mark" aria-hidden="true">${icon("puzzle")}</span><div><span class="eh-eyebrow">CHROME EXTENSION</span><h4>Action Recorder</h4></div><span class="eh-extension-live" data-eh="live" aria-hidden="true"></span></div>
+              <div class="eh-extension-body"><div class="eh-record-toolbar"><label class="eh-check"><input type="checkbox" data-eh="tracking" checked> Tracking enabled</label><button type="button" class="demo-reset" data-eh="clear">Clear trace</button></div><span class="eh-record-status" data-eh="status" role="status">Tracking on · 0 events</span>
+                <div class="eh-trace-heading"><span class="eh-eyebrow">CAPTURED ACTIONS</span><span>Newest first</span></div><div class="eh-trace" data-eh="trace"></div><div class="eh-annotation" data-eh="annotation" hidden><label>Comment for event <span data-eh="event-number"></span><textarea data-eh="comment" rows="2" maxlength="240"></textarea></label></div>
+                <button type="button" class="button button-outline eh-capture-action" data-eh="capture">Add sample screenshot event</button><details class="eh-export"><summary>Inspect JSONL export preview</summary><pre data-eh="export">No events yet.</pre></details><p class="eh-footnote">Extension demo · no actual screenshots are taken.</p>
+              </div>
+            </section>
+          </div>`,
+      )
+    },
+    mount(root) {
+      const q = ehQuery(root)
+      let records = [],
+        selected = null,
+        nextId = 1
+      function exportPreview() {
+        q("export").textContent = records.length ? records.map((r) => JSON.stringify(r)).join("\n") : "No events yet."
+      }
+      function render() {
+        q("status").textContent = `${q("tracking").checked ? "Tracking on" : "Tracking off"} · ${records.length} events`
+        q("live").dataset.active = String(q("tracking").checked)
+        q("trace").innerHTML = records.length
+          ? [...records]
+              .reverse()
+              .map(
+                (r) =>
+                  `<button type="button" class="eh-trace-item" data-event="${r.actionNumber}" aria-pressed="${selected === r.actionNumber}"><span>${String(r.actionNumber).padStart(2, "0")}</span><span><b>${r.action.type}</b><small>${ehEscape(r.action.data.text || r.action.data.target)}</small></span><span aria-hidden="true">↗</span></button>`,
+              )
+              .join("")
+          : `<div class="eh-empty"><b>${q("tracking").checked ? "Listening to the browser…" : "Tracking paused"}</b><p>${q("tracking").checked ? "Click Seoul or Busan in the sample website. Your first action will appear here." : "Enable tracking to record actions from the sample website."}</p></div>`
+        const record = records.find((r) => r.actionNumber === selected)
+        q("annotation").hidden = !record
+        if (record) {
+          q("event-number").textContent = `#${selected}`
+          q("comment").value = record.comment
+        }
+        exportPreview()
+      }
+      function record(type, data) {
+        if (!q("tracking").checked) return
+        const item = {
+          actionNumber: nextId++,
+          timestamp: new Date().toISOString(),
+          imagePath: null,
+          comment: "",
+          action: { type, data },
+        }
+        records.push(item)
+        if (records.length > 30) records.shift()
+        selected = item.actionNumber
+        render()
+      }
+      q("tracking").addEventListener("change", render)
+      q("search").addEventListener("change", () =>
+        record("KEYBOARD_INPUT", { text: q("search").value, target: "Search destinations" }),
+      )
+      root.querySelectorAll("[data-destination]").forEach((el) =>
+        el.addEventListener("click", () => {
+          q("selection").textContent = `${el.dataset.destination} workspace selected.`
+          root
+            .querySelectorAll("[data-destination]")
+            .forEach((button) => button.setAttribute("aria-pressed", String(button === el)))
+          record("CLICK", { target: `${el.dataset.destination} workspace` })
+        }),
+      )
+      q("capture").addEventListener("click", () =>
+        record("SCREENSHOT", { target: "Sample workspace illustration · no screenshot captured" }),
+      )
+      q("trace").addEventListener("click", (event) => {
+        const button = event.target.closest("[data-event]")
+        if (!button) return
+        selected = Number(button.dataset.event)
+        render()
+        q("trace").querySelector(`[data-event="${selected}"]`)?.focus()
+      })
+      q("comment").addEventListener("input", () => {
+        const item = records.find((r) => r.actionNumber === selected)
+        if (item) item.comment = q("comment").value
+        exportPreview()
+      })
+      q("clear").addEventListener("click", () => {
+        records = []
+        selected = null
+        nextId = 1
+        render()
+      })
+      render()
     },
   }
   function renderVisual() {

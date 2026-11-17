@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.jers.dev"),
   title: "Jérôme Schaeffer — Senior Product Engineer",
   description:
-    "Senior product engineer in Seoul. Product interfaces, backend systems, AI and team delivery. Explore my experience and selected work.",
+    "Senior product engineer in Seoul with 11+ years across frontend, full-stack, digital twins and AI/AX. Explore Beamo, Pivo, AI products and selected work.",
   alternates: { canonical: "/" },
   openGraph: {
     title: "Jérôme Schaeffer — Senior Product Engineer",

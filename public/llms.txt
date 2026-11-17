@@ -1,16 +1,21 @@
 # Jérôme Schaeffer — Personal Portfolio
 
-> Frontend engineer based in Seoul, South Korea. Portfolio and resume site.
+> Senior product engineer based in Seoul, South Korea. Portfolio and résumé site.
 
 ## About
 
-Jérôme Schaeffer is a frontend engineer based in Seoul, South Korea with 11+ years of experience across startups, international companies, and consulting. He specializes in React, Next.js, TypeScript, Vue.js, product-focused UI, AI tools, MCP servers, and internal Claude workflows. This site serves as his personal portfolio and online resume.
+Jérôme Schaeffer is a senior product engineer based in Seoul, South Korea with 11+ years across frontend, full-stack and AI/AX work. His work includes React/Three.js Beamo digital-twin viewers, Pivo web applications, AI products, MCP integrations and company-wide Claude adoption. His current role at 3i is Frontend Developer & AX Engineer. This site serves as his personal portfolio and online résumé.
 
 ## Pages
 
-- [English](https://jers.dev/en): Portfolio in English
-- [French](https://jers.dev/fr): Portfolio en français
-- [Korean](https://jers.dev/ko): 한국어 포트폴리오
+- [Home](https://www.jers.dev/): Portfolio in English
+- [Work](https://www.jers.dev/#work/3i): Professional experience and side projects
+- [About](https://www.jers.dev/#about): Career timeline
+- [AI demo](https://www.jers.dev/#playground): Interactive AI decision example
+- [Current Korean résumé](https://www.jers.dev/assets/resume-ko.pdf)
+- [Earlier English résumé](https://www.jers.dev/assets/resume-en.pdf)
+
+Legacy /en, /fr and /ko URLs redirect to the English homepage.
 
 ## Contact & Social
 

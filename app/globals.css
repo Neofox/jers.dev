@@ -4694,6 +4694,559 @@ dialog::backdrop {
   color: var(--muted);
 }
 
+/* ─── Living portrait ────────────────────────────────────────────────── */
+/* A face is a stack of decoded layers; the newest fades in over the previous one. */
+.pf-face {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background: var(--surface);
+}
+.pf-face img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+}
+.pf-face img + img {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 250ms var(--ease-out);
+}
+.pf-face img.is-in {
+  opacity: 1;
+}
+.portrait-composition {
+  position: relative;
+}
+.portrait-home {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-l);
+  background: none;
+  text-align: left;
+}
+.portrait-home .pf-face {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-l);
+  transition: border-color var(--dur-s) var(--ease-out);
+}
+.portrait-home:hover .pf-face {
+  border-color: var(--border-strong);
+}
+.portrait-home:focus-visible {
+  outline-offset: 4px;
+}
+.pf-tag {
+  position: absolute;
+  left: var(--space-3);
+  bottom: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 10px 3px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: oklch(17.5% 0.006 250 / 0.82);
+  backdrop-filter: blur(8px);
+  color: var(--fg-soft);
+  font: 500 12px / 1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.pf-tag i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.pf-why {
+  display: none;
+  color: var(--faint);
+}
+.portrait-home:hover .pf-why,
+.portrait-home:focus-visible .pf-why {
+  display: inline;
+}
+.is-asking .pf-tag i {
+  animation: pf-blink 0.9s var(--ease-out) infinite alternate;
+}
+@keyframes pf-blink {
+  to {
+    opacity: 0.25;
+  }
+}
+.portrait-hint {
+  margin-top: var(--space-2);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+  color: var(--faint);
+}
+.portrait-hint-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--fg-soft);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 4px;
+  transition: text-decoration-color var(--dur-s) var(--ease-out);
+}
+.portrait-hint-button:hover {
+  text-decoration-color: var(--accent);
+}
+
+/* Asides: a mint speech bubble, shown for a few seconds, never interactive. */
+.portrait-aside {
+  position: absolute;
+  z-index: 2;
+  width: max-content;
+  max-width: 260px;
+  padding: 9px 14px 10px;
+  border-radius: var(--radius-m);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font: 500 var(--text-sm) / 1.4 var(--font-body);
+  text-wrap: pretty;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.45);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 250ms var(--ease-out),
+    visibility 0s linear 250ms;
+}
+.portrait-aside.is-shown {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+  animation: pf-rise 320ms var(--ease-out);
+}
+@keyframes pf-rise {
+  from {
+    transform: translateY(6px);
+  }
+}
+.portrait-aside::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background: inherit;
+  rotate: 45deg;
+}
+.portrait-aside.is-home {
+  left: var(--space-4);
+  bottom: 52px;
+  max-width: calc(100% - 2 * var(--space-4));
+}
+.portrait-aside.is-home::after {
+  top: -5px;
+  left: 32%;
+}
+
+/* Dock: the portrait as a bubble on every stage but Home. */
+.portrait-dock {
+  position: fixed;
+  z-index: 26;
+  right: max(var(--space-5), env(safe-area-inset-right, 0px));
+  bottom: max(var(--space-5), env(safe-area-inset-bottom, 0px));
+}
+.portrait-dock .portrait-aside {
+  right: calc(100% + 14px);
+  top: 50%;
+  translate: 0 -50%;
+}
+.portrait-dock .portrait-aside::after {
+  right: -5px;
+  top: calc(50% - 6px);
+}
+.dock-face {
+  display: block;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow:
+    0 0 0 4px var(--bg),
+    0 12px 28px rgb(0 0 0 / 0.5);
+  transition: border-color var(--dur-s) var(--ease-out);
+}
+.dock-face:hover {
+  border-color: var(--accent);
+}
+.dock-face:focus-visible {
+  outline-offset: 5px;
+}
+.dock-face .pf-face img {
+  scale: 1.7;
+  transform-origin: 50% 40%;
+}
+.portrait-dock.is-muted .dock-face .pf-face {
+  opacity: 0.6;
+}
+.dock-mute {
+  position: absolute;
+  top: -6px;
+  left: -8px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: var(--raised);
+  color: var(--fg-soft);
+  opacity: 0;
+  transition:
+    opacity var(--dur-s) var(--ease-out),
+    background-color var(--dur-s) var(--ease-out);
+}
+.portrait-dock:hover .dock-mute,
+.portrait-dock:focus-within .dock-mute,
+.dock-mute[aria-pressed="true"] {
+  opacity: 1;
+}
+.dock-mute:hover {
+  background: var(--border);
+}
+.dock-mute[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.dock-mute:not([aria-pressed="true"]) .mute-slash {
+  display: none;
+}
+@media (hover: none) {
+  .dock-mute {
+    opacity: 1;
+  }
+}
+/* Keep the footer controls clear of the dock at the end of the page. */
+body:not([data-stage="home"]) .site-footer {
+  padding-bottom: 72px;
+}
+
+/* "Why this face?" drawer: a calm technical readout. */
+#portrait-dialog {
+  --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: min(460px, 100vw);
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  border-width: 0 0 0 1px;
+  border-radius: var(--radius-l) 0 0 var(--radius-l);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+#portrait-dialog .dialog-top {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--surface);
+}
+.pd-body {
+  display: grid;
+  gap: var(--space-6);
+  padding: var(--space-5) var(--space-5) var(--space-7);
+}
+.pd-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.pd-thumb {
+  flex: none;
+  width: 72px;
+  height: 72px;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--raised);
+}
+.pd-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  scale: 1.7;
+  transform-origin: 50% 40%;
+}
+.pd-head h2 {
+  font-size: var(--text-xl);
+}
+.pd-trigger {
+  margin-top: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--fg-soft);
+}
+.pd-sent {
+  margin-top: var(--space-1);
+  font: 12px / 1.5 var(--mono);
+  color: var(--faint);
+  overflow-wrap: anywhere;
+}
+.pd-quote {
+  padding-left: var(--space-4);
+  border-left: 2px solid var(--accent);
+  font-size: var(--text-base);
+  color: var(--fg);
+}
+.pd-quote::before {
+  content: "“";
+}
+.pd-quote::after {
+  content: "”";
+}
+.pd-fallback {
+  padding: var(--space-3) var(--space-4);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-s);
+  font-size: var(--text-sm);
+  color: var(--fg-soft);
+}
+.pd-fallback::before {
+  content: "fallback  ";
+  font: 500 12px / 1 var(--mono);
+  color: var(--accent);
+  white-space: pre;
+}
+.pd-questions {
+  margin-top: var(--space-2);
+}
+.pd-questions > li {
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--border);
+}
+.pd-qhead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+.pd-qhead code {
+  font: 500 14px / 1.4 var(--mono);
+  color: var(--fg);
+}
+.pd-type {
+  padding: 0 7px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font: 11px / 1.6 var(--mono);
+  color: var(--faint);
+}
+.pd-ask {
+  margin-top: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+.pd-answer {
+  margin-top: var(--space-3);
+  font: 12px / 1.6 var(--mono);
+  color: var(--fg-soft);
+}
+.pd-answer > p {
+  margin-top: var(--space-1);
+}
+.pd-answer .pd-none {
+  color: var(--faint);
+}
+.pd-bars {
+  display: grid;
+  gap: 3px;
+}
+.pd-bars li {
+  display: grid;
+  grid-template-columns: 9ch minmax(0, 1fr) 4ch;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--faint);
+}
+.pd-bars li.is-chosen {
+  color: var(--fg);
+}
+.pd-track {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--raised);
+  overflow: hidden;
+}
+.pd-track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--border-strong);
+  transform: scaleX(var(--p, 0));
+  transform-origin: left;
+  animation: pd-grow 600ms var(--ease-out);
+}
+.is-chosen .pd-track i {
+  background: var(--accent);
+}
+@keyframes pd-grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+.pd-value {
+  text-align: right;
+}
+.pd-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  overflow: hidden;
+  background: var(--border);
+}
+.pd-stats div {
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+}
+.pd-stats dt {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.pd-stats dd {
+  margin-top: var(--space-1);
+  font: 500 14px / 1.4 var(--mono);
+  color: var(--fg);
+}
+.pd-mute {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  width: 100%;
+  min-height: 48px;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-s);
+  background: transparent;
+  font-weight: 500;
+  transition: border-color var(--dur-s) var(--ease-out);
+}
+.pd-mute:hover {
+  border-color: var(--fg);
+}
+.pd-switch {
+  position: relative;
+  flex: none;
+  width: 36px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--raised);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+  transition: background-color var(--dur-s) var(--ease-out);
+}
+.pd-switch::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition:
+    translate var(--dur-s) var(--ease-out),
+    background-color var(--dur-s) var(--ease-out);
+}
+.pd-mute[aria-pressed="true"] .pd-switch {
+  background: var(--accent);
+}
+.pd-mute[aria-pressed="true"] .pd-switch::after {
+  translate: 16px 0;
+  background: var(--accent-ink);
+}
+.pd-mute-row p {
+  margin-top: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--faint);
+}
+.pd-notes {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-2);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border);
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+@media (max-width: 767px) {
+  .portrait-dock {
+    right: var(--space-3);
+    bottom: calc(var(--mobile-nav-h) + env(safe-area-inset-bottom, 0px) + var(--space-3));
+  }
+  /* The Enhans demo pins its Run / Next bar above the bottom navigation: sit above it. */
+  body[data-stage="work"]:has(.demo-enhans .eh-controls) .portrait-dock {
+    bottom: calc(var(--mobile-nav-h) + env(safe-area-inset-bottom, 0px) + 116px);
+  }
+}
+@media (max-width: 599px) {
+  .dock-face {
+    width: 46px;
+    height: 46px;
+  }
+  .portrait-dock .portrait-aside {
+    right: 0;
+    top: auto;
+    bottom: calc(100% + 14px);
+    max-width: min(260px, calc(100vw - 2 * var(--space-4)));
+    translate: none;
+  }
+  .portrait-dock .portrait-aside::after {
+    top: auto;
+    right: 17px;
+    bottom: -5px;
+  }
+  #portrait-dialog {
+    inset: auto 0 0;
+    width: 100%;
+    height: auto;
+    max-height: 88dvh;
+    border-width: 1px 0 0;
+    border-radius: var(--radius-l) var(--radius-l) 0 0;
+  }
+}
+/* Fading between faces and asides is not motion: keep it when motion is off or reduced. */
+html[data-motion="off"] .pf-face img,
+html[data-motion="off"] .portrait-aside.is-shown {
+  transition: opacity 250ms var(--ease-out) !important;
+}
+html[data-motion="off"] .portrait-aside:not(.is-shown) {
+  transition:
+    opacity 250ms var(--ease-out),
+    visibility 0s linear 250ms !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pf-face img,
+  .portrait-aside.is-shown {
+    transition: opacity 250ms var(--ease-out) !important;
+  }
+  .portrait-aside:not(.is-shown) {
+    transition:
+      opacity 250ms var(--ease-out),
+      visibility 0s linear 250ms !important;
+  }
+}
+
 /* ─── Motion ─────────────────────────────────────────────────────────── */
 ::view-transition-old(root),
 ::view-transition-new(root) {

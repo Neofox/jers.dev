@@ -8,6 +8,7 @@ export default function Home() {
     <>
       <div id="portfolio" dangerouslySetInnerHTML={{ __html: markup }} />
       <Script src="/portfolio.js" strategy="afterInteractive" />
+      <Script type="module" src="/portrait.mjs" strategy="afterInteractive" crossOrigin="anonymous" />
     </>
   )
 }

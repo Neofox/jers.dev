@@ -190,22 +190,25 @@ test("sanitizes answer probabilities before they leave the server", () => {
           { value: 2, label: "clear", probability: 0.6, extra: true },
           { value: 9, label: "huge", probability: 0.2 },
           { value: 1, label: "light", probability: -0.1 },
+          { value: 3, label: "light", probability: 0.1 },
+          { value: 1.5, label: "light", probability: 0.1 },
           ...Array.from({ length: 10 }, () => ({ value: 0, label: "subtle", probability: 0.1 })),
+          { value: 2, label: "clear", probability: 0.3 },
         ],
       },
     }),
     situation,
   )
-  const expr = r.questions.expression.probabilities
-  assert.deepEqual(expr[0], { value: "laugh", probability: 0.8 })
-  assert.ok(expr.every((p) => Object.keys(p).join() === "value,probability"))
-  assert.ok(!expr.some((p) => ["angry", "grin", "proud", "wince"].includes(p.value)))
-  assert.equal(expr.length, 8)
-  const levels = r.questions.intensity.probabilities
-  assert.deepEqual(levels[0], { value: 2, label: "clear", probability: 0.6 })
-  assert.ok(levels.every((p) => Object.keys(p).join() === "value,label,probability"))
-  assert.ok(levels.every((p) => p.value >= 0 && p.value <= 3))
-  assert.equal(levels.length, 4)
+  // Unknown values, out-of-range probabilities and junk fields are dropped; duplicates keep the first.
+  assert.deepEqual(r.questions.expression.probabilities, [
+    { value: "laugh", probability: 0.8 },
+    { value: "smile", probability: 0.01 },
+  ])
+  // Score entries must pair each label with its 0-based level index.
+  assert.deepEqual(r.questions.intensity.probabilities, [
+    { value: 2, label: "clear", probability: 0.6 },
+    { value: 0, label: "subtle", probability: 0.1 },
+  ])
   assert.deepEqual(
     interpret(
       answers({ aside: { type: "choice", name: "aside", choice: "a1", probabilities: "nope", confidence: 0.9 } }),

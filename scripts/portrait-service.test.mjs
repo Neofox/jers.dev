@@ -61,6 +61,14 @@ test("caches identical situations and shares in-flight calls", async () => {
   const third = await react(situation)
   assert.equal(client.calls.length, 1)
   assert.equal(third.cached, true)
+  // A cache hit cost nothing: it must not repeat the original call's usage or cost.
+  assert.deepEqual(first.usage, usage)
+  assert.ok(first.estimatedCostUsd > 0)
+  for (const hit of [second, third]) {
+    assert.equal(hit.usage, null)
+    assert.equal(hit.estimatedCostUsd, 0)
+    assert.equal(hit.latencyMs, 0)
+  }
 })
 
 test("falls back on upstream failure without caching it", async () => {
@@ -77,6 +85,35 @@ test("falls back on upstream failure without caching it", async () => {
   assert.equal(client.calls.length, 2)
   assert.equal(retried.fallbackReason, undefined)
   assert.equal(retried.expression, "laugh")
+})
+
+test("upstream fallbacks report the measured elapsed time", async () => {
+  const client = fakeClient(() => new Promise((_resolve, reject) => setTimeout(() => reject(new Error("timeout")), 40)))
+  const react = createPortraitService({ client })
+  const failed = await react(situation)
+  assert.equal(failed.fallbackReason, "upstream")
+  assert.ok(failed.latencyMs >= 35, `latencyMs was ${failed.latencyMs}`)
+  assert.equal(failed.usage, null)
+  assert.equal(failed.estimatedCostUsd, 0)
+})
+
+test("does not cache reactions that fell back to the default face", async () => {
+  const client = fakeClient(async (_params, n) => {
+    const d = decision()
+    if (n === 1) d.answers[1] = { ...d.answers[1], confidence: 0.1 }
+    return d
+  })
+  const react = createPortraitService({ client })
+  const low = await react(situation)
+  assert.equal(low.fallback, "low_confidence")
+  assert.equal(low.expression, ITEMS["project:3i"].defaultExpression)
+  const retried = await react(situation)
+  assert.equal(client.calls.length, 2)
+  assert.equal(retried.cached, false)
+  assert.equal(retried.fallback, null)
+  assert.equal(retried.expression, "laugh")
+  assert.equal((await react(situation)).cached, true)
+  assert.equal(client.calls.length, 2)
 })
 
 test("stops calling upstream past the hourly cap", async () => {

@@ -1,19 +1,19 @@
 # jers.dev
 
-Jérôme Schaeffer’s portfolio. Next.js serves the approved OpenDesign experience and a server-side OpenAI Decisions endpoint.
+Jérôme Schaeffer’s portfolio. Next.js serves the approved OpenDesign experience and a living portrait whose reactions are decided server-side by OpenAI's Decisions API.
 
 ## Run
 
-Use Node.js 24 and the existing dependency lockfile. Install with `bun install --frozen-lockfile`, then run `npm run dev`.
+Use Node.js 24 and the existing dependency lockfile. Install with `bun install --frozen-lockfile`, then run `bun run dev`.
 
-Set `OPENAI_API_KEY` in the git-ignored `.env.local`. It is server-only. No key is embedded in the browser bundle. The UI remains usable without a key and reports that evaluations are temporarily unavailable.
+Set `OPENAI_API_KEY` in the git-ignored `.env.local`. It is server-only. No key is embedded in the browser bundle. Without a key the site works normally and the portrait simply keeps each item's default face with no aside.
 
 ## Verify
 
-- `node --test scripts/*.test.mjs`
-- `npm run lint`
-- `npm run build`
-- `npm start`
+- `bun run test`
+- `bun run lint`
+- `bun run build`
+- `bun run start`
 
 The homepage is English. Old `/en`, `/fr` and `/ko` URLs redirect to the new homepage; both English and Korean résumé PDFs are available from the résumé dialog. Project views use shareable URL fragments.
 
@@ -25,12 +25,24 @@ The updated professional content follows the latest Korean résumé, including B
 
 - `app/portfolio.json`: trusted, server-rendered markup from the approved design; never populate it with user content.
 - `app/globals.css`: local fonts, layout and motion preferences.
-- `public/portfolio.js`: navigation, case studies, accessible dialogs and the live decision interaction.
-- `lib/decisions.mjs`: validated OpenAI request, refusal handling and bounded cache.
-- `lib/decision-handler.mjs`: same-origin checks, body limits and per-visitor throttling.
-- `public/assets`: product captures, portrait, fonts and current résumé PDFs.
+- `public/portfolio.js`: navigation, case studies, accessible dialogs and the living portrait (dock, speech bubble, mute, "why this face?" drawer).
+- `app/api/portrait`: the `POST /api/portrait` route.
+- `lib/portrait-catalog.mjs`: the catalog of items, default faces and the approved asides (versioned by `CATALOG_VERSION`).
+- `lib/portrait-decision.mjs`: request builder, thresholds, refusal and fallback rules, cost calculation.
+- `lib/portrait-service.mjs`: bounded cache and upstream limits around the OpenAI call.
+- `lib/request-guard.mjs`: same-origin checks, body limits and per-visitor throttling.
+- `scripts/portrait-eval.mjs`, `scripts/portrait-scenarios.json`: evaluation script and its signed-off scenarios.
+- `public/assets`: product captures, portrait, fonts and current résumé PDFs. `public/assets/portrait` holds the expression images.
 
-Example cards only prefill editable text. Every displayed evaluation comes from OpenAI (or a previously cached identical request), and cached results are labelled. Probability bars are model estimates; category descriptions are labelled as general interpretation. No product action is executed.
+## Living portrait
+
+The portrait follows visitors and reacts to what they look at: opening a project or demo, downloading the résumé, dwelling on a section, reaching the end, idling, or coming back to the tab. Each reaction is a facial expression plus, sometimes, a short first-person aside. The decision is made live by OpenAI's Decisions API (`gpt-6-luna`) through `POST /api/portrait`. The asides are written and approved ahead of time in `lib/portrait-catalog.mjs`; nothing is generated at runtime. A "why this face?" drawer shows the trigger, the questions asked, the probabilities, latency, estimated cost and whether the cache was hit. The drawer shows the `should_react` probability only, since predicates carry no confidence.
+
+What is sent: the browser posts only `{action, itemId, recent}`, and only catalog item IDs and action types reach OpenAI. No text, URLs, identifiers or other visitor data are sent, and requests are not logged by the application. If anything fails (no key, timeout, refusal, per-visit cap, offline) the portrait keeps the item's default face with no aside and no error UI. A mute control turns reactions off, and with reduced motion or the motion toggle off the face only crossfades.
+
+The expression images are AI-generated variants of Jérôme's own photo, and the portrait caption and drawer say so.
+
+Evaluation: `bun run eval:portrait` runs the signed-off scenarios against the live API (needs `OPENAI_API_KEY` in `.env.local`, costs well under a cent) and rewrites `public/portrait-eval.json`, which the drawer links to. It is run by hand, not in CI. Scenarios are split into a tuning set and a held-out set, and misses are published as they come.
 
 ## Release on Vercel
 
@@ -38,9 +50,9 @@ Production: https://www.jers.dev (jers.dev redirects here). Released on 2026-10-
 
 The approved `OPENAI_API_KEY` is configured as a production Secret. Future deployments should use the Next.js preset and Node.js 24. Never prefix the key with `NEXT_PUBLIC_`.
 
-The active Vercel Firewall rule limits POST `/api/decision` to 6 requests per IP per minute (`rule_decision_api_rate_limit_FSSI0b`). The code’s in-memory limits are defense in depth: 6 requests per IP per minute and 100 upstream requests per hour per function instance. They reset on cold starts and are not a global spending cap. Set the desired project budget/alerts on the OpenAI side as well.
+Add a Vercel Firewall rule that rate-limits `POST /api/portrait` to 12 requests per IP per minute, and remove the old `/api/decision` rule. The code’s in-memory limits are defense in depth: 12 requests per IP per minute and 1,000 upstream requests per hour per function instance. They reset on cold starts and are not a global spending cap. Set a budget on the OpenAI project that holds the key: $20 hard limit with a $10 alert.
 
-After deployment, verify one live example, both résumé PDFs, the contact dialog and navigation on the deployed URL. Keep the API key out of logs. Requests and visitor situations are not logged by the application.
+After deployment, verify one live portrait reaction (and its drawer), both résumé PDFs, the contact dialog and navigation on the deployed URL. Keep the API key out of logs. Requests and visitor situations are not logged by the application.
 
 Product screenshots remain attributed to their actual sources. ACT-2 imagery is explicitly identified as a current product reference; Jérôme’s contribution was to ACT-1. Kaltoe’s repository screenshots contain demonstration data, not claimed usage metrics.
 

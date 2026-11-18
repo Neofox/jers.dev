@@ -1,6 +1,6 @@
 {
-  "status": "draft",
-  "ranAt": "2026-11-18T07:16:03.688Z",
+  "status": "signed-off",
+  "ranAt": "2026-11-18T07:22:40.848Z",
   "model": "gpt-6-luna",
   "catalogVersion": 2,
   "scenarios": 22,
@@ -11,7 +11,7 @@
     "expressionAgreement": 1,
     "reactAgreement": 0.875
   },
-  "avgLatencyMs": 373,
+  "avgLatencyMs": 420,
   "totalCostUsd": 0.003153,
   "thresholds": {
     "shouldReact": 0.5,
@@ -36,7 +36,7 @@
         "reactProbability": 1,
         "choice": "proud",
         "confidence": 0.45,
-        "latencyMs": 492,
+        "latencyMs": 1091,
         "costUsd": 0.000106
       },
       "ok": true
@@ -58,7 +58,7 @@
         "reactProbability": 1,
         "choice": "thinking",
         "confidence": 0.29,
-        "latencyMs": 418,
+        "latencyMs": 383,
         "costUsd": 0.0001058
       },
       "ok": true
@@ -81,7 +81,7 @@
         "reactProbability": 1,
         "choice": "smile",
         "confidence": 0.38,
-        "latencyMs": 329,
+        "latencyMs": 308,
         "costUsd": 0.0001058
       },
       "ok": true
@@ -104,7 +104,7 @@
         "reactProbability": 1,
         "choice": "proud",
         "confidence": 0.91,
-        "latencyMs": 449,
+        "latencyMs": 419,
         "costUsd": 0.0001051
       },
       "ok": true
@@ -127,7 +127,7 @@
         "reactProbability": 1,
         "choice": "proud",
         "confidence": 0.23,
-        "latencyMs": 259,
+        "latencyMs": 448,
         "costUsd": 0.0001053
       },
       "ok": true
@@ -150,7 +150,7 @@
         "reactProbability": 1,
         "choice": "smile",
         "confidence": 0.93,
-        "latencyMs": 266,
+        "latencyMs": 265,
         "costUsd": 0.0001046
       },
       "ok": true
@@ -172,7 +172,7 @@
         "reactProbability": 1,
         "choice": "smile",
         "confidence": 0.86,
-        "latencyMs": 330,
+        "latencyMs": 352,
         "costUsd": 0.0001052
       },
       "ok": false
@@ -195,7 +195,7 @@
         "reactProbability": 1,
         "choice": "wince",
         "confidence": 0.29,
-        "latencyMs": 320,
+        "latencyMs": 510,
         "costUsd": 0.0001053
       },
       "ok": true
@@ -217,7 +217,7 @@
         "reactProbability": 1,
         "choice": "proud",
         "confidence": 0.37,
-        "latencyMs": 390,
+        "latencyMs": 475,
         "costUsd": 0.0001054
       },
       "ok": true
@@ -239,7 +239,7 @@
         "reactProbability": 0.89,
         "choice": "neutral",
         "confidence": 0.15,
-        "latencyMs": 515,
+        "latencyMs": 416,
         "costUsd": 0.0001057
       },
       "ok": false
@@ -262,7 +262,7 @@
         "reactProbability": 1,
         "choice": "smile",
         "confidence": 0.51,
-        "latencyMs": 569,
+        "latencyMs": 460,
         "costUsd": 0.0001047
       },
       "ok": true
@@ -285,7 +285,7 @@
         "reactProbability": 1,
         "choice": "smile",
         "confidence": 0.84,
-        "latencyMs": 273,
+        "latencyMs": 543,
         "costUsd": 0.0001043
       },
       "ok": true
@@ -307,7 +307,7 @@
         "reactProbability": 1,
         "choice": "smile",
         "confidence": 0.78,
-        "latencyMs": 514,
+        "latencyMs": 416,
         "costUsd": 0.0001049
       },
       "ok": true
@@ -330,7 +330,7 @@
         "reactProbability": 0.98,
         "choice": "smile",
         "confidence": 0.51,
-        "latencyMs": 251,
+        "latencyMs": 478,
         "costUsd": 0.0001037
       },
       "ok": true
@@ -353,7 +353,7 @@
         "reactProbability": 1,
         "choice": "smile",
         "confidence": 0.67,
-        "latencyMs": 259,
+        "latencyMs": 452,
         "costUsd": 0.000104
       },
       "ok": true
@@ -376,7 +376,7 @@
         "reactProbability": 1,
         "choice": "smile",
         "confidence": 0.9,
-        "latencyMs": 350,
+        "latencyMs": 403,
         "costUsd": 0.0001038
       },
       "ok": true
@@ -399,7 +399,7 @@
         "reactProbability": 1,
         "choice": "smile",
         "confidence": 0.93,
-        "latencyMs": 253,
+        "latencyMs": 247,
         "costUsd": 0.000104
       },
       "ok": true
@@ -417,7 +417,7 @@
         "reactProbability": 0,
         "choice": "proud",
         "confidence": 0.54,
-        "latencyMs": 261,
+        "latencyMs": 259,
         "costUsd": 0.0001054
       },
       "ok": true
@@ -435,7 +435,7 @@
         "reactProbability": 0,
         "choice": "grin",
         "confidence": 0.49,
-        "latencyMs": 412,
+        "latencyMs": 268,
         "costUsd": 0.0001056
       },
       "ok": true
@@ -453,7 +453,7 @@
         "reactProbability": 0.01,
         "choice": "proud",
         "confidence": 0.28,
-        "latencyMs": 311,
+        "latencyMs": 269,
         "costUsd": 0.0001062
       },
       "ok": true
@@ -471,7 +471,7 @@
         "reactProbability": 0,
         "choice": "smile",
         "confidence": 0.95,
-        "latencyMs": 292,
+        "latencyMs": 320,
         "costUsd": 0.000105
       },
       "ok": true
@@ -489,7 +489,7 @@
         "reactProbability": 0.09,
         "choice": "smile",
         "confidence": 0.98,
-        "latencyMs": 507,
+        "latencyMs": 411,
         "costUsd": 0.0001051
       },
       "ok": true
@@ -512,7 +512,7 @@
         "reactProbability": 1,
         "choice": "smile",
         "confidence": 0.53,
-        "latencyMs": 250,
+        "latencyMs": 511,
         "costUsd": 0.0001052
       },
       "ok": true
@@ -535,7 +535,7 @@
         "reactProbability": 0.96,
         "choice": "smile",
         "confidence": 0.45,
-        "latencyMs": 264,
+        "latencyMs": 576,
         "costUsd": 0.0001055
       },
       "ok": true
@@ -553,7 +553,7 @@
         "reactProbability": 0.02,
         "choice": "grin",
         "confidence": 0.62,
-        "latencyMs": 471,
+        "latencyMs": 414,
         "costUsd": 0.0001052
       },
       "ok": true
@@ -576,7 +576,7 @@
         "reactProbability": 1,
         "choice": "smile",
         "confidence": 0.99,
-        "latencyMs": 292,
+        "latencyMs": 515,
         "costUsd": 0.0001052
       },
       "ok": true
@@ -594,7 +594,7 @@
         "reactProbability": 1,
         "choice": "smile",
         "confidence": 0.47,
-        "latencyMs": 424,
+        "latencyMs": 265,
         "costUsd": 0.000106
       },
       "ok": false
@@ -617,7 +617,7 @@
         "reactProbability": 0.97,
         "choice": "smile",
         "confidence": 0.91,
-        "latencyMs": 334,
+        "latencyMs": 295,
         "costUsd": 0.0001043
       },
       "ok": true
@@ -635,7 +635,7 @@
         "reactProbability": 0.19,
         "choice": "smile",
         "confidence": 0.94,
-        "latencyMs": 522,
+        "latencyMs": 326,
         "costUsd": 0.0001051
       },
       "ok": true
@@ -657,7 +657,7 @@
         "reactProbability": 1,
         "choice": "proud",
         "confidence": 0.41,
-        "latencyMs": 612,
+        "latencyMs": 506,
         "costUsd": 0.0001058
       },
       "ok": true

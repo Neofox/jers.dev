@@ -121,7 +121,7 @@ The client needs the `id`s and `defaultExpression`s for the fallback. How the cl
 
 - Called directly on OpenAI with the official `openai` Node SDK (v7.59+, `client.decisions.create`), not through Vercel AI Gateway and not with hand-written `fetch`. The client is injected so tests can pass a fake. Use `maxRetries: 0` and a ~4 s `timeout`: a late reaction is worse than none.
 - `model: "gpt-6-luna"`.
-- `input`: a developer message holding the instructions (who Jérôme is, the tone, that this is a playful portfolio companion), then a user message with the full catalog as `input_json`. This shared prefix is identical on every call and must exceed 1,024 tokens so prompt caching applies. Set `prompt_cache_key: "portrait-v1"`, and bump it whenever the catalog changes.
+- `input`: a developer message holding the instructions (who Jérôme is, the tone, that this is a playful portfolio companion), then a user message with the full catalog as `input_json`. This shared prefix is identical on every call and must exceed 1,024 tokens so prompt caching applies. Set `prompt_cache_key: "portrait-v<CATALOG_VERSION>"` (currently catalog v2, so `portrait-v2`) and bump the version whenever the catalog changes. An explicit cache breakpoint (`prompt_cache_breakpoint`, after an "End of catalog." marker) ends the cached prefix right after the catalog; without it the implicit breakpoint lands after the per-request situation and almost none of the shared prefix is read from cache. Default faces are not sent to the model in catalog v2, so the model cannot copy them.
 - The current situation (action, item, recent moves) goes last, after the cached prefix.
 - Questions:
   - `should_react` (predicate): is a reaction welcome right now, or would it be noise?
@@ -150,7 +150,7 @@ When there is no key, a 4xx/5xx, a timeout, a refusal, the per-visit cap is reac
 Opens from the bubble (and from the home portrait). Shows, for the latest reaction:
 - the trigger (action and item, in plain words)
 - the four questions as sent
-- a bar for each expression's probability, plus `should_react` probability and confidence
+- a bar for each expression's probability and its confidence, plus the `should_react` probability only (predicates carry no confidence, so none is shown for it)
 - latency in ms, estimated cost, cache hit or miss, and cached input tokens
 - whether the fallback was used, and why
 - a note that only item IDs and action types are sent to OpenAI, and that the expressions are AI-generated variants of Jérôme's photo
@@ -184,7 +184,7 @@ Jérôme is comfortable with $10–20/month; actual traffic is low, so this is a
 
 ### Testing
 
-- Unit tests (`node --test`, like the existing ones) for input validation, the request builder, decision rules (thresholds, refusals, fallbacks), the cache and the cost calculation, with a mocked `fetch`.
+- Unit tests (`node --test`, like the existing ones) for input validation, the request builder, decision rules (thresholds, refusals, fallbacks), the cache and the cost calculation, with an injected SDK client (a fake `client.decisions.create`).
 - Handler tests reusing the pattern in `scripts/decision-handler.test.mjs`.
 - Manual check in the browser: every trigger, mute, reduced motion, no key, offline, narrow screen, keyboard only.
 

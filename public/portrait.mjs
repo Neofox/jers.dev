@@ -78,7 +78,8 @@ function init() {
   const muteButtons = [$("portrait-dock-mute"), $("pd-mute")]
   let catalog = null
   let latest = null
-  let shown = { expression: "neutral", asideText: null }
+  let shownAside = null
+  let face = "neutral"
   let muted = store("localStorage", KEY.muted) === "1"
   let preloaded = false
   let asideTimer = 0
@@ -129,10 +130,20 @@ function init() {
     )
   }
 
+  // `face` only changes once the home layer has really loaded, so the tag, name and drawer never
+  // describe a face that failed to load.
   function setFace(expression, intensity = 0) {
-    $("portrait-home-tag").textContent = expression
     for (const surface of surfaces) {
-      swap(surface, expression).then((ok) => ok && surface === active() && pop(surface, intensity))
+      swap(surface, expression).then((ok) => {
+        if (!ok) return
+        if (surface.home) {
+          face = expression
+          $("portrait-home-tag").textContent = expression
+          syncNames()
+          if (drawer.open) render()
+        }
+        if (surface === active()) pop(surface, intensity)
+      })
     }
   }
 
@@ -155,7 +166,7 @@ function init() {
   }
 
   function syncNames() {
-    const name = `Jérôme's reaction: ${shown.asideText ?? shown.expression}`
+    const name = `Jérôme's reaction: ${shownAside ?? face}`
     for (const surface of surfaces) surface.button.setAttribute("aria-label", name)
   }
 
@@ -191,7 +202,7 @@ function init() {
     }
     latest = { response, situation }
     if (response.react !== false) {
-      shown = { expression: response.expression, asideText: response.asideText }
+      shownAside = response.asideText
       setFace(response.expression, response.intensity)
       showAside(response.asideText)
       syncNames()
@@ -288,7 +299,7 @@ function init() {
     for (const button of muteButtons) button.setAttribute("aria-pressed", String(on))
     dock.classList.toggle("is-muted", on)
     if (on) {
-      shown = { expression: "neutral", asideText: null }
+      shownAside = null
       setFace("neutral")
       showAside(null)
       syncNames()
@@ -360,8 +371,8 @@ function init() {
 
   function render() {
     const { response, situation } = latest ?? {}
-    $("pd-face").src = faceUrl(shown.expression)
-    $("pd-face").alt = ALT[shown.expression] ?? ""
+    $("pd-face").src = faceUrl(face)
+    $("pd-face").alt = ALT[face] ?? ""
     if (muted) $("pd-trigger").textContent = "Muted. I'll keep a straight face."
     else if (!situation) $("pd-trigger").textContent = "No reaction yet. Open a project and watch my face."
     else {
@@ -371,8 +382,8 @@ function init() {
     $("pd-sent").textContent = situation
       ? `sent: ${situation.action} · ${situation.itemId} · ${situation.recent.length} recent`
       : ""
-    $("pd-quote").hidden = !shown.asideText
-    $("pd-quote").textContent = shown.asideText ?? ""
+    $("pd-quote").hidden = !shownAside
+    $("pd-quote").textContent = shownAside ?? ""
     const reason = response?.fallbackReason ?? response?.fallback ?? null
     $("pd-fallback").hidden = !reason
     $("pd-fallback").textContent = FALLBACK_COPY[reason] ?? (reason ? "Fallback, showing the default face" : "")

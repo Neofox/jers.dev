@@ -5411,10 +5411,24 @@ html[data-motion="off"] *::after {
     max-width: none;
     margin: 0;
   }
-  .home-person .person-portrait {
+  .home-person .portrait-home,
+  .home-person .portrait-home .pf-face {
+    border-radius: var(--radius-m);
+  }
+  .home-person .pf-face img {
+    height: 100%;
     aspect-ratio: 4 / 5;
     object-fit: cover;
-    border-radius: var(--radius-m);
+  }
+  .home-person .pf-tag {
+    left: var(--space-2);
+    bottom: var(--space-2);
+  }
+  /* The portrait is a narrow column here: let the aside spill over the caption beside it. */
+  .portrait-aside.is-home {
+    left: var(--space-3);
+    bottom: var(--space-2);
+    max-width: min(240px, calc(100vw - 2 * var(--gutter) - var(--space-5)));
   }
   .page-head {
     padding: var(--space-6) 0 var(--space-5);

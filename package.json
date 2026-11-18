@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "test": "node --test scripts/*.test.mjs"
+    "test": "node --test scripts/*.test.mjs",
+    "eval:portrait": "node --env-file=.env.local scripts/portrait-eval.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^1.6.1",

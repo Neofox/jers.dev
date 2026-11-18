@@ -10,30 +10,70 @@ export function createScheduler({
   maxPerVisit = 20,
   getCount,
   setCount,
+  onError = () => {},
 }) {
   const high = new Set(highPriority)
   let recent = []
   let lastSentAt = null
   let sequence = 0
 
-  async function trigger(action, itemId) {
-    if (getCount() >= maxPerVisit) return
-    const at = now()
-    if (!high.has(action) && lastSentAt !== null && at - lastSentAt < minGapMs) return
-
-    lastSentAt = at
-    setCount(getCount() + 1)
-    const mine = (sequence += 1)
-    const situation = { action, itemId, recent: recent.slice() }
-    recent = [...recent, { action, itemId }].slice(-RECENT_LIMIT)
-
-    let response
+  function report(error) {
     try {
-      response = await send(situation)
+      onError(error)
     } catch {
-      response = { react: true, expression: defaultFor(itemId), asideText: null, fallbackReason: "network" }
+      // reporting must never throw
     }
-    if (mine === sequence) apply(response, situation)
+  }
+
+  function readCount() {
+    try {
+      const value = getCount()
+      return Number.isFinite(value) ? value : 0
+    } catch (error) {
+      report(error)
+      return 0
+    }
+  }
+
+  function finish(mine, itemId, situation, outcome) {
+    if (mine !== sequence) return
+    try {
+      const response = outcome.ok
+        ? outcome.value
+        : { react: true, expression: defaultFor(itemId), asideText: null, fallbackReason: "network" }
+      apply(response, situation)
+    } catch (error) {
+      report(error)
+    }
+  }
+
+  function trigger(action, itemId) {
+    try {
+      const count = readCount()
+      if (count >= maxPerVisit) return
+      const at = now()
+      if (!high.has(action) && lastSentAt !== null && at - lastSentAt < minGapMs) return
+
+      lastSentAt = at
+      try {
+        setCount(count + 1)
+      } catch (error) {
+        report(error)
+      }
+      const mine = (sequence += 1)
+      const situation = { action, itemId, recent: recent.slice() }
+      recent = [...recent, { action, itemId }].slice(-RECENT_LIMIT)
+
+      new Promise((resolve) => resolve(send(situation))).then(
+        (value) => finish(mine, itemId, situation, { ok: true, value }),
+        (error) => {
+          report(error)
+          finish(mine, itemId, situation, { ok: false })
+        },
+      )
+    } catch (error) {
+      report(error)
+    }
   }
 
   return {

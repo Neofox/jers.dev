@@ -95,10 +95,95 @@ test("falls back silently when the request fails", async () => {
   scheduler.trigger("open_project", "project:gone")
   await flush()
   assert.equal(calls, 1)
+  assert.deepEqual(applied[0].situation, {
+    action: "open_project",
+    itemId: "project:gone",
+    recent: [],
+  })
   assert.deepEqual(applied[0].response, {
     react: true,
     expression: "default:project:gone",
     asideText: null,
     fallbackReason: "network",
   })
+})
+
+test("does not apply a stale failure after a newer success", async () => {
+  const settle = []
+  const { clock, applied, scheduler } = setup({
+    send: (situation) => new Promise((resolve, reject) => settle.push({ resolve, reject, situation })),
+  })
+  scheduler.trigger("open_project", "A")
+  clock.t = 1
+  scheduler.trigger("open_project", "B")
+  settle[1].resolve({ tag: "B" })
+  await flush()
+  settle[0].reject(new Error("network"))
+  await flush()
+  assert.equal(applied.length, 1)
+  assert.equal(applied[0].response.tag, "B")
+})
+
+test("a high-priority send resets the gap", async () => {
+  const { clock, sent, scheduler } = setup()
+  scheduler.trigger("dwell", "a")
+  clock.t = 1000
+  scheduler.trigger("open_project", "b")
+  clock.t = 10500
+  scheduler.trigger("dwell", "c")
+  await flush()
+  assert.equal(sent.length, 2)
+})
+
+test("a failed send counts toward the cap", async () => {
+  const { scheduler, count } = setup({
+    send: async () => {
+      throw new Error("boom")
+    },
+    scheduler: { maxPerVisit: 1 },
+  })
+  scheduler.trigger("open_project", "a")
+  scheduler.trigger("open_project", "b")
+  await flush()
+  assert.equal(count(), 1)
+})
+
+test("respects a pre-seeded count", async () => {
+  const { sent, scheduler } = setup({
+    scheduler: { maxPerVisit: 3, getCount: () => 3 },
+  })
+  scheduler.trigger("open_project", "a")
+  await flush()
+  assert.equal(sent.length, 0)
+})
+
+test("a throwing apply or storage never causes an unhandled rejection", async () => {
+  const unhandled = []
+  const listener = (reason) => unhandled.push(reason)
+  process.on("unhandledRejection", listener)
+  const errors = []
+  try {
+    const { sent, scheduler } = setup({
+      scheduler: {
+        apply: () => {
+          throw new Error("apply")
+        },
+        getCount: () => {
+          throw new Error("get")
+        },
+        setCount: () => {
+          throw new Error("set")
+        },
+        onError: (error) => errors.push(error.message),
+      },
+    })
+    scheduler.trigger("open_project", "a")
+    await flush()
+    await flush()
+    assert.equal(sent.length, 1)
+    assert.deepEqual(unhandled, [])
+    assert.ok(errors.includes("apply") && errors.includes("get") && errors.includes("set"))
+  } finally {
+    process.off("unhandledRejection", listener)
+  }
 })

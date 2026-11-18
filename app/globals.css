@@ -5045,6 +5045,9 @@ body:not([data-stage="home"]) .site-footer {
   font: 11px / 1.6 var(--mono);
   color: var(--faint);
 }
+.pd-type:empty {
+  display: none;
+}
 .pd-ask {
   margin-top: var(--space-1);
   font-size: var(--text-sm);

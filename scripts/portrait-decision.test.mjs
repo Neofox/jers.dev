@@ -8,7 +8,11 @@ import {
   interpret,
   estimateCostUsd,
   CACHED_INPUT_USD_PER_MILLION,
+  MODEL,
+  QUESTION_TEXT,
+  clientPayload,
 } from "../lib/portrait-decision.mjs"
+import { clientCatalog } from "../lib/portrait-catalog.mjs"
 
 const situation = { action: "open_project", itemId: "project:3i", recent: [] }
 
@@ -237,4 +241,33 @@ test("a mutated request cannot corrupt the next one", () => {
   }
   assert.equal(JSON.stringify(buildRequest(situation)), pristine)
   assert.equal(ITEMS["project:3i"].facts.includes("hijacked"), false)
+})
+
+test("sends the question text the drawer shows, from one source", () => {
+  const request = buildRequest(situation)
+  assert.deepEqual(
+    request.questions.map((q) => q.name),
+    Object.keys(QUESTION_TEXT),
+  )
+  for (const q of request.questions) {
+    assert.equal(q.type, QUESTION_TEXT[q.name].type)
+    assert.equal(q.instructions, QUESTION_TEXT[q.name].instructions)
+  }
+  assert.equal(request.model, MODEL)
+})
+
+test("the browser payload carries the catalog, the model and the question text", () => {
+  const payload = JSON.parse(JSON.stringify(clientPayload()))
+  assert.deepEqual(
+    { ...payload, model: undefined, questions: undefined },
+    {
+      ...JSON.parse(JSON.stringify(clientCatalog())),
+      model: undefined,
+      questions: undefined,
+    },
+  )
+  assert.equal(payload.model, MODEL)
+  assert.deepEqual(payload.questions, JSON.parse(JSON.stringify(QUESTION_TEXT)))
+  // Only what the drawer needs: no facts or asides leak to the browser.
+  assert.doesNotMatch(JSON.stringify(payload), /"facts"|"asides"/)
 })

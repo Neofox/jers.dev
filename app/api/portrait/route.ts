@@ -1,6 +1,5 @@
 import OpenAI from "openai"
-import { clientCatalog } from "@/lib/portrait-catalog.mjs"
-import { validateSituation } from "@/lib/portrait-decision.mjs"
+import { clientPayload, validateSituation } from "@/lib/portrait-decision.mjs"
 import { createPortraitService } from "@/lib/portrait-service.mjs"
 import { createGuardedJsonHandler } from "@/lib/request-guard.mjs"
 
@@ -14,5 +13,5 @@ const react = createPortraitService({ client })
 export const POST = createGuardedJsonHandler((body: unknown) => react(validateSituation(body)))
 
 export function GET() {
-  return Response.json(clientCatalog(), { headers: { "Cache-Control": "public, max-age=300" } })
+  return Response.json(clientPayload(), { headers: { "Cache-Control": "public, max-age=300" } })
 }

@@ -244,6 +244,13 @@ function init() {
       const expressions = data.expressions.filter((e) => typeof e === "string" && /^[a-z]+$/.test(e))
       catalog = { expressions, items: data.items }
       window.portraitKnows = (id) => typeof id === "string" && Object.hasOwn(catalog.items, id)
+      // Model and question text come from the server, the same source the request is built from.
+      if (typeof data.model === "string") $("pd-model").textContent = ` · ${data.model}`
+      for (const [name, question] of Object.entries(data.questions ?? {})) {
+        if (!$(`pd-q-${name}`) || typeof question?.instructions !== "string") continue
+        $(`pd-q-${name}`).textContent = question.instructions
+        $(`pd-t-${name}`).textContent = String(question.type ?? "")
+      }
       setTimeout(checkIdle, IDLE_MS)
     })
     .catch(() => {})

@@ -1582,8 +1582,8 @@
             <div class="pm-top"><span class="pm-room">Lesson · sample room</span>
               <div class="pm-layouts" role="group" aria-label="Layout"><button type="button" data-pm-layout="fifty" aria-pressed="true">Side by side</button><button type="button" data-pm-layout="small" aria-pressed="false">Small preview</button><button type="button" data-pm-layout="large" aria-pressed="false">Large preview</button></div></div>
             <div class="pm-stage" data-pm="stage" data-layout="fifty">
-              <div class="pm-tile remote" data-pm="remote"></div>
               <div class="pm-tile self" data-pm="self"></div>
+              <div class="pm-tile remote" data-pm="remote"></div>
             </div>
             <div class="pm-podbar" data-pm="podbar" hidden><span>Rotate (← →)</span><span>Zoom in/out (↑ ↓)</span><span class="pm-podbtns"><button type="button" data-pm-pod="left" aria-label="Rotate left">←</button><button type="button" data-pm-pod="right" aria-label="Rotate right">→</button><button type="button" data-pm-pod="in" aria-label="Zoom in">↑</button><button type="button" data-pm-pod="out" aria-label="Zoom out">↓</button></span></div>
             <div class="pm-controls">
@@ -1606,7 +1606,7 @@
     },
     mount(root) {
       const q = (k) => root.querySelector(`[data-pm="${k}"]`)
-      const st = { layout: "fifty", mic: true, cam: true, grant: false, pod: false, rot: 0, zoom: 1, rec: "idle", recStart: 0, joinedAt: Date.now() }
+      const st = { layout: "fifty", mic: true, cam: true, grant: false, pod: false, pan: 0, zoom: 1, rec: "idle", recStart: 0, joinedAt: Date.now() }
       let tick = null,
         toastTimer = null,
         recTimer = null,
@@ -1626,14 +1626,13 @@
         const micOn = me ? st.mic : true
         const scene = me
           ? ""
-          : `<div class="pm-scene" style="--rot:${st.rot}deg;--zoom:${st.zoom}" aria-hidden="true"><i class="pm-arena"></i><i class="pm-rider"></i></div>`
+          : '<img class="pm-scene" src="/assets/pivo-meet-arena.webp" alt="A rider on horseback in an indoor arena" draggable="false">'
         return `${camOn ? `<div class="pm-video">${scene}${me ? '<span class="pm-avatar sample">C</span>' : ""}</div>` : `<div class="pm-off"><span class="pm-avatar">C</span></div>`}
           <span class="pm-badge"><b>${me ? "Me" : "Guest"}</b><i class="pm-mic${micOn ? "" : " off"}" aria-label="${micOn ? "Microphone on" : "Microphone off"}"></i></span>
-          <span class="pm-sample">Sample video</span>`
+          <span class="pm-sample">${me ? "Sample video" : "Sample photo"}</span>`
       }
       function draw() {
         q("stage").dataset.layout = st.layout
-        q("remote").innerHTML = tile("remote")
         q("self").innerHTML = tile("self")
         root.querySelectorAll("[data-pm-layout]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.pmLayout === st.layout)))
         q("mic").setAttribute("aria-pressed", String(st.mic))
@@ -1642,7 +1641,7 @@
         q("podbar").hidden = !st.pod
         q("tip").textContent = st.grant
           ? st.pod
-            ? "Guest Control is on: use the arrows (or ← → ↑ ↓ keys) to move their camera."
+            ? "Hold an arrow button or arrow key to pan or zoom the guest camera."
             : "Guest Control is on. Press Camera control to move their camera."
           : "You can't move their camera. Ask guest to turn “Guest Control” on."
         const label = { idle: "Start recording", starting: "Starting...", stopping: "Stopping...", processing: "Processing..." }[st.rec]
@@ -1675,15 +1674,39 @@
         q("rec").setAttribute("aria-expanded", String(open))
         if (open) q("where").querySelector("[data-pm-save]").focus()
       }
-      function pod(dir) {
-        if (!st.pod) return
-        if (dir === "left") st.rot = Math.max(-40, st.rot - 10)
-        if (dir === "right") st.rot = Math.min(40, st.rot + 10)
-        if (dir === "in") st.zoom = Math.min(1.8, +(st.zoom + 0.1).toFixed(2))
-        if (dir === "out") st.zoom = Math.max(1, +(st.zoom - 0.1).toFixed(2))
-        draw()
+      const remote = q("remote")
+      remote.innerHTML = tile("remote")
+      let frame = 0
+      let heldInput = null
+      function drawCamera() {
+        remote.style.setProperty("--pan", `${st.pan}%`)
+        remote.style.setProperty("--zoom", st.zoom)
+      }
+      function moveCamera(dir, seconds) {
+        if (dir === "left") st.pan = Math.min(10, st.pan + seconds * 12)
+        if (dir === "right") st.pan = Math.max(-10, st.pan - seconds * 12)
+        if (dir === "in") st.zoom = Math.min(1.8, st.zoom + seconds * 0.48)
+        if (dir === "out") st.zoom = Math.max(1, st.zoom - seconds * 0.48)
+        drawCamera()
+      }
+      function stopCamera() {
+        cancelAnimationFrame(frame)
+        heldInput = null
+      }
+      function holdCamera(dir, input) {
+        stopCamera()
+        heldInput = input
+        moveCamera(dir, 0.1)
+        let previous = performance.now()
+        function advance(now) {
+          moveCamera(dir, Math.max(0, Math.min(now - previous, 50)) / 1000)
+          previous = now
+          frame = requestAnimationFrame(advance)
+        }
+        frame = requestAnimationFrame(advance)
       }
       function sheet(html) {
+        stopCamera()
         q("call").hidden = true
         q("sheet").innerHTML = html
         q("sheet").hidden = false
@@ -1707,7 +1730,8 @@
         q("toast").hidden = true
         setWhere(false)
         q("grant").checked = false
-        Object.assign(st, { rec: "idle", grant: false, pod: false, rot: 0, zoom: 1 })
+        Object.assign(st, { rec: "idle", grant: false, pod: false, pan: 0, zoom: 1 })
+        drawCamera()
         draw()
       }
       // "Start now" after leaving: a fresh call with a new clock and the same clean state.
@@ -1728,10 +1752,11 @@
         if (t.closest('[data-pm="pod"]')) {
           if (!st.grant) return toast("Camera control", "You can't move their camera. Ask guest to turn “Guest Control” on.")
           st.pod = !st.pod
+          if (!st.pod) stopCamera()
           return draw()
         }
         const pb = t.closest("[data-pm-pod]")
-        if (pb) return pod(pb.dataset.pmPod)
+        if (pb && st.pod && e.detail === 0) return moveCamera(pb.dataset.pmPod, 0.1)
         if (t.closest('[data-pm="rec"]')) {
           if (busy()) return
           if (st.rec === "idle") return setWhere(q("where").hidden)
@@ -1783,23 +1808,55 @@
       })
       q("grant").addEventListener("change", (e) => {
         st.grant = e.target.checked
-        if (!st.grant) st.pod = false
+        if (!st.grant) {
+          st.pod = false
+          stopCamera()
+        }
         draw()
       })
       root.addEventListener("keydown", (e) => {
         if (e.key === "Escape" && !q("where").hidden) return setWhere(false), q("rec").focus()
         if (e.key === "Escape" && q("sheet").querySelector("[data-pm-back]")) return resume()
-        if (!st.pod || e.target.closest("input, textarea, select")) return
+        if (!st.pod || q("call").hidden || e.target.closest("input, textarea, select")) return
         const map = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "in", ArrowDown: "out" }
-        if (map[e.key]) {
+        const buttonKey = e.key === " " || e.key === "Enter"
+        const dir = map[e.key] || (buttonKey && e.target.closest("[data-pm-pod]")?.dataset.pmPod)
+        if (dir) {
           e.preventDefault()
-          pod(map[e.key])
+          if (!e.repeat) holdCamera(dir, e.key)
         }
       })
+      root.addEventListener("keyup", (e) => {
+        if (heldInput === e.key) {
+          e.preventDefault()
+          stopCamera()
+        }
+      })
+      const podbar = q("podbar")
+      podbar.addEventListener("pointerdown", (e) => {
+        const button = e.target.closest("[data-pm-pod]")
+        if (!button || !st.pod || !e.isPrimary || e.button !== 0) return
+        button.setPointerCapture(e.pointerId)
+        holdCamera(button.dataset.pmPod, e.pointerId)
+      })
+      function releasePointer(e) {
+        if (heldInput === e.pointerId) stopCamera()
+      }
+      podbar.addEventListener("pointerup", releasePointer)
+      podbar.addEventListener("pointercancel", releasePointer)
+      podbar.addEventListener("lostpointercapture", releasePointer)
+      root.addEventListener("focusout", () => {
+        if (typeof heldInput === "string") stopCamera()
+      })
+      window.addEventListener("blur", stopCamera)
+      document.addEventListener("visibilitychange", stopCamera)
       draw()
       clocks()
       tick = setInterval(clocks, 1000)
       return () => {
+        stopCamera()
+        window.removeEventListener("blur", stopCamera)
+        document.removeEventListener("visibilitychange", stopCamera)
         clearInterval(tick)
         clearTimeout(toastTimer)
         clearTimeout(recTimer)

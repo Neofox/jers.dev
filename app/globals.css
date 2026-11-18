@@ -4118,26 +4118,13 @@ html[data-motion="on"] .illo.is-live .tr-arrow .ui-icon {
 }
 .pm-scene {
   position: absolute;
-  inset: -20%;
-  transform: translateX(calc(var(--rot) * -1.2px)) scale(var(--zoom));
-  transition: transform var(--dur-m) var(--ease-out);
-}
-.pm-arena {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 18%;
-  height: 34%;
-  background: linear-gradient(180deg, oklch(56% 0.06 70), oklch(44% 0.05 60));
-}
-.pm-rider {
-  position: absolute;
-  left: 46%;
-  bottom: 34%;
-  width: 14%;
-  aspect-ratio: 1.4;
-  border-radius: 40% 50% 30% 30%;
-  background: oklch(30% 0.03 50);
+  left: -12.5%;
+  width: 125%;
+  max-width: none;
+  height: 100%;
+  object-fit: cover;
+  object-position: 60% 62%;
+  transform: translateX(var(--pan, 0%)) scale(var(--zoom, 1));
 }
 .pm-avatar {
   display: grid;
@@ -4200,6 +4187,8 @@ html[data-motion="on"] .illo.is-live .tr-arrow .ui-icon {
   margin-left: auto;
 }
 .pm-podbtns button {
+  touch-action: none;
+  user-select: none;
   width: 40px;
   height: 40px;
   border: 1px solid var(--border-strong);
@@ -4393,7 +4382,6 @@ html[data-motion="on"] .illo.is-live .tr-arrow .ui-icon {
     border-top: 1px solid var(--border);
   }
   .pm-stage {
-    grid-template-columns: minmax(0, 1fr);
     min-height: 0;
   }
   .pm-tile {

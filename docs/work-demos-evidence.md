@@ -98,7 +98,7 @@ The portfolio uses four invented reports. Status changes update the queue counts
 - **Leaving:** Leave asks "Are you sure you want to leave this video call?", then "How was your call?" with 5 stars, "Tell us how we can improve?" and Skip/Submit. "Ready to start?" / "Start now" rejoins.
 
 **Simplified or synthetic**
-- No camera, microphone, device permission, Agora, network or recording is used. Videos are drawn sample tiles.
+- The self tile shows a sample avatar. The guest tile pans and zooms a still photograph by Jeremy T. Dyer, BLM Utah. Holding an arrow key or an on-screen arrow moves the view until release or the travel limit. The demo uses no live camera, microphone, Agora call or recording. [Original arena photograph](https://www.flickr.com/photos/76340031@N02/53003001579/).
 - The guest's grant is a local checkbox.
 - The recording clock runs in real time from 00:00.
 - The thank-you heading is paraphrased; the source shows a thank-you popup with "Go to customer support for help".

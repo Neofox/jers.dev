@@ -168,6 +168,41 @@ test("estimates cost from usage", () => {
   )
 })
 
+test("estimates a zero cost from missing or non-numeric usage", () => {
+  for (const usage of [
+    null,
+    undefined,
+    "nope",
+    {},
+    { input_tokens: "1000" },
+    { input_tokens: NaN },
+    { input_tokens: Infinity },
+    { input_tokens: -5 },
+    { input_tokens: null, input_tokens_details: { cached_tokens: 10 } },
+  ]) {
+    assert.equal(estimateCostUsd(usage), 0, JSON.stringify(usage))
+  }
+  // A non-numeric cached count is ignored: everything is billed as uncached.
+  assert.equal(estimateCostUsd({ input_tokens: 1_000_000, input_tokens_details: { cached_tokens: "x" } }), 0.1)
+})
+
+test("the aside answer carries the chosen aside's text, also when the portrait stays quiet", () => {
+  const text = ITEMS["project:3i"].asides[1].text
+  assert.equal(interpret(answers(), situation).questions.aside.text, text)
+  const quiet = interpret(
+    answers({ should_react: { type: "predicate", name: "should_react", probability: 0.1 } }),
+    situation,
+  )
+  assert.equal(quiet.asideText, null)
+  assert.equal(quiet.questions.aside.text, text)
+  const none = interpret(
+    answers({ aside: { type: "choice", name: "aside", choice: "none", probabilities: [], confidence: 0.9 } }),
+    situation,
+  )
+  assert.equal(none.questions.aside.text, null)
+  assert.equal(none.asideText, null)
+})
+
 test("sanitizes answer probabilities before they leave the server", () => {
   const valid = { value: "smile", probability: 0.01 }
   const r = interpret(

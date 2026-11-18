@@ -66,6 +66,30 @@ test("every demo item matches a demo chapter", () => {
     const key = new RegExp(`^ {4}(?:${project}|"${project}"): \\{`, "m").exec(visuals)
     assert.ok(key, `${id}: no visuals entry for ${project}`)
     const projectVisuals = blockAt(visuals, key.index)
-    assert.match(projectVisuals, new RegExp(`\\b${chapter}: \\{ demo: "`), `${id}: "${chapter}" is not a ${project} demo`)
+    assert.match(
+      projectVisuals,
+      new RegExp(`\\b${chapter}: \\{ demo: "`),
+      `${id}: "${chapter}" is not a ${project} demo`,
+    )
   }
+})
+
+test("project and career items match projectOrder and the career chapters in portfolio.js", () => {
+  const source = readFileSync(new URL("../public/portfolio.js", import.meta.url), "utf8")
+  const order = /const projectOrder = (\[[^\]]*\])/.exec(source)
+  assert.ok(order, "no projectOrder")
+  const projects = JSON.parse(order[1]).map((id) => `project:${id}`)
+  // Career chapters: the `id: "<chapter>"` entries of the `const chapters = [` array only.
+  const start = source.indexOf("const chapters = [")
+  const end = source.indexOf("\n  ]\n", start)
+  assert.ok(start >= 0 && end > start, "no career chapters")
+  const block = source.slice(start, end)
+  const careers = [...block.matchAll(/^ {6}id: "([a-z0-9-]+)",$/gm)].map((m) => `career:${m[1]}`)
+  assert.ok(careers.length >= 5, `found ${careers.length} chapters`)
+  const ids = (kind) =>
+    Object.keys(ITEMS)
+      .filter((id) => id.startsWith(`${kind}:`))
+      .sort()
+  assert.deepEqual(ids("project"), [...projects].sort())
+  assert.deepEqual(ids("career"), [...careers].sort())
 })

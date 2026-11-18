@@ -1,5 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
+import { APIConnectionTimeoutError, InternalServerError } from "openai"
 import { ITEMS } from "../lib/portrait-catalog.mjs"
 import { estimateCostUsd, validateSituation } from "../lib/portrait-decision.mjs"
 import { createPortraitService } from "../lib/portrait-service.mjs"
@@ -73,12 +74,12 @@ test("caches identical situations and shares in-flight calls", async () => {
 
 test("falls back on upstream failure without caching it", async () => {
   const client = fakeClient(async (_params, n) => {
-    if (n === 1) throw new Error("timeout")
+    if (n === 1) throw new Error("boom")
     return decision()
   })
   const react = createPortraitService({ client })
   const failed = await react(situation)
-  assert.equal(failed.fallbackReason, "upstream")
+  assert.equal(failed.fallbackReason, "upstream_error")
   assert.equal(failed.expression, ITEMS["project:3i"].defaultExpression)
   assert.equal(failed.react, true)
   const retried = await react(situation)
@@ -88,10 +89,12 @@ test("falls back on upstream failure without caching it", async () => {
 })
 
 test("upstream fallbacks report the measured elapsed time", async () => {
-  const client = fakeClient(() => new Promise((_resolve, reject) => setTimeout(() => reject(new Error("timeout")), 40)))
+  const client = fakeClient(
+    () => new Promise((_resolve, reject) => setTimeout(() => reject(new APIConnectionTimeoutError()), 40)),
+  )
   const react = createPortraitService({ client })
   const failed = await react(situation)
-  assert.equal(failed.fallbackReason, "upstream")
+  assert.equal(failed.fallbackReason, "upstream_timeout")
   assert.ok(failed.latencyMs >= 35, `latencyMs was ${failed.latencyMs}`)
   assert.equal(failed.usage, null)
   assert.equal(failed.estimatedCostUsd, 0)
@@ -172,4 +175,21 @@ test("rejects a stale catalog item with 400 without calling upstream", async () 
   assert.equal(ok.status, 200)
   assert.equal((await ok.json()).expression, "laugh")
   assert.equal(client.calls.length, 1)
+})
+
+test("tells a timeout apart from any other upstream error, also for shared in-flight calls", async () => {
+  for (const [error, reason] of [
+    [new APIConnectionTimeoutError(), "upstream_timeout"],
+    [new InternalServerError(500, undefined, "boom", new Headers()), "upstream_error"],
+    [new TypeError("fetch failed"), "upstream_error"],
+  ]) {
+    const client = fakeClient(async () => {
+      throw error
+    })
+    const react = createPortraitService({ client })
+    const [first, shared] = await Promise.all([react(situation), react({ ...situation })])
+    assert.equal(client.calls.length, 1)
+    assert.equal(first.fallbackReason, reason, error.constructor.name)
+    assert.equal(shared.fallbackReason, reason, `shared ${error.constructor.name}`)
+  }
 })

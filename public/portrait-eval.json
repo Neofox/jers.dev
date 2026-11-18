@@ -6,10 +6,18 @@
   "scenarios": 22,
   "expressionAgreement": 0.882,
   "reactAgreement": 1,
+  "fallbackPasses": 5,
   "heldOut": {
     "scenarios": 8,
     "expressionAgreement": 1,
-    "reactAgreement": 0.875
+    "reactAgreement": 0.875,
+    "fallbackPasses": 0
+  },
+  "defaultBaseline": {
+    "expressionAgreement": 0.824,
+    "heldOut": {
+      "expressionAgreement": 1
+    }
   },
   "avgLatencyMs": 420,
   "totalCostUsd": 0.003153,

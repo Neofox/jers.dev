@@ -9,6 +9,9 @@
 // - expression: scored only where the portrait is expected to react. The face it would show (the
 //   model's choice when its confidence clears the threshold, otherwise the item's default face) must
 //   be one of the acceptable faces.
+// - fallbackPasses: expression passes that came from the item's default face after a fallback.
+// - defaultBaseline: expression agreement per set if the item's default face were always shown,
+//   computed from the scenarios alone (no API call). The model's figures should beat it.
 // `status` is copied from the scenarios file: "draft" until Jérôme signs the expectations off.
 // If any call fails, the summary is printed but public/portrait-eval.json is left untouched.
 
@@ -24,6 +27,7 @@ import {
   interpret,
   validateSituation,
 } from "../lib/portrait-decision.mjs"
+import { defaultBaseline, fallbackPasses } from "./portrait-eval-figures.mjs"
 
 const PRODUCTION_TIMEOUT_MS = 4000
 const SETS = ["tuning", "heldOut"]
@@ -132,8 +136,9 @@ function agreement(results) {
       scenarios: results.length,
       expressionAgreement: ratio(face, faces.length),
       reactAgreement: ratio(react, results.length),
+      fallbackPasses: fallbackPasses(results),
     },
-    text: `expression ${face}/${faces.length} · react ${react}/${results.length}`,
+    text: `expression ${face}/${faces.length} · react ${react}/${results.length} · ${fallbackPasses(results)} via default face`,
   }
 }
 
@@ -162,6 +167,7 @@ for (const set of SETS) {
 
 const tuning = agreement(results.filter((r) => r.set === "tuning"))
 const heldOut = agreement(results.filter((r) => r.set === "heldOut"))
+const baseline = defaultBaseline(scenarios, SETS)
 const answered = results.filter((r) => !r.got.error)
 const latencies = answered.map((r) => r.got.latencyMs)
 const summary = {
@@ -171,6 +177,10 @@ const summary = {
   catalogVersion: CATALOG_VERSION,
   ...tuning.figures,
   heldOut: heldOut.figures,
+  defaultBaseline: {
+    expressionAgreement: baseline.tuning,
+    heldOut: { expressionAgreement: baseline.heldOut },
+  },
   avgLatencyMs: latencies.length ? Math.round(latencies.reduce((a, b) => a + b, 0) / latencies.length) : null,
   totalCostUsd: round(
     results.reduce((sum, r) => sum + r.got.costUsd, 0),
@@ -185,6 +195,7 @@ const slow = latencies.filter((ms) => ms > PRODUCTION_TIMEOUT_MS).length
 const fallbacks = answered.filter((r) => r.got.fallback).length
 console.log(`\ntuning   ${tuning.text}`)
 console.log(`held-out ${heldOut.text}`)
+console.log(`default-face baseline: expression ${baseline.tuning} tuning · ${baseline.heldOut} held-out`)
 console.log(
   `avg ${summary.avgLatencyMs ?? "–"} ms, max ${latencies.length ? Math.max(...latencies) : "–"} ms, ${slow} over the production` +
     ` ${PRODUCTION_TIMEOUT_MS} ms timeout · ${failed} failed · default-face fallbacks ${fallbacks} · $${summary.totalCostUsd}`,

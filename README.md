@@ -25,24 +25,26 @@ The updated professional content follows the latest Korean résumé, including B
 
 - `app/portfolio.json`: trusted, server-rendered markup from the approved design; never populate it with user content.
 - `app/globals.css`: local fonts, layout and motion preferences.
-- `public/portfolio.js`: navigation, case studies, accessible dialogs and the living portrait (dock, speech bubble, mute, "why this face?" drawer).
-- `app/api/portrait`: the `POST /api/portrait` route.
+- `public/portfolio.js`: navigation, case studies, accessible dialogs, and the `portrait:trigger` events the living portrait reacts to.
+- `public/portrait.mjs`: the living portrait in the browser (faces, dock, speech bubble, mute, "why this face?" drawer).
+- `public/portrait-core.mjs`: the portrait's request scheduler (gap, per-visit cap, latest-response-wins, local fallbacks) and other DOM-free helpers, unit-tested.
+- `app/api/portrait`: `POST /api/portrait` (one reaction for `{action, itemId, recent}`) and `GET /api/portrait` (the browser catalog: item IDs, labels and default faces, plus the model name and the question text the drawer shows; no facts or asides).
 - `lib/portrait-catalog.mjs`: the catalog of items, default faces and the approved asides (versioned by `CATALOG_VERSION`).
 - `lib/portrait-decision.mjs`: request builder, thresholds, refusal and fallback rules, cost calculation.
 - `lib/portrait-service.mjs`: bounded cache and upstream limits around the OpenAI call.
 - `lib/request-guard.mjs`: same-origin checks, body limits and per-visitor throttling.
-- `scripts/portrait-eval.mjs`, `scripts/portrait-scenarios.json`: evaluation script and its signed-off scenarios.
+- `scripts/portrait-eval.mjs`, `scripts/portrait-scenarios.json`, `scripts/portrait-eval-figures.mjs`: evaluation script, its signed-off scenarios and the figures it reports.
 - `public/assets`: product captures, portrait, fonts and current résumé PDFs. `public/assets/portrait` holds the expression images.
 
 ## Living portrait
 
 The portrait follows visitors and reacts to what they look at: opening a project or demo, downloading the résumé, dwelling on a section, reaching the end, idling, or coming back to the tab. Each reaction is a facial expression plus, sometimes, a short first-person aside. The decision is made live by OpenAI's Decisions API (`gpt-6-luna`) through `POST /api/portrait`. The asides are written and approved ahead of time in `lib/portrait-catalog.mjs`; nothing is generated at runtime. A "why this face?" drawer shows the trigger, the questions asked, the probabilities, latency, estimated cost and whether the cache was hit. The drawer shows the `should_react` probability only, since predicates carry no confidence.
 
-What is sent: the browser posts only `{action, itemId, recent}`, and only catalog item IDs and action types reach OpenAI. No text, URLs, identifiers or other visitor data are sent, and requests are not logged by the application. If anything fails (no key, timeout, refusal, per-visit cap, offline) the portrait keeps the item's default face with no aside and no error UI. A mute control turns reactions off, and with reduced motion or the motion toggle off the face only crossfades.
+What is sent: the browser posts only `{action, itemId, recent}`, and only catalog item IDs and action types reach OpenAI. No text, URLs, identifiers or other visitor data are sent, and requests are not logged by the application. If anything fails (no key, timeout, refusal, server error) the portrait shows the item's default face with no aside and no error UI; the drawer says why in plain words. Past the per-visit cap or while offline nothing is sent: the face stays as it is, and only opening a project, a demo or the résumé switches to that item's default face, at most once every 10 seconds. An aside that arrives while a dialog is open or the tab is hidden waits until the page is visible again (and is dropped after 30 seconds). On phones a tap on the speech bubble dismisses it. A mute control turns reactions off, and with reduced motion or the motion toggle off the face only crossfades.
 
 The expression images are AI-generated variants of Jérôme's own photo, and the portrait caption and drawer say so.
 
-Evaluation: `bun run eval:portrait` runs the signed-off scenarios against the live API (needs `OPENAI_API_KEY` in `.env.local`, costs well under a cent) and rewrites `public/portrait-eval.json`, which the drawer links to. It is run by hand, not in CI. Scenarios are split into a tuning set and a held-out set, and misses are published as they come.
+Evaluation: `bun run eval:portrait` runs the signed-off scenarios against the live API (needs `OPENAI_API_KEY` in `.env.local`, costs well under a cent) and rewrites `public/portrait-eval.json`, which the drawer links to. It is run by hand, not in CI. Scenarios are split into a tuning set and a held-out set, and misses are published as they come. The summary also gives a `defaultBaseline` (the expression agreement if each item's default face were always shown) and `fallbackPasses` (passes that came from that default face after a low-confidence or refused answer), so the model's figures can be read against what a fixed face would score.
 
 ## Release on Vercel
 

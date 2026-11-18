@@ -669,60 +669,11 @@
   })
   reducedMotion.addEventListener("change", syncMotion)
 
-  let currentExample = "inbox",
-    exampleReturn = "work/3i"
-  function validReturn(path) {
-    if (typeof path !== "string") return "work/3i"
-    const [base, query = ""] = path.split("?")
-    if (!/^work\/(3i|enhans|rubiwin|translater|kaltoe-timer|neoharness|gleamstral)(?:\/[a-z-]+){0,2}$/.test(base))
-      return "work/3i"
-    const params = new URLSearchParams(query)
-    for (const [key, value] of params) {
-      if (key === "filter" && !["all", "professional", "independent"].includes(value)) return "work/3i"
-      if (key === "page" && !/^\d{1,3}$/.test(value)) return "work/3i"
-      if (!["filter", "page"].includes(key)) return "work/3i"
-    }
-    return path
-  }
-
-  function examplePath(scenario, from) {
-    return "playground/" + scenario + "?from=" + encodeURIComponent(validReturn(from))
-  }
-  function renderCaseApproach() {
-    const mapping = {
-      "3i": ["access", "When should an agent act?"],
-      translater: ["inbox", "When should a draft change?"],
-      neoharness: ["access", "When should an agent act?"],
-      rubiwin: ["refund", "When should a price be applied?"],
-      enhans: ["access", "Where should AI stop?"],
-    }
-    const entry = mapping[currentProject]
-    $("case-approach").hidden = !entry
-    if (!entry) return
-    $("case-approach").href =
-      "#" + examplePath(entry[0], workPath(currentProject, currentVisual, "overview", currentFilter))
-    $("case-approach").innerHTML =
-      '<span class="case-approach-label">AI demo · try a situation</span><strong>' +
-      entry[1] +
-      ' <span aria-hidden="true">→</span></strong>'
-  }
-  function renderExample(route, entering) {
-    if (route.scenario && (entering || currentExample !== route.scenario)) {
-      fillExample(route.scenario)
-    }
-    currentExample = route.scenario
-    exampleReturn = route.returnPath
-    const origin = projects[exampleReturn.split("/")[1]]
-    $("example-return").setAttribute("href", "#" + exampleReturn)
-    $("example-return").innerHTML =
-      (route.hasOrigin ? "Back to " + origin.name : "Explore professional work") + ' <span aria-hidden="true">→</span>'
-  }
-
   function parseRoute(hash) {
     const [path, search = ""] = hash.replace(/^#/, "").split("?"),
       parts = path.split("/")
     const name = parts[0] === "studio" ? "home" : parts[0],
-      stage = ["home", "work", "about", "playground"].includes(name) ? name : "home"
+      stage = ["home", "work", "about"].includes(name) ? name : "home"
     let filter = new URLSearchParams(search).get("filter")
     let project = Object.hasOwn(projects, parts[1]) ? parts[1] : "3i"
     if (!["professional", "independent"].includes(filter)) filter = projects[project].category
@@ -735,9 +686,6 @@
     return {
       stage,
       project,
-      hasOrigin: new URLSearchParams(search).has("from"),
-      scenario: ["inbox", "access", "refund"].includes(parts[1]) ? parts[1] : null,
-      returnPath: validReturn(new URLSearchParams(search).get("from")),
       visual: p.chapters.some((c) => c[0] === parts[2]) ? parts[2] : p.chapters[0][0],
       page: Math.max(0, Math.min(999, parseInt(new URLSearchParams(search).get("page"), 10) || 0)),
       inspector: ["overview", "role", "decisions", "sources"].includes(parts[3]) ? parts[3] : "overview",
@@ -786,7 +734,6 @@
     if ($("work-directory").open) $("work-directory").close()
     if ($("detail-dialog").open) $("detail-dialog").close()
     if ($("image-dialog").open) $("image-dialog").close()
-    if (activeStage === "playground" && stageChanged) resetEvaluation()
     document.querySelectorAll(".stage").forEach((el) => (el.hidden = el.id !== "stage-" + r.stage))
     document.querySelectorAll(".site-nav a").forEach((a) => {
       if (a.dataset.nav === r.stage) a.setAttribute("aria-current", "page")
@@ -803,13 +750,14 @@
       currentVisual = r.visual
       currentInspector = r.inspector
       shareProject(r.project)
+      emitTrigger("open_project", "project:" + r.project)
+      if (visualChanged || caseChanged) emitTrigger("open_demo", demoItem(r.project, r.visual))
       if (caseChanged) {
         renderCase()
         if (!stageChanged) animateIn($("project-story"), true)
       }
       else if (visualChanged) {
         renderChapters()
-        renderCaseApproach()
         renderVisual()
         if (!stageChanged) animateIn($("visual-stage"), true)
       }
@@ -827,7 +775,6 @@
       if (r.fullCareer) scrollTarget = $("chapter-list")
       else if (r.chapterExplicit && (stageChanged || chapterChanged)) scrollTarget = $("career-" + r.chapter)
     }
-    if (r.stage === "playground") renderExample(r, stageChanged)
     if (stageChanged) {
       revealStage($("stage-" + r.stage))
       window.scrollTo({ top: 0, behavior: "instant" })
@@ -850,7 +797,6 @@
       home: "Home",
       work: $("work-context-path").textContent || projects[r.project].name,
       about: "Career and background",
-      playground: "AI demo",
     }[r.stage]
     $("stage-announcement").textContent = label
     document.title = label + " — Jérôme Schaeffer"
@@ -1367,7 +1313,6 @@
     $("previous-project").parentElement.setAttribute("aria-label", "More " + unit + "s")
     $("previous-project").innerHTML = '<span aria-hidden="true">←</span> <span class="sr-only">Previous ' + unit + ' </span>' + nameOf(previous)
     $("next-project").innerHTML = '<span class="sr-only">Next ' + unit + ' </span>' + nameOf(next) + ' <span aria-hidden="true">→</span>'
-    renderCaseApproach()
     renderChapters()
     renderVisual()
     staggerIn([...document.querySelectorAll("#case-highlights li, #case-did li")])
@@ -4156,6 +4101,7 @@
     .join("")
   function openImage(key) {
     const im = imageAssets[key]
+    if (activeStage === "work") emitTrigger("open_demo", demoItem(currentProject, currentVisual), true)
     imageOpener = document.activeElement
     $("lightbox-title").textContent = im.title
     $("lightbox-image").src = im.src
@@ -4249,13 +4195,9 @@
         direction = b.id === "next-project" ? 1 : -1
       go(workPath(ids[(ids.indexOf(currentProject) + direction + ids.length) % ids.length], undefined, "overview"))
     } else if (b.id === "surprise") {
-      const choices = [...projectOrder, "playground"]
-      const id = choices[Math.floor(Math.random() * choices.length)]
-      if (id === "playground") go("playground")
-      else {
-        shareProject(id)
-        go(workPath(id, undefined, "overview", projects[id].category))
-      }
+      const id = projectOrder[Math.floor(Math.random() * projectOrder.length)]
+      shareProject(id)
+      go(workPath(id, undefined, "overview", projects[id].category))
     } else if (b.id === "dialog-career") {
       $("detail-dialog").close()
       go("about/" + currentChapter)
@@ -4268,7 +4210,7 @@
       !e.shiftKey &&
       !e.altKey &&
       (!b.target || b.target === "_self") &&
-      /^#(?:home|work|about|playground|studio)(?:[/?]|$)/.test(b.getAttribute("href") || "")
+      /^#(?:home|work|about|studio)(?:[/?]|$)/.test(b.getAttribute("href") || "")
     ) {
       e.preventDefault()
       go(b.getAttribute("href").slice(1))
@@ -4279,275 +4221,75 @@
     $("main").focus({ preventScroll: true })
   })
 
-  // User-triggered requests only. Classification and scores come from the API.
-  const examples = {
-    inbox:
-      "A translation is close, but too formal. AI would revise the draft while keeping the previous version available. The person can compare both versions before using either one.",
-    access:
-      "An AI agent is asked to change a shared file. The request may affect other people. Should the agent apply the change, prepare it for approval, or ask a person to review its scope first?",
-    refund:
-      "A carrier offer has a suggested price based on matching pricing rules. AI could fill a draft, suggest a price for confirmation, or ask a person to review it before the offer changes.",
+  // Portrait triggers: announce what the visitor is doing as `portrait:trigger` events whose
+  // detail is { action, itemId }, using the catalog IDs in lib/portrait-catalog.mjs. The portrait
+  // UI listens for them; nothing here depends on it being present.
+  const lastTrigger = {}
+  // Emits only when the item differs from the last one emitted for that action, unless forced
+  // (a discrete click such as opening a capture).
+  function emitTrigger(action, itemId, force = false) {
+    if (!itemId || (!force && lastTrigger[action] === itemId)) return
+    if (window.portraitKnows && !window.portraitKnows(itemId)) return
+    lastTrigger[action] = itemId
+    document.dispatchEvent(new CustomEvent("portrait:trigger", { detail: { action, itemId } }))
   }
-  const controls = ["ambiguity", "consequences", "reversibility"].map($)
-  const aiNames = { automate: "Automate", assist: "Assist", human_review: "Human review" }
-  const categoryMeanings = {
-    automate:
-      "A candidate for automatic execution within explicit limits, with ways to monitor, correct and override it.",
-    assist: "AI can prepare or suggest the next step while a person confirms what happens.",
-    human_review: "Keep a person responsible for reviewing the situation before anything is carried out.",
-  }
-  let aiRevision = 0,
-    aiController = null,
-    aiTimeout = null
-  function syncInputs() {
-    document
-      .querySelectorAll("[data-example]")
-      .forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.example === $("scenario").value)))
-    controls.forEach((input, i) => {
-      const label = (i === 2 ? ["Hard to undo", "Partly reversible", "Easy to undo"] : ["Low", "Medium", "High"])[
-        Number(input.value)
-      ]
-      $(input.id + "-label").textContent = label
-      input.setAttribute("aria-valuetext", label)
-    })
-    $("character-count").textContent = $("situation").value.length.toLocaleString("en-US") + " / 1,200"
-  }
-  function resetEvaluation() {
-    document
-      .querySelectorAll("#evaluation-result, #evaluation-result *")
-      .forEach((el) => el.getAnimations().forEach((a) => a.cancel()))
-    $("evaluation-result").removeAttribute("data-result")
-    aiRevision++
-    aiController?.abort()
-    aiController = null
-    clearTimeout(aiTimeout)
-    aiTimeout = null
-    $("evaluation-result").setAttribute("aria-busy", "false")
-    $("evaluate-situation").disabled = false
-    $("evaluate-situation").innerHTML = 'Evaluate situation <span aria-hidden="true">↗</span>'
-    $("cancel-evaluation").hidden = true
-    $("ai-bars").hidden = true
-    $("ai-bars").replaceChildren()
-    $("ai-note").hidden = true
-    $("category-reading").hidden = true
-    $("ai-choice").textContent = "Ready when you are."
-    $("ai-status").textContent = "Evaluate your current situation to see a classification and probabilities."
-    $("situation-error").hidden = true
-    $("situation").removeAttribute("aria-invalid")
-  }
-  function fillExample(id) {
-    if (!Object.hasOwn(examples, id)) return
-    resetEvaluation()
-    $("situation").value = examples[id]
-    $("scenario").value = id
-    const values = { inbox: [0, 0, 2], access: [1, 2, 0], refund: [1, 1, 1] }[id]
-    controls.forEach((input, i) => (input.value = values[i]))
-    syncInputs()
-    animateIn($("situation"), true)
-  }
-  document
-    .querySelectorAll("[data-example]")
-    .forEach((button) => button.addEventListener("click", () => fillExample(button.dataset.example)))
-  $("scenario").addEventListener("change", () => {
-    if ($("scenario").value) fillExample($("scenario").value)
+  const demoItem = (project, visual) => (visuals[project]?.[visual]?.demo ? "demo:" + project + "/" + visual : null)
+  document.addEventListener("click", (e) => {
+    if (e.target.closest?.('a[href$=".pdf"]')) emitTrigger("download_resume", "event:resume")
   })
-  $("clear-situation").addEventListener("click", () => {
-    resetEvaluation()
-    $("situation").value = ""
-    $("scenario").value = ""
-    syncInputs()
-    $("situation").focus({ preventScroll: true })
-  })
-  $("situation").addEventListener("input", () => {
-    resetEvaluation()
-    $("scenario").value = ""
-    syncInputs()
-  })
-  controls.forEach((input) =>
-    input.addEventListener("input", () => {
-      resetEvaluation()
-      syncInputs()
-    }),
+  // Dwell: hover or keyboard focus resting on a home selection, workplace or career entry for 700 ms.
+  const dwellSelector = ".home-selection a[data-project], .workplaces a, .career-item"
+  let dwellTarget = null,
+    dwellTimer = 0
+  function dwellItem(el) {
+    if (el.matches(".career-item")) return "career:" + el.dataset.chapterItem
+    if (el.dataset.project) return "project:" + el.dataset.project
+    return "project:" + parseRoute(el.getAttribute("href") || "").project
+  }
+  function startDwell(el) {
+    if (el === dwellTarget) return
+    clearTimeout(dwellTimer)
+    dwellTarget = el
+    dwellTimer = setTimeout(() => {
+      dwellTarget = null
+      if (el.isConnected && !el.closest("[hidden]")) emitTrigger("dwell", dwellItem(el))
+    }, 700)
+  }
+  function stopDwell(el) {
+    if (el !== dwellTarget) return
+    clearTimeout(dwellTimer)
+    dwellTarget = null
+  }
+  // pointerenter/pointerleave do not bubble: listen in the capture phase and match the target itself.
+  document.addEventListener(
+    "pointerenter",
+    (e) => {
+      if (e.pointerType !== "touch" && e.target.matches?.(dwellSelector)) startDwell(e.target)
+    },
+    true,
   )
-  $("cancel-evaluation").addEventListener("click", () => {
-    resetEvaluation()
-    $("ai-status").textContent = "Request cancelled. You can edit the situation or evaluate again."
-    $("evaluate-situation").focus({ preventScroll: true })
+  document.addEventListener("pointerleave", (e) => stopDwell(e.target), true)
+  document.addEventListener("focusin", (e) => {
+    const el = e.target.closest?.(dwellSelector)
+    if (el) startDwell(el)
   })
-  function decisionEndpoint() {
-    return "/api/decision"
-  }
-
-  function revealDecision(choice) {
-    const panel = $("evaluation-result")
-    panel.dataset.result = choice
-    if (!motionEnabled()) return
-    playAnimation(
-      panel,
-      [
-        { boxShadow: "0 0 0 0 oklch(85% .12 170 / 0)", transform: "translateY(5px)" },
-        { boxShadow: "0 0 40px 2px oklch(85% .12 170 / .16)", transform: "translateY(0)", offset: 0.45 },
-        { boxShadow: "0 0 0 0 oklch(85% .12 170 / 0)", transform: "translateY(0)" },
-      ],
-      { duration: 1000, easing: "ease-out" },
-    )
-    playAnimation(
-      $("ai-choice"),
-      [
-        { opacity: 0, transform: "translateY(12px)", filter: "blur(5px)" },
-        { opacity: 1, transform: "translateY(0)", filter: "blur(0)" },
-      ],
-      { duration: 600, easing: "cubic-bezier(.16,1,.3,1)" },
-    )
-    document
-      .querySelectorAll("#ai-bars .ai-track i")
-      .forEach((bar, i) =>
-        playAnimation(bar, [{ transform: "scaleX(0)" }, { transform: "scaleX(1)" }], {
-          duration: 750,
-          delay: i * 90,
-          easing: "cubic-bezier(.16,1,.3,1)",
-          fill: "backwards",
-        }),
-      )
-    playAnimation(
-      $("category-reading"),
-      [
-        { opacity: 0, transform: "translateY(8px)" },
-        { opacity: 1, transform: "translateY(0)" },
-      ],
-      { duration: 450, delay: 250, easing: "ease-out", fill: "backwards" },
-    )
-  }
-
-  function validateDecision(result) {
-    if (
-      !result ||
-      !Object.hasOwn(aiNames, result.choice) ||
-      !Array.isArray(result.probabilities) ||
-      result.probabilities.length !== 3
-    )
-      throw new Error("The response could not be read. Please try again.")
-    const values = Object.keys(aiNames).map((value) => {
-      const entries = result.probabilities.filter((p) => p && p.value === value)
-      if (
-        entries.length !== 1 ||
-        !Number.isFinite(entries[0].probability) ||
-        entries[0].probability < 0 ||
-        entries[0].probability > 1
-      )
-        throw new Error("The response contained invalid probabilities. Please try again.")
-      return entries[0]
-    })
-    return values
-  }
-  $("decision-form").addEventListener("submit", async (e) => {
-    e.preventDefault()
-    if (aiController) return
-    const situation = $("situation").value.trim(),
-      values = controls.map((c) => Number(c.value))
-    if (situation.length < 10 || situation.length > 1200) {
-      $("situation-error").textContent = "Enter between 10 and 1,200 characters, excluding surrounding spaces."
-      $("situation-error").hidden = false
-      $("situation").setAttribute("aria-invalid", "true")
-      $("situation").focus({ preventScroll: true })
-      return
-    }
-    if (values.some((v) => !Number.isInteger(v) || v < 0 || v > 2)) return
-    resetEvaluation()
-    const revision = ++aiRevision,
-      controller = new AbortController()
-    aiController = controller
-    let timedOut = false
-    aiTimeout = setTimeout(() => {
-      timedOut = true
-      controller.abort()
-    }, 25000)
-    $("evaluate-situation").disabled = true
-    $("evaluate-situation").textContent = "Evaluating…"
-    $("cancel-evaluation").hidden = false
-    $("evaluation-result").setAttribute("aria-busy", "true")
-    $("ai-choice").textContent = "Evaluating your situation…"
-    $("ai-status").textContent = "Waiting for OpenAI’s response. You can cancel or edit your input."
-    try {
-      const response = await fetch(decisionEndpoint(), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        signal: controller.signal,
-        body: JSON.stringify({ situation, ambiguity: values[0], consequences: values[1], reversibility: values[2] }),
-      })
-      let result
-      try {
-        result = await response.json()
-      } catch {
-        throw new Error("The evaluation is unavailable right now. Please try again.")
-      }
-      if (revision !== aiRevision) return
-      if (timedOut) throw new DOMException("Timed out", "AbortError")
-      if (!response.ok) {
-        const fallback = {
-          422: "This situation could not be evaluated. Try rephrasing it.",
-          429: "The evaluation limit has been reached. Please try again later.",
-          503: "The evaluation is temporarily unavailable. Please try again later.",
-        }
-        throw new Error(
-          typeof result?.error === "string"
-            ? result.error
-            : fallback[response.status] || "The evaluation failed. Please try again.",
-        )
-      }
-      const probabilities = validateDecision(result)
-      $("ai-choice").textContent = aiNames[result.choice]
-      $("ai-status").textContent = "OpenAI’s classification for this situation and these constraints."
-      $("ai-bars").replaceChildren()
-      for (const p of probabilities) {
-        const row = document.createElement("div")
-        row.className = "ai-bar-row"
-        row.dataset.selected = String(p.value === result.choice)
-        const label = document.createElement("span")
-        label.textContent = aiNames[p.value]
-        const track = document.createElement("span")
-        track.className = "ai-track"
-        track.setAttribute("aria-hidden", "true")
-        const bar = document.createElement("i")
-        bar.style.width = p.probability * 100 + "%"
-        track.append(bar)
-        const score = document.createElement("span")
-        score.textContent = (p.probability * 100).toFixed(1) + "%"
-        row.append(label, track, score)
-        $("ai-bars").append(row)
-      }
-      $("ai-bars").hidden = false
-      $("ai-note").hidden = false
-      $("ai-note").textContent =
-        "Model-estimated probabilities, not guarantees." +
-        (result.cached ? " Previously evaluated for the same inputs." : "")
-      $("category-meaning").textContent = categoryMeanings[result.choice]
-      $("category-reading").hidden = false
-      revealDecision(result.choice)
-    } catch (error) {
-      if (revision !== aiRevision) return
-      $("ai-bars").hidden = true
-      $("ai-note").hidden = true
-      $("category-reading").hidden = true
-      $("ai-choice").textContent = "No evaluation returned."
-      $("ai-status").textContent =
-        timedOut || error.name === "AbortError"
-          ? "The request timed out after 25 seconds. Please try again."
-          : error instanceof TypeError
-            ? "Unable to connect. Check your connection and try again."
-            : error.message
-    } finally {
-      if (revision === aiRevision) {
-        clearTimeout(aiTimeout)
-        aiTimeout = null
-        aiController = null
-        $("evaluation-result").setAttribute("aria-busy", "false")
-        $("evaluate-situation").disabled = false
-        $("evaluate-situation").textContent = $("ai-bars").hidden ? "Retry evaluation ↗" : "Evaluate again ↗"
-        $("cancel-evaluation").hidden = true
-      }
-    }
+  document.addEventListener("focusout", (e) => {
+    const el = e.target.closest?.(dwellSelector)
+    if (el && !el.contains(e.relatedTarget)) stopDwell(el)
   })
+  // Reaching the end of the career timeline, once per page load.
+  const lastCareer = document.querySelector("#chapter-list .career-item:last-child")
+  if (lastCareer && "IntersectionObserver" in window) {
+    const endObserver = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return
+        endObserver.disconnect()
+        emitTrigger("reach_end", "event:end")
+      },
+      { threshold: 0.5 },
+    )
+    endObserver.observe(lastCareer)
+  }
 
   // Pointer response is input-driven only, never an ambient loop.
   let portraitFrame = 0
@@ -4592,6 +4334,5 @@
   updateClock()
   setInterval(updateClock, 60000)
   syncMotion()
-  syncInputs()
   renderRoute()
 })()

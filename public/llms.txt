@@ -11,7 +11,6 @@ Jérôme Schaeffer is a senior product engineer based in Seoul, South Korea with
 - [Home](https://www.jers.dev/): Portfolio in English
 - [Work](https://www.jers.dev/#work/3i): Professional experience and side projects
 - [About](https://www.jers.dev/#about): Career timeline
-- [AI demo](https://www.jers.dev/#playground): Interactive AI decision example
 - [Current Korean résumé](https://www.jers.dev/assets/resume-ko.pdf)
 - [Earlier English résumé](https://www.jers.dev/assets/resume-en.pdf)
 

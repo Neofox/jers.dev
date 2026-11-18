@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import { existsSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
 import { EXPRESSIONS, ITEMS, clientCatalog } from "../lib/portrait-catalog.mjs"
 
 test("lists the 31 items with kind prefixes", () => {
@@ -40,5 +40,18 @@ test("client catalog exposes no asides or facts", () => {
   }
   for (const id of Object.keys(ITEMS)) {
     assert.deepEqual(Object.keys(client.items[id]).sort(), ["defaultExpression", "label"])
+  }
+})
+
+test("every demo item matches a demo chapter", () => {
+  const source = readFileSync("public/portfolio.js", "utf8")
+  const demos = Object.keys(ITEMS).filter((id) => id.startsWith("demo:"))
+  assert.ok(demos.length > 0)
+  for (const id of demos) {
+    const chapter = id.split("/")[1]
+    // A chapter entry: `"<c>",` opening a chapters array row or a setChapter call.
+    assert.match(source, new RegExp(`(?:\\[|^\\s*)"${chapter}",`, "m"), `${id}: no "${chapter}" chapter entry`)
+    // The chapter's visual is a working demo.
+    assert.match(source, new RegExp(`\\b${chapter}: \\{ demo: "`), `${id}: "${chapter}" is not a demo chapter`)
   }
 })

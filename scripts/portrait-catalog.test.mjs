@@ -43,15 +43,29 @@ test("client catalog exposes no asides or facts", () => {
   }
 })
 
+// The `{ … }` block that starts at the first "{" at or after `from`, by brace depth.
+function blockAt(source, from) {
+  const start = source.indexOf("{", from)
+  for (let i = start, depth = 0; i < source.length; i++) {
+    if (source[i] === "{") depth++
+    else if (source[i] === "}" && --depth === 0) return source.slice(start, i + 1)
+  }
+  throw new Error("unbalanced block")
+}
+
 test("every demo item matches a demo chapter", () => {
-  const source = readFileSync("public/portfolio.js", "utf8")
+  const source = readFileSync(new URL("../public/portfolio.js", import.meta.url), "utf8")
+  const visuals = blockAt(source, source.indexOf("const visuals = {"))
   const demos = Object.keys(ITEMS).filter((id) => id.startsWith("demo:"))
   assert.ok(demos.length > 0)
   for (const id of demos) {
-    const chapter = id.split("/")[1]
+    const [project, chapter] = id.slice("demo:".length).split("/")
     // A chapter entry: `"<c>",` opening a chapters array row or a setChapter call.
     assert.match(source, new RegExp(`(?:\\[|^\\s*)"${chapter}",`, "m"), `${id}: no "${chapter}" chapter entry`)
-    // The chapter's visual is a working demo.
-    assert.match(source, new RegExp(`\\b${chapter}: \\{ demo: "`), `${id}: "${chapter}" is not a demo chapter`)
+    // visuals[<project>][<chapter>] is a working demo.
+    const key = new RegExp(`^ {4}(?:${project}|"${project}"): \\{`, "m").exec(visuals)
+    assert.ok(key, `${id}: no visuals entry for ${project}`)
+    const projectVisuals = blockAt(visuals, key.index)
+    assert.match(projectVisuals, new RegExp(`\\b${chapter}: \\{ demo: "`), `${id}: "${chapter}" is not a ${project} demo`)
   }
 })

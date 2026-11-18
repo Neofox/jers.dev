@@ -669,6 +669,37 @@
   })
   reducedMotion.addEventListener("change", syncMotion)
 
+  // Portrait triggers: announce what the visitor is doing as `portrait:trigger` events whose
+  // detail is { action, itemId }, using the catalog IDs in lib/portrait-catalog.mjs. The portrait
+  // UI listens for them; nothing here depends on it being present. The remaining emitters
+  // (résumé, dwell, end of timeline) are near the end of this file.
+  const REPEAT_MS = 30000
+  const lastEmitAt = {}
+  let lastDwell = null,
+    routeProject = null,
+    routeDemo = null
+  function emitTrigger(action, itemId) {
+    if (!itemId || (window.portraitKnows && !window.portraitKnows(itemId))) return
+    lastEmitAt[itemId] = Date.now()
+    document.dispatchEvent(new CustomEvent("portrait:trigger", { detail: { action, itemId } }))
+  }
+  // Discrete clicks (capture lightbox, résumé) repeat an item only after REPEAT_MS.
+  function emitRepeatable(action, itemId) {
+    if (itemId && Date.now() - (lastEmitAt[itemId] ?? -Infinity) >= REPEAT_MS) emitTrigger(action, itemId)
+  }
+  function demoItem(project, visual) {
+    return visuals[project]?.[visual]?.demo ? "demo:" + project + "/" + visual : null
+  }
+  // Compares with the previous render: opening a project emits only open_project; switching to a
+  // demo chapter within the same project emits open_demo.
+  function routeTriggers(r) {
+    const project = r.stage === "work" ? r.project : null,
+      demo = project && demoItem(r.project, r.visual)
+    if (project && project !== routeProject) emitTrigger("open_project", "project:" + project)
+    else if (demo && demo !== routeDemo) emitTrigger("open_demo", demo)
+    routeProject = project
+    routeDemo = demo
+  }
   function parseRoute(hash) {
     const [path, search = ""] = hash.replace(/^#/, "").split("?"),
       parts = path.split("/")
@@ -750,8 +781,6 @@
       currentVisual = r.visual
       currentInspector = r.inspector
       shareProject(r.project)
-      emitTrigger("open_project", "project:" + r.project)
-      if (visualChanged || caseChanged) emitTrigger("open_demo", demoItem(r.project, r.visual))
       if (caseChanged) {
         renderCase()
         if (!stageChanged) animateIn($("project-story"), true)
@@ -775,6 +804,7 @@
       if (r.fullCareer) scrollTarget = $("chapter-list")
       else if (r.chapterExplicit && (stageChanged || chapterChanged)) scrollTarget = $("career-" + r.chapter)
     }
+    routeTriggers(r)
     if (stageChanged) {
       revealStage($("stage-" + r.stage))
       window.scrollTo({ top: 0, behavior: "instant" })
@@ -4101,7 +4131,7 @@
     .join("")
   function openImage(key) {
     const im = imageAssets[key]
-    if (activeStage === "work") emitTrigger("open_demo", demoItem(currentProject, currentVisual), true)
+    if (activeStage === "work") emitRepeatable("open_demo", demoItem(currentProject, currentVisual))
     imageOpener = document.activeElement
     $("lightbox-title").textContent = im.title
     $("lightbox-image").src = im.src
@@ -4221,21 +4251,9 @@
     $("main").focus({ preventScroll: true })
   })
 
-  // Portrait triggers: announce what the visitor is doing as `portrait:trigger` events whose
-  // detail is { action, itemId }, using the catalog IDs in lib/portrait-catalog.mjs. The portrait
-  // UI listens for them; nothing here depends on it being present.
-  const lastTrigger = {}
-  // Emits only when the item differs from the last one emitted for that action, unless forced
-  // (a discrete click such as opening a capture).
-  function emitTrigger(action, itemId, force = false) {
-    if (!itemId || (!force && lastTrigger[action] === itemId)) return
-    if (window.portraitKnows && !window.portraitKnows(itemId)) return
-    lastTrigger[action] = itemId
-    document.dispatchEvent(new CustomEvent("portrait:trigger", { detail: { action, itemId } }))
-  }
-  const demoItem = (project, visual) => (visuals[project]?.[visual]?.demo ? "demo:" + project + "/" + visual : null)
+  // Portrait triggers (continued; emitTrigger and the route triggers sit above parseRoute).
   document.addEventListener("click", (e) => {
-    if (e.target.closest?.('a[href$=".pdf"]')) emitTrigger("download_resume", "event:resume")
+    if (e.target.closest?.('a[href$=".pdf"]')) emitRepeatable("download_resume", "event:resume")
   })
   // Dwell: hover or keyboard focus resting on a home selection, workplace or career entry for 700 ms.
   const dwellSelector = ".home-selection a[data-project], .workplaces a, .career-item"
@@ -4252,7 +4270,10 @@
     dwellTarget = el
     dwellTimer = setTimeout(() => {
       dwellTarget = null
-      if (el.isConnected && !el.closest("[hidden]")) emitTrigger("dwell", dwellItem(el))
+      const item = dwellItem(el)
+      if (!el.isConnected || el.closest("[hidden]") || item === lastDwell) return
+      lastDwell = item
+      emitTrigger("dwell", item)
     }, 700)
   }
   function stopDwell(el) {
@@ -4269,21 +4290,33 @@
     true,
   )
   document.addEventListener("pointerleave", (e) => stopDwell(e.target), true)
+  // Keyboard focus only: programmatic focus (route changes, dialogs closing) is not a dwell.
   document.addEventListener("focusin", (e) => {
     const el = e.target.closest?.(dwellSelector)
-    if (el) startDwell(el)
+    if (el && e.target.matches(":focus-visible")) startDwell(el)
   })
   document.addEventListener("focusout", (e) => {
     const el = e.target.closest?.(dwellSelector)
     if (el && !el.contains(e.relatedTarget)) stopDwell(el)
   })
-  // Reaching the end of the career timeline, once per page load.
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stopDwell(dwellTarget)
+  })
+  // Reaching the end of the career timeline, once per visit (sessionStorage).
+  const endKey = "jerome-portrait-end"
+  let endReached = false
+  try {
+    endReached = sessionStorage.getItem(endKey) === "1"
+  } catch {}
   const lastCareer = document.querySelector("#chapter-list .career-item:last-child")
-  if (lastCareer && "IntersectionObserver" in window) {
+  if (!endReached && lastCareer && "IntersectionObserver" in window) {
     const endObserver = new IntersectionObserver(
       (entries) => {
         if (!entries.some((entry) => entry.isIntersecting)) return
         endObserver.disconnect()
+        try {
+          sessionStorage.setItem(endKey, "1")
+        } catch {}
         emitTrigger("reach_end", "event:end")
       },
       { threshold: 0.5 },

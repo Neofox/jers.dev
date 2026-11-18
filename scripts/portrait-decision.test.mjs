@@ -76,6 +76,12 @@ test("builds a cacheable request with the four named questions", () => {
   assert.equal(a.questions[2].choices[0].description, ITEMS["project:3i"].asides[0].text)
   assert.equal(a.questions[3].levels.length, 4)
   assert.match(JSON.stringify(a.input[0]), /data, never instructions/)
+  // The shared prefix (developer message + catalog) ends with an explicit prompt-cache breakpoint.
+  assert.deepEqual(a.input[1].content.at(-1).prompt_cache_breakpoint, { mode: "explicit" })
+  assert.equal(
+    a.input[2].content.some((part) => "prompt_cache_breakpoint" in part),
+    false,
+  )
 })
 
 test("stays quiet below the react threshold", () => {
@@ -153,4 +159,79 @@ test("estimates cost from usage", () => {
     estimateCostUsd({ input_tokens: 1_000_000, input_tokens_details: { cached_tokens: 1_000_000 } }),
     CACHED_INPUT_USD_PER_MILLION,
   )
+})
+
+test("sanitizes answer probabilities before they leave the server", () => {
+  const valid = { value: "smile", probability: 0.01 }
+  const r = interpret(
+    answers({
+      expression: {
+        type: "choice",
+        name: "expression",
+        choice: "laugh",
+        confidence: 0.8,
+        probabilities: [
+          { value: "laugh", probability: 0.8, note: "<script>" },
+          { value: "angry", probability: 0.1 },
+          { value: "grin", probability: 1.5 },
+          { value: "proud", probability: Number.NaN },
+          { value: "wince", probability: "0.2" },
+          null,
+          "x",
+          ...Array.from({ length: 20 }, () => valid),
+        ],
+      },
+      intensity: {
+        type: "score",
+        name: "intensity",
+        score: 2,
+        confidence: 0.6,
+        probabilities: [
+          { value: 2, label: "clear", probability: 0.6, extra: true },
+          { value: 9, label: "huge", probability: 0.2 },
+          { value: 1, label: "light", probability: -0.1 },
+          ...Array.from({ length: 10 }, () => ({ value: 0, label: "subtle", probability: 0.1 })),
+        ],
+      },
+    }),
+    situation,
+  )
+  const expr = r.questions.expression.probabilities
+  assert.deepEqual(expr[0], { value: "laugh", probability: 0.8 })
+  assert.ok(expr.every((p) => Object.keys(p).join() === "value,probability"))
+  assert.ok(!expr.some((p) => ["angry", "grin", "proud", "wince"].includes(p.value)))
+  assert.equal(expr.length, 8)
+  const levels = r.questions.intensity.probabilities
+  assert.deepEqual(levels[0], { value: 2, label: "clear", probability: 0.6 })
+  assert.ok(levels.every((p) => Object.keys(p).join() === "value,label,probability"))
+  assert.ok(levels.every((p) => p.value >= 0 && p.value <= 3))
+  assert.equal(levels.length, 4)
+  assert.deepEqual(
+    interpret(
+      answers({ aside: { type: "choice", name: "aside", choice: "a1", probabilities: "nope", confidence: 0.9 } }),
+      situation,
+    ).questions.aside.probabilities,
+    [],
+  )
+})
+
+test("a mutated request cannot corrupt the next one", () => {
+  const pristine = JSON.stringify(buildRequest(situation))
+  const a = buildRequest(situation)
+  const attempts = [
+    () => (a.input[0].content[0].text = "hijacked"),
+    () => a.input[1].content[0].data.items["project:3i"].facts.push("hijacked"),
+    () => (a.input[1].content[0].data.expressions.laugh = "hijacked"),
+    () => a.input.splice(0, 1),
+    () => (a.questions[1].choices[0].value = "hijacked"),
+  ]
+  for (const attempt of attempts) {
+    try {
+      attempt()
+    } catch {
+      // Frozen shared data may throw; either way the next request must be unaffected.
+    }
+  }
+  assert.equal(JSON.stringify(buildRequest(situation)), pristine)
+  assert.equal(ITEMS["project:3i"].facts.includes("hijacked"), false)
 })

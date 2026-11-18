@@ -1,6 +1,6 @@
 # Work demos: source evidence
 
-The Work page has twelve working demos. Each one re-implements observed product behaviour in the portfolio's own code, using sample data only. No private code, SVG, screenshots, customer or site data, credentials, or network calls were copied or used.
+The Work page has thirteen working demos. Each one re-implements observed product behaviour in the portfolio's own code, using sample data only. No private code, SVG, screenshots, customer or site data, credentials, or network calls were copied or used.
 
 Company repositories were read in read-only mode (CodeGraph first where an index exists). Personal repositories were read locally.
 
@@ -70,6 +70,12 @@ Coaches is one presentation. The working demo is primary, and "View real capture
 - AI search is left out because it calls a live endpoint.
 - The header says "1 Coach" in the singular; the product shows "1 Coaches".
 - "See More" opens an in-demo sample profile built from the same fictional record (discipline, languages, certification, new students); the product navigates to the coach's page. There are no profile images.
+
+## Pivo CS report triage (`#work/3i/cs`)
+
+The reference screens are `cs-app/src/screens/DashboardScreen.tsx` and `ReportDetailScreen.tsx`. The status choices come from `src/lib/types.ts`. The dashboard filters reports by status with counts and opens a preview with the report summary and device information. The detail screen supports status edits and internal discussion.
+
+The portfolio uses four invented reports. Status changes update the queue counts, and notes last for the current demo session. The existing capture shows the empty new-report form.
 
 ## Pivo Meet (3i case, `#work/3i/live`; `#work/3i/recordings` is an alias)
 
@@ -231,11 +237,9 @@ Coaches is one presentation. The working demo is primary, and "View real capture
 - `MistralEmbed` is left out of the model list because this is the chat endpoint.
 - Tools, streaming and the embeddings and agent modules are not shown.
 
-## Not given demos
-
-Rubiwin/Supplier Portal keeps its captures and illustrations, because no local source was available for a grounded demo. Enhans now has four source-grounded demos. The redundant Model Generator/Product example tabs and the product-range illustration were removed; the old model/usecase routes open Compare models. Gleamstral keeps its library-interface illustration as a second screen (`#work/gleamstral/interface`).
-
 ## Enhans ACT-1 (`#work/enhans/act`)
+
+Legacy `frontend` and `range` links open ACT-1. Legacy `model` and `usecase` links open Compare models.
 
 **Sources** (read-only under `Enhans/act-1-front`):
 - `src/app/[lang]/(playground)/chat/[task_id]/_components/{progress,action-log-grouped,step-list}.tsx`
@@ -255,7 +259,7 @@ Rubiwin/Supplier Portal keeps its captures and illustrations, because no local s
 
 **Reproduced:** connected Input → Text Translation → Output blocks, inspecting a selected block, a target-language parameter, passing output to the following block, pending/processing/completed/error states, and failure preventing the output block from completing.
 
-**Simplified or synthetic:** a fixed three-node graph, two sample inputs and pre-written Korean/French translations. No dragging, adding nodes, model requests, save or deployment. The inspector is a compact presentation of the source's settings and outputs. The error toggle and playback controls are portfolio additions. Editing settings resets the sample run.
+**Simplified or synthetic:** a fixed three-node graph, two sample inputs and pre-written Korean/French translations. No dragging, adding nodes, model requests, save or deployment. The inspector is a compact presentation of the source's settings and outputs. The error toggle and playback controls are portfolio additions. Editing settings after a run clears the previous output and prompts the visitor to run the workflow again.
 
 ## Enhans Select LLM (`#work/enhans/compare`)
 
@@ -265,7 +269,7 @@ Rubiwin/Supplier Portal keeps its captures and illustrations, because no local s
 
 **Reproduced:** model multiselection, independently arriving results, multiple numbered output variants, price and latency fields, result ordering with Best N badges, and an explanation of the evaluation.
 
-**Simplified or synthetic:** fictional Models A/B/C, invented metrics, two pre-written outputs each and an authored ranking. No benchmark or live model evaluation occurs. The instruction and input are a single sample; image analysis/generation and configurable generation counts are omitted. Evaluation is click-expandable rather than hover-only. Manual stepping and replay are portfolio additions.
+**Simplified or synthetic:** fictional Models A/B/C, invented metrics, two pre-written outputs each and an authored ranking. No benchmark or live model evaluation occurs. The ranking evaluates Output 01 for each selected model. The instruction and input are a single sample; image analysis/generation and configurable generation counts are omitted. Evaluation is click-expandable rather than hover-only. Manual stepping and replay are portfolio additions.
 
 ## Enhans action recorder (`#work/enhans/recorder`)
 
@@ -277,3 +281,7 @@ Rubiwin/Supplier Portal keeps its captures and illustrations, because no local s
 **Reproduced:** explicit tracking toggle, numbered typed events, newest-first log, selecting an event to edit its comment, reset, and a JSONL-shaped export preview with action number, timestamp, image path, comment and action.
 
 **Simplified or synthetic:** tracking starts enabled in the demo, with a labeled browser window and a separate Chrome-extension panel. Tracking is restricted to the demo's search field (on committed change), two destination buttons and an explicit sample screenshot-event button. No extension, page capture, global input listener, API, download or real screenshot is used; imagePath stays null. Only the most recent 30 events are kept. Event data is a simplified subset of the extension schema. Actual demo interactions receive local timestamps. Annotations stay in memory and are cleared on restart, reload, or switching demos.
+
+## Additional project visuals
+
+Rubiwin/Supplier Portal uses captures and illustrations. Gleamstral also includes a library-interface illustration at `#work/gleamstral/interface`.

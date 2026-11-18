@@ -157,8 +157,8 @@
         [
           "cs",
           "CS",
-          "Designed and built · Pivo CS.",
-          "An internal support and QA workflow connecting reports, investigation context and delivery.",
+          "Triage a support report.",
+          "Filter the queue, inspect the device details and record an investigation update.",
         ],
         [
           "ax",
@@ -180,7 +180,7 @@
         ],
         ["Pivo Coaches", "https://coaches.pivo.app/"],
       ],
-      note: "Beamo, Meet, Cloud and Coaches: source-based working demos with synthetic data, not production interfaces. AI/AX: an illustrative capability overview. No private code or site data are included. Real captures open from each Pivo demo: Cloud and Coaches are current product captures; Meet is the recording view from Pivo’s public documentation. CS: current product capture.",
+      note: "Beamo, Meet, Cloud, Coaches and CS: source-based working demos with synthetic data, not production interfaces. AI/AX: an illustrative capability overview. No private code or site data are included. Real captures open from each Pivo demo: Cloud and Coaches are current product captures; Meet is the recording view from Pivo’s public documentation. The CS capture shows the empty report form.",
     },
     enhans: {
       name: "Enhans",
@@ -782,6 +782,7 @@
     const focused = document.activeElement,
       focusId = focused?.dataset.focusId,
       contentFocus = $("main").contains(focused)
+    if ($("work-directory").open) $("work-directory").close()
     if ($("detail-dialog").open) $("detail-dialog").close()
     if ($("image-dialog").open) $("image-dialog").close()
     if (activeStage === "playground" && stageChanged) resetEvaluation()
@@ -801,9 +802,13 @@
       currentVisual = r.visual
       currentInspector = r.inspector
       shareProject(r.project)
-      if (caseChanged) renderCase()
+      if (caseChanged) {
+        renderCase()
+        if (!stageChanged) animateIn($("project-story"), true)
+      }
       else if (visualChanged) {
         renderChapters()
+        renderCaseApproach()
         renderVisual()
         if (!stageChanged) animateIn($("visual-stage"), true)
       }
@@ -811,7 +816,10 @@
         // Section links open the full case first, then land on the requested part.
         $("case-more").open = true
         scrollTarget = $("case-" + r.inspector)
-      } else if (caseChanged && !stageChanged) scrollTarget = "top"
+      } else if (directoryNavigation) {
+        directoryNavigation = false
+        scrollTarget = $("view-title")
+      } else if (caseChanged && !stageChanged && !focused?.closest(".product-picker, .workplaces")) scrollTarget = "top"
     }
     if (r.stage === "about") {
       renderChapter(r.chapter, r.chapterExplicit)
@@ -838,7 +846,7 @@
     }
     const label = {
       home: "Home",
-      work: projects[r.project].name,
+      work: $("work-context-path").textContent || projects[r.project].name,
       about: "Career and background",
       playground: "AI demo",
     }[r.stage]
@@ -846,7 +854,7 @@
     document.title = label + " — Jérôme Schaeffer"
   }
   function routeChange() {
-    if (!motionEnabled() || !document.startViewTransition) {
+    if (!motionEnabled() || !document.startViewTransition || (activeStage === "work" && parseRoute(location.hash).stage === "work")) {
       renderRoute()
       return
     }
@@ -870,7 +878,6 @@
   // Short lines are condensed from the vetted story copy above; no new claims.
   const extras = {
     "3i": {
-      thumb: { illo: "beamo" },
       highlights: ["Beamo 3D viewer", "Sole frontend · 4 Vue apps", "Company-wide Claude adoption"],
       did: [
         ["cube", "Beamo digital-twin viewer in React/Three.js: panoramas, Gaussian splats, BIM/IMDF."],
@@ -880,7 +887,6 @@
       ],
     },
     enhans: {
-      thumb: { demo: "enhansAct", glyph: "cursor" },
       highlights: ["AI products, architecture to deployment", "Multi-LLM workflows", "LLM web agents"],
       did: [
         ["layers", "AI products and SaaS prototypes in React/Next.js, from architecture to deployment."],
@@ -890,7 +896,6 @@
       ],
     },
     rubiwin: {
-      thumb: { image: "rubiwin-auction" },
       highlights: ["Full-stack → team lead", "Logistics portal", "Legacy PHP → React"],
       did: [
         ["truck", "React/TypeScript/Node portal: transport orders, supplier bidding, real-time chat."],
@@ -899,7 +904,6 @@
       ],
     },
     translater: {
-      thumb: { image: "translater" },
       highlights: ["Tone-aware translation", "English / Korean", "Refinement chips"],
       did: [
         ["chat", "Friends, Casual and Professional tones as a starting point."],
@@ -908,7 +912,6 @@
       ],
     },
     "kaltoe-timer": {
-      thumb: { image: "kaltoe" },
       highlights: ["macOS menu bar", "Linux tray", "Korean flex-time rules"],
       did: [
         ["clock", "Countdown built on Flex clock-in, lunch, a weekly overtime cap and time off."],
@@ -917,7 +920,6 @@
       ],
     },
     neoharness: {
-      thumb: { illo: "neoharness" },
       highlights: ["Elixir / OTP runtime", "Memory & schedules", "Supervised agents"],
       did: [
         ["memory", "Each agent keeps its own memory, skills and conversations."],
@@ -927,7 +929,6 @@
       ],
     },
     gleamstral: {
-      thumb: { illo: "gleamstral" },
       highlights: ["Typed Gleam client", "Mistral API", "Bring your own HTTP client"],
       did: [
         ["code", "Chat, vision, tools, embeddings, agents and structured output, typed."],
@@ -1024,12 +1025,10 @@
       phases: { demo: "kaltoe" },
       label: {
         custom: "label",
-        thumb: "ring",
         source: "Official ring and track label images, shown at their natural proportions.",
       },
       linux: {
         custom: "linux",
-        thumb: "linux",
         source: "KDE tray renderer examples from the public repository · synthetic data.",
       },
     },
@@ -1038,7 +1037,7 @@
       live: { demo: "meet", capture: "pivo-recording" },
       library: { demo: "cloud", capture: "pivo-cloud-current" },
       coaches: { demo: "coaches", capture: "pivo-coaches-current" },
-      cs: { image: "pivo-cs-current", source: "Pivo CS · empty report form" },
+      cs: { demo: "cs", capture: "pivo-cs-current" },
       ax: { illo: "ax" },
     },
     enhans: {
@@ -1132,29 +1131,181 @@
       "</ul></div>"
     )
   }
-  function thumbMedia(visual) {
-    const key = visual.image || visual.thumb
-    if (key) {
-      const im = imageAssets[key]
-      const ratio = im.w / im.h
-      return `<span class="thumb-media${ratio > 2.2 || ratio < 1 ? " is-whole" : ""}"><img src="${im.src}" width="${im.w}" height="${im.h}" alt="" loading="lazy" decoding="async"></span>`
-    }
-    if (visual.demo)
-      return `<span class="thumb-media is-demo">${icon(visual.glyph || demos[visual.demo].glyph)}<b>Try it</b></span>`
-    return `<span class="thumb-media is-illo">${icon(visual.glyph || illoGlyph[visual.illo])}</span>`
+  const workplaces = [
+    { id: "3i", name: "3i", dates: "2025–now" },
+    { id: "enhans", name: "Enhans", dates: "2024–25" },
+    { id: "rubiwin", name: "Redspher", dates: "2021–23" },
+    { id: "independent", name: "Side projects", dates: "Independent" },
+  ]
+  // Case and chapter IDs remain the shareable route. Group only genuine sibling views.
+  const workProducts = {
+    "3i": [
+      { name: "Beamo", description: "Digital twin viewer", preview: "beamo", views: ["beamo"] },
+      { name: "Pivo Meet", description: "Remote video lessons", preview: "meet", views: ["live"] },
+      { name: "Pivo Cloud", description: "Personal video library", preview: "cloud", views: ["library"] },
+      { name: "Pivo Coaches", description: "Equestrian coach discovery", preview: "coaches", views: ["coaches"] },
+      { name: "CS / QA app", description: "Internal support triage", preview: "cs", views: ["cs"] },
+      { name: "AI / AX", description: "Company-wide AI adoption", views: ["ax"] },
+    ],
+    enhans: [
+      { name: "ACT-1", description: "Web agent task runner", preview: "enhans-act", views: ["act"] },
+      { name: "AIAP", description: "Visual workflow builder", preview: "enhans-workflow", views: ["workflow"] },
+      { name: "Select LLM", description: "Side-by-side model comparison", preview: "enhans-compare", views: ["compare"] },
+      {
+        name: "Action Recorder",
+        description: "Browser interaction recorder",
+        preview: "enhans-recorder",
+        views: ["recorder"],
+      },
+    ],
+    rubiwin: [
+      { name: "Rubiwin", description: "Carrier offers and pricing", preview: "rubiwin", views: ["rubiwin", "pricing"] },
+      { name: "Supplier Portal", description: "Orders, bids and chat", views: ["supplier"] },
+    ],
+  }
+  const sidePreviews = {
+    translater: "translater",
+    "kaltoe-timer": "kaltoe",
+    neoharness: "neoharness",
+    gleamstral: "gleamstral",
+  }
+  function productsAt(place) {
+    if (place !== "independent") return workProducts[place].map((p) => ({ ...p, caseId: place }))
+    return projectOrder
+      .filter((id) => projects[id].category === "independent")
+      .map((id) => ({
+        caseId: id,
+        name: projects[id].name,
+        description: projects[id].short,
+        preview: sidePreviews[id],
+        views: projects[id].chapters.map(([view]) => view),
+      }))
+  }
+  function activePlace() {
+    return currentFilter === "independent" ? "independent" : currentProject
+  }
+  function productPath(p, view = p.views[0]) {
+    return "#" + workPath(p.caseId, view, "overview", projects[p.caseId].category)
+  }
+  function viewType(v) {
+    return v.demo ? "Demo" : v.illo ? "Overview" : "Capture"
+  }
+  function chapterLabel(id, view) {
+    return projects[id].chapters.find(([key]) => key === view)[1]
+  }
+  function productCard(p, active) {
+    const view = visuals[p.caseId][p.views[0]]
+    const kind = p.views.length > 1 ? p.views.length + " views" : viewType(view) + (view.capture ? " · Capture" : "")
+    const demoPreview = view.demo && !view.capture && !["kaltoe", "translater"].includes(p.preview)
+    const media = p.preview
+      ? `<span class="product-image"><img src="/assets/work-previews/${p.preview}.webp" width="384" height="240" alt="">${demoPreview ? "<small>Demo preview</small>" : ""}</span>`
+      : `<span class="product-image is-illustration">${icon(illoGlyph[view.illo])}</span>`
+    return `<li><a class="product-card" href="${productPath(p, active ? currentVisual : undefined)}" data-focus-id="product-${p.caseId}-${p.views[0]}" ${active ? 'aria-current="true"' : ""}>${media}<span class="product-copy"><strong>${p.name}</strong><span class="product-description">${p.description}</span><small class="product-kind">${kind}</small></span></a></li>`
   }
   function renderChapters() {
-    const p = projects[currentProject],
-      chapter = p.chapters.find((c) => c[0] === currentVisual)
-    $("visual-chapters").hidden = p.chapters.length < 2
-    $("visual-chapters").innerHTML = (p.chapters.length < 2 ? [] : p.chapters)
-      .map(
-        (c) =>
-          `<button type="button" class="chapter-thumb" data-visual="${c[0]}" aria-pressed="${c[0] === currentVisual}" data-focus-id="visual-${currentProject}-${c[0]}">${thumbMedia(visuals[currentProject][c[0]])}<span class="thumb-label">${c[1]}</span></button>`,
-      )
-      .join("")
+    const place = workplaces.find((w) => w.id === activePlace())
+    const productsHere = productsAt(place.id)
+    const selected = productsHere.find((p) => p.caseId === currentProject && p.views.includes(currentVisual))
+    const chapter = projects[currentProject].chapters.find(([key]) => key === currentVisual)
+    const multiple = selected.views.length > 1
+    $("product-list-title").textContent =
+      place.id === "independent" ? "Independent projects" : "Projects at " + place.name
+    $("project-list").innerHTML = productsHere.map((p) => productCard(p, p === selected)).join("")
+    $("view-owner").textContent = place.name + " / " + viewType(visuals[currentProject][currentVisual])
+    $("view-title").textContent = selected.name
+    $("work-context-path").textContent = [place.name, selected.name, ...(multiple ? [chapter[1]] : [])].join(" › ")
+    const tabs = $("visual-chapters"),
+      panel = $("visual-stage")
+    const priorTab = tabs.querySelector('[aria-selected="true"]')
+    const priorLeft = priorTab?.offsetLeft
+    const sameProduct = tabs.dataset.product === selected.name
+    tabs.dataset.product = selected.name
+    tabs.hidden = !multiple
+    tabs.innerHTML = multiple
+      ? selected.views
+          .map((view) => {
+            const active = view === currentVisual,
+              type = viewType(visuals[currentProject][view])
+            return `<button type="button" role="tab" id="view-tab-${view}" aria-controls="visual-stage" aria-selected="${active}" tabindex="${active ? 0 : -1}" data-visual="${view}" data-focus-id="visual-${currentProject}-${view}"><i aria-hidden="true" data-type="${type}"></i>${chapterLabel(currentProject, view)}<span class="sr-only"> · ${type}</span></button>`
+          })
+          .join("")
+      : ""
+    panel.setAttribute("role", multiple ? "tabpanel" : "group")
+    panel.setAttribute("aria-labelledby", multiple ? "view-tab-" + currentVisual : "view-title")
+    // Keep the selected view in its own horizontal strip without moving the page.
+    const tab = tabs.querySelector('[aria-selected="true"]')
+    if (tab) {
+      tabs.scrollLeft = Math.max(0, tab.offsetLeft - (tabs.clientWidth - tab.offsetWidth) / 2)
+      const indicator = document.createElement("span")
+      indicator.className = "view-indicator"
+      indicator.setAttribute("aria-hidden", "true")
+      tab.append(indicator)
+      if (sameProduct && priorLeft !== undefined && motionEnabled()) {
+        playAnimation(indicator, [{ transform: `translateX(${priorLeft - tab.offsetLeft}px)` }, { transform: "none" }], {
+          duration: 220,
+          easing: "ease-out",
+        })
+      }
+    }
     $("visual-annotation").innerHTML = "<strong>" + chapter[2] + "</strong> " + chapter[3]
   }
+  function renderWorkplaces() {
+    $("workplaces").innerHTML = workplaces
+      .map((w) => {
+        const first = productsAt(w.id)[0]
+        return `<a href="${productPath(first)}" data-focus-id="workplace-${w.id}" ${w.id === activePlace() ? 'aria-current="page"' : ""}><strong>${w.id === "independent" ? '<span class="side-long">Side projects</span><span class="side-short">Side</span>' : w.name}</strong><small>${w.dates}</small></a>`
+      })
+      .join("")
+  }
+  function openWorkDirectory() {
+    $("directory-links").innerHTML = workplaces
+      .map((w) => {
+        const links = productsAt(w.id)
+          .map((p) => {
+            const selected = p.caseId === currentProject && p.views.includes(currentVisual)
+            const link = (view, name) =>
+              `<a href="${productPath(p, view)}" ${selected && currentVisual === view ? 'aria-current="page"' : ""}>${name}</a>`
+            return p.views.length === 1
+              ? link(p.views[0], p.name)
+              : `<details class="directory-product" ${selected ? "open" : ""}><summary>${p.name}</summary>${p.views.map((v) => link(v, chapterLabel(p.caseId, v))).join("")}</details>`
+          })
+          .join("")
+        return `<details ${w.id === activePlace() ? "open" : ""}><summary>${w.name}</summary><div>${links}</div></details>`
+      })
+      .join("")
+    $("work-directory").showModal()
+  }
+  $("work-context").addEventListener("click", openWorkDirectory)
+  $("directory-close").addEventListener("click", () => $("work-directory").close())
+  let directoryNavigation = false
+  $("directory-links").addEventListener("click", (e) => {
+    if (!e.target.closest("a") || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+    directoryNavigation = true
+    $("work-directory").close()
+  })
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(
+      ([entry]) => {
+        $("work-context").hidden = entry.isIntersecting || entry.boundingClientRect.bottom > (entry.rootBounds?.top ?? 0)
+      },
+      { rootMargin: "-64px 0px 0px" },
+    ).observe($("project-list"))
+  }
+  $("visual-chapters").addEventListener("keydown", (e) => {
+    const tabs = [...e.currentTarget.children],
+      i = tabs.indexOf(e.target)
+    if (i < 0) return
+    const next = {
+      ArrowRight: (i + 1) % tabs.length,
+      ArrowLeft: (i + tabs.length - 1) % tabs.length,
+      Home: 0,
+      End: tabs.length - 1,
+    }[e.key]
+    if (next === undefined) return
+    e.preventDefault()
+    tabs[next].focus({ preventScroll: true })
+    tabs[next].click()
+  })
   function staggerIn(items) {
     if (!motionEnabled()) return
     items.forEach((el, i) => {
@@ -1177,26 +1328,21 @@
       list = visibleProjects(),
       index = list.indexOf(currentProject)
     caseRendered = true
-    $("work-collection-label").textContent =
-      currentFilter === "professional" ? "Teams & products" : "Experiments & utilities"
-    $("project-list").innerHTML = list
-      .map((id) => {
-        const t = extras[id].thumb
-        return `<li><button type="button" class="project-option" data-project="${id}" data-focus-id="project-${id}" aria-current="${id === currentProject}">${thumbMedia(t).replace("thumb-media", "project-thumb thumb-media")}<span class="project-text"><span class="project-name">${projects[id].name}</span><span class="project-short">${projects[id].short}</span></span></button></li>`
-      })
-      .join("")
-    document
-      .querySelectorAll("[data-filter]")
-      .forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.filter === currentFilter)))
-    $("inspector-meta").textContent = p.meta
-    $("inspector-title").textContent = p.name
-    $("case-headline").textContent = p.headline
+    const workplace = workplaces.find((w) => w.id === activePlace())
+    const side = currentFilter === "independent"
+    renderWorkplaces()
+    $("inspector-meta").textContent = side ? p.meta : "Workplace · " + (currentProject === "rubiwin" ? p.meta : p.meta.split(" · ").at(-1))
+    $("inspector-title").textContent = side ? p.name : workplace.name
+    $("inspector-title").closest(".case-head").hidden = side
+    $("case-did-title").textContent = side ? "What I built" : "My work at " + (currentProject === "rubiwin" ? "Flash Europe and Redspher" : workplace.name)
+    $("more-title").textContent = side ? "Read the project story" : "Read the workplace story"
     $("inspector-role").textContent = p.role
     $("case-stack").textContent = p.stack
     $("case-highlights").innerHTML = x.highlights.map((h) => "<li>" + h + "</li>").join("")
     $("case-did").innerHTML = x.did
       .map(([name, text]) => `<li><span class="did-icon">${icon(name)}</span><p>${text}</p></li>`)
       .join("")
+    $("case-overview-meta").textContent = side ? [p.meta, p.role, p.stack].join(" · ") : p.headline
     $("case-overview-title").textContent = p.story.overview[0]
     $("case-overview-body").innerHTML =
       '<p class="case-summary">' + p.summary + "</p>" + storyParagraphs(p.story.overview)
@@ -1213,11 +1359,12 @@
     $("case-more").open = false
     const previous = list[(index - 1 + list.length) % list.length],
       next = list[(index + 1) % list.length]
-    $("project-position").textContent = index + 1 + " of " + list.length
-    $("previous-project").innerHTML =
-      '<span aria-hidden="true">←</span> <span class="sr-only">Previous project: </span>' + projects[previous].name
-    $("next-project").innerHTML =
-      '<span class="sr-only">Next project: </span>' + projects[next].name + ' <span aria-hidden="true">→</span>'
+    const nameOf = (id) => side ? projects[id].name : workplaces.find((w) => w.id === id).name
+    const unit = side ? "project" : "workplace"
+    $("project-position").textContent = (side ? "Project " : "Workplace ") + (index + 1) + " of " + list.length
+    $("previous-project").parentElement.setAttribute("aria-label", "More " + unit + "s")
+    $("previous-project").innerHTML = '<span aria-hidden="true">←</span> <span class="sr-only">Previous ' + unit + ' </span>' + nameOf(previous)
+    $("next-project").innerHTML = '<span class="sr-only">Next ' + unit + ' </span>' + nameOf(next) + ' <span aria-hidden="true">→</span>'
     renderCaseApproach()
     renderChapters()
     renderVisual()
@@ -1682,6 +1829,113 @@
       }
     },
   }
+  demos.cs = {
+    glyph: "layers",
+    render() {
+      return demoShell("cs", "Pivo CS report triage", `
+        <div class="eh-panel eh-form" data-cs-queue>
+          <h4>CS reports</h4>
+          <div class="eh-controls" role="group" aria-label="Filter reports by status" data-cs-filters></div>
+          <div data-cs-list></div>
+        </div>
+        <section class="eh-panel eh-form" data-cs-report hidden></section>
+        <span class="sr-only" role="status" data-cs-notice></span>`)
+    },
+    mount(root) {
+      const statuses = ["Unresolved", "Pending", "On Hold", "Resolved"]
+      const reports = [
+        ["DEMO-104", "Preview freezes after rotation", "Video", "Android tablet", "Unresolved", "Rotating the tablet during playback leaves the preview on its last frame."],
+        ["DEMO-103", "Pairing takes a second attempt", "Connection", "iPhone", "Pending", "The sample pod connects on the second attempt after waking from sleep."],
+        ["DEMO-102", "Gallery thumbnail stays blank", "Gallery", "Android phone", "On Hold", "A new clip appears in the library before its thumbnail is available."],
+        ["DEMO-101", "Lesson timer overlaps the controls", "Lessons", "iPad", "Resolved", "In landscape orientation the elapsed time overlapped the mute control."],
+      ].map(([id, title, category, device, status, summary]) => ({ id, title, category, device, status, summary, notes: [] }))
+      const queue = root.querySelector("[data-cs-queue]")
+      const filters = root.querySelector("[data-cs-filters]")
+      const list = root.querySelector("[data-cs-list]")
+      const panel = root.querySelector("[data-cs-report]")
+      const notice = root.querySelector("[data-cs-notice]")
+      let filter = "All"
+      let selected = null
+      function renderQueue() {
+        for (const button of filters.children) {
+          const key = button.dataset.csFilter
+          const count = reports.filter(r => key === "All" || r.status === key).length
+          button.textContent = key + " (" + count + ")"
+          button.setAttribute("aria-pressed", String(key === filter))
+          button.className = key === filter ? "button button-primary" : "button button-outline"
+        }
+        const visible = reports.filter(r => filter === "All" || r.status === filter)
+        list.innerHTML = visible.map(r => `<button type="button" class="eh-trace-item" data-report="${r.id}"><span>${r.id}</span><span><b>${r.title}</b><small>${r.category} · ${r.status}</small></span></button>`).join("") || "<p>No reports with this status.</p>"
+      }
+      function backToQueue() {
+        panel.hidden = true
+        panel.replaceChildren()
+        queue.hidden = false
+        renderQueue()
+        const target = list.querySelector(`[data-report="${selected.id}"]`) || filters.querySelector('[aria-pressed="true"]')
+        target.focus()
+        selected = null
+      }
+      function openReport(detail) {
+        queue.hidden = true
+        panel.hidden = false
+        panel.innerHTML = `<button type="button" class="demo-reset" data-back>Back to reports</button>
+          <span class="eh-eyebrow">${selected.id} · ${detail ? "Report detail" : "Report preview"}</span>
+          <h4 tabindex="-1">${selected.title}</h4><p>${selected.summary}</p>
+          <p>${selected.category} · ${selected.device}</p>`
+        panel.querySelector("[data-back]").onclick = backToQueue
+        if (detail) {
+          panel.insertAdjacentHTML("beforeend", `<label>Status<select data-status>${statuses.map(key => `<option>${key}</option>`).join("")}</select></label>
+            <div><b>Internal discussion</b><ul data-notes></ul></div>
+            <form class="eh-form"><label>Internal note<textarea required maxlength="280" rows="2"></textarea></label>
+            <button class="button button-outline" type="submit">Add note</button></form>`)
+          const status = panel.querySelector("[data-status]")
+          status.value = selected.status
+          status.onchange = () => {
+            selected.status = status.value
+            notice.textContent = selected.id + " marked " + status.value
+          }
+          const showNotes = () => {
+            panel.querySelector("[data-notes]").replaceChildren(...selected.notes.map(text => {
+              const li = document.createElement("li")
+              li.textContent = text
+              return li
+            }))
+          }
+          showNotes()
+          panel.querySelector("form").onsubmit = event => {
+            event.preventDefault()
+            const field = panel.querySelector("textarea")
+            if (!field.value.trim()) return field.focus()
+            selected.notes.push(field.value.trim())
+            field.value = ""
+            showNotes()
+            field.focus()
+            notice.textContent = "Internal note added to " + selected.id
+          }
+        } else {
+          panel.insertAdjacentHTML("beforeend", `<p>Status · ${selected.status}</p><button type="button" class="button button-primary" data-open>Open full report</button>`)
+          panel.querySelector("[data-open]").onclick = () => openReport(true)
+        }
+        panel.querySelector("h4").focus()
+      }
+      for (const key of ["All", ...statuses]) {
+        const button = document.createElement("button")
+        button.type = "button"
+        button.dataset.csFilter = key
+        button.onclick = () => { filter = key; renderQueue() }
+        filters.append(button)
+      }
+      list.onclick = event => {
+        const button = event.target.closest("[data-report]")
+        if (!button) return
+        selected = reports.find(r => r.id === button.dataset.report)
+        openReport(false)
+      }
+      renderQueue()
+    },
+  }
+
   // Pivo Cloud · video gallery. Mirrors the Vue app's behaviour: "Cloud Gallery" / "Lesson Gallery" tabs, a
   // "My cloud" panel, items grouped by day (Today, Yesterday, en-US long date) newest first, 4:3 cards with a play
   // icon and status badges, "Select" / "Cancel" mode with select-all, Share (1+), Download (exactly 1) and Delete
@@ -2654,8 +2908,8 @@
             st.orbit.az -= dx * 0.008 // grab-the-world feel
             st.orbit.pol = Math.min(Math.PI / 2 + 0.35, Math.max(0.1, st.orbit.pol - dy * 0.006))
           } else {
-            st.fp.yaw -= dx * 0.005
-            st.fp.pitch = Math.min(1.2, Math.max(-1.2, st.fp.pitch - dy * 0.004))
+            st.fp.yaw += dx * 0.005
+            st.fp.pitch = Math.min(1.2, Math.max(-1.2, st.fp.pitch + dy * 0.004))
           }
           st.hover = null
           return schedule()
@@ -3373,17 +3627,27 @@
   const ehEscape = (value) =>
     String(value).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c])
   const ehQuery = (root) => (key) => root.querySelector(`[data-eh="${key}"]`)
+  // The body gets its own block so the sticky phone controls can never ride up over the demo header (Restart).
+  const ehShell = (label, body) => demoShell("enhans", label, `<div class="eh-body">${body}</div>`)
   function ehControls(label) {
     return `<div class="eh-controls"><button type="button" class="button button-primary" data-eh="play">${label}</button><button type="button" class="button button-outline" data-eh="next">Next step</button><span data-eh="status" role="status">Ready to explore</span></div>`
   }
+  // Shared stepper. With motion on: Run/Pause/Continue/Replay + Next step. With motion off the run button would only
+  // repeat Next step, so it is hidden until Replay. Next stays focusable at the end (aria-disabled), so keyboard focus
+  // never drops to <body> and an extra Enter cannot restart the demo; focus only moves when Run itself is hidden.
   function ehPlayback(root, { label, length, draw }) {
     const q = ehQuery(root)
     let step = 0,
       timer = null
     function paint() {
+      const had = document.activeElement
       draw(step)
-      q("play").textContent = timer ? "Pause" : step >= length() ? "Replay" : step ? "Continue" : label
-      q("next").disabled = step >= length()
+      const total = length()
+      const done = total > 0 && step >= total
+      q("play").textContent = timer ? "Pause" : done ? "Replay" : step ? "Continue" : label
+      q("play").hidden = !motionEnabled() && !done
+      q("next").setAttribute("aria-disabled", String(!total || done))
+      if (had === q("play") && q("play").hidden) q("next").focus()
     }
     function stop() {
       clearTimeout(timer)
@@ -3406,12 +3670,14 @@
       if (step >= length()) step = 0
       advance(true)
     })
-    q("next").addEventListener("click", () => advance(false))
+    q("next").addEventListener("click", () => {
+      if (step < length()) advance(false)
+    })
+    // Pause when hidden, off the Work stage or when motion is turned off; repaint either way so the run button
+    // reappears as soon as motion is enabled again.
     const suspend = () => {
-      if (document.hidden || activeStage !== "work" || !motionEnabled()) {
-        stop()
-        paint()
-      }
+      if (document.hidden || activeStage !== "work" || !motionEnabled()) stop()
+      paint()
     }
     document.addEventListener("visibilitychange", suspend)
     const observer = new MutationObserver(suspend)
@@ -3435,14 +3701,13 @@
   demos.enhansAct = {
     glyph: "cursor",
     render() {
-      return demoShell(
-        "enhans",
+      return ehShell(
         "ACT-1 task execution",
-        `<div class="eh-head"><span class="eh-eyebrow">ACT-1 / WEB AGENT</span><h3>One request. Every action visible.</h3><p>Follow a sample research task, then open a step to see what happened.</p></div>
-          <div class="eh-split"><div class="eh-panel"><div class="eh-message"><span>You</span><p>Find a compact desk lamp under $80. Compare three options.</p></div>
+        `<div class="eh-head"><span class="eh-eyebrow">ACT-1 / WEB AGENT</span></div>
+          <div class="eh-split"><div class="eh-panel eh-act-panel"><div class="eh-message"><span>You</span><p>Find a compact desk lamp under $80. Compare three options.</p></div>
             <div class="eh-task-state"><span class="eh-dot" data-eh="dot"></span><b data-eh="activity">Waiting for your instruction</b><span data-eh="count">0 / 4</span></div>
-            <div class="eh-log">${["Open the catalog", "Apply the budget", "Compare the options", "Summarize the findings"].map((label, i) => `<details data-act-step="${i}"><summary><span class="eh-step-number">0${i + 1}</span><b>${label}</b><span class="eh-step-state">Pending</span></summary><p>${["Navigate to the sample lighting catalog. Inspect the available products.", "Set the maximum price to $80. Exclude the $96 Arc lamp.", "Read the price and size of each remaining lamp. Compare the three candidates.", "Return a short recommendation with the compared prices."][i]}</p></details>`).join("")}</div>
-            <p class="eh-answer" data-eh="answer" hidden></p></div>
+            <div class="eh-log">${["Open the catalog", "Apply the budget", "Compare the options", "Summarize the findings"].map((label, i) => `<details data-act-step="${i}"><summary><span class="eh-step-number">0${i + 1}</span><b>${label}</b><span class="eh-step-state">Pending</span><span class="eh-chevron" aria-hidden="true"></span></summary><p>Not run yet.</p></details>`).join("")}</div>
+            <p class="eh-answer" data-eh="answer" data-state="pending">The result appears here when the task completes.</p></div>
             <div class="eh-browser"><div class="eh-browser-bar"><span aria-hidden="true">● ● ●</span><span>studio.example / lighting</span></div><div class="eh-browser-body"><span class="eh-eyebrow">SAMPLE STOREFRONT</span><h4>A brighter workspace.</h4><div class="eh-budget" data-eh="budget">All desk lamps</div><div class="eh-products">${[
               ["Loop", "58", "loop"],
               ["Fold", "72", "fold"],
@@ -3451,7 +3716,7 @@
             ]
               .map(
                 ([name, price, shape], i) =>
-                  `<div class="eh-product" data-product="${i}"><div class="eh-lamp ${shape}" aria-hidden="true"><i></i><b></b></div><strong>${name}</strong><span>$${price}</span></div>`,
+                  `<div class="eh-product" data-product="${i}"><div class="eh-lamp ${shape}" aria-hidden="true"><i></i><b></b></div><strong>${name}</strong><span>$${price}</span><em class="eh-over" hidden>Over $80</em></div>`,
               )
               .join(
                 "",
@@ -3464,24 +3729,32 @@
         label: "Run sample task",
         length: () => 4,
         draw(step) {
-          const labels = [
-            "Waiting for your instruction",
-            "Reading the catalog",
-            "Filtering by price",
-            "Comparing three options",
-            "Task completed",
+          // Each step is a finished action, so the progress line reports what just happened.
+          const labels = ["Waiting for your instruction", "Catalog opened", "Budget applied", "Options compared", "Task completed"]
+          const details = [
+            "Navigated to the sample lighting catalog and inspected the available products.",
+            "Set the maximum price to $80. The $96 Arc lamp is excluded.",
+            "Read the price and size of each remaining lamp and compared the three candidates.",
+            "Returned a short recommendation with the compared prices.",
           ]
           q("activity").textContent = labels[step]
+          // The in-panel line and counter carry progress; the footer only speaks for start and completion
+          // (it stays in the accessibility tree as the live status).
           q("status").textContent =
-            step === 4 ? "Completed · sample recommendation" : step ? `Step ${step} of 4` : "Ready to explore"
+            step === 4 ? "Completed · sample recommendation" : step ? `Step ${step} of 4 · ${labels[step]}` : "Ready to explore"
+          q("status").classList.toggle("eh-status-quiet", step > 0 && step < 4)
           q("count").textContent = `${step} / 4`
           q("dot").dataset.state = step === 4 ? "completed" : step ? "processing" : "pending"
           root.querySelectorAll("[data-act-step]").forEach((el, i) => {
-            el.dataset.state = i < step ? "completed" : "pending"
-            el.querySelector(".eh-step-state").textContent = i < step ? "Done" : "Pending"
+            const state = i < step ? "completed" : i === step ? "next" : "pending"
+            el.dataset.state = state
+            el.querySelector(".eh-step-state").textContent = { completed: "Done", next: "Next", pending: "Pending" }[state]
+            el.querySelector("p").textContent = i < step ? details[i] : "Not run yet."
           })
-          q("budget").textContent = step >= 2 ? "Budget ≤ $80 · 3 matches" : "All desk lamps"
-          root.querySelector('[data-product="3"]').hidden = step >= 2
+          q("budget").textContent = step >= 2 ? "Budget ≤ $80 · 3 of 4 match" : "All desk lamps"
+          const arc = root.querySelector('[data-product="3"]')
+          arc.classList.toggle("is-excluded", step >= 2)
+          arc.querySelector(".eh-over").hidden = step < 2
           root
             .querySelectorAll("[data-product]")
             .forEach((el, i) => el.classList.toggle("is-picked", step >= 3 && i === 0))
@@ -3492,9 +3765,11 @@
             "Snapshot 03 · options compared",
             "Final view · Loop selected for the sample recommendation",
           ][step]
-          q("answer").hidden = step < 4
+          q("answer").dataset.state = step === 4 ? "completed" : "pending"
           q("answer").textContent =
-            "Loop is the lowest-priced option at $58. Fold ($72) and Pebble ($64) also fit the budget. All products and findings are fictional."
+            step === 4
+              ? "Loop is the lowest-priced option at $58. Fold ($72) and Pebble ($64) also fit the budget. All products and findings are fictional."
+              : "The result appears here when the task completes."
         },
       })
       return player.cleanup
@@ -3502,12 +3777,11 @@
   }
 
   demos.enhansWorkflow = {
-    glyph: "layers",
+    glyph: "flow",
     render() {
-      return demoShell(
-        "enhans",
+      return ehShell(
         "AIAP visual workflow",
-        `<div class="eh-head"><span class="eh-eyebrow">AIAP / VISUAL WORKFLOWS</span><h3>Build the path from input to output.</h3><p>Select a block to inspect it. Change the language, run the flow, or try a failed step.</p></div>
+        `<div class="eh-head"><span class="eh-eyebrow">AIAP / VISUAL WORKFLOWS</span></div>
           <div class="eh-flow" aria-label="Workflow blocks">${["Input", "Text Translation", "Output"].map((name, i) => `<button type="button" class="eh-node" data-node="${i}" aria-pressed="${i === 1}"><span class="eh-node-port" aria-hidden="true"></span><span class="eh-eyebrow">BLOCK 0${i + 1}</span><strong>${name}</strong><span class="eh-node-state">pending</span><span class="eh-node-port out" aria-hidden="true"></span></button>${i < 2 ? '<span class="eh-wire" aria-hidden="true"><i></i>→</span>' : ""}`).join("")}</div>
           <div class="eh-split"><div class="eh-panel eh-form"><span class="eh-eyebrow">FLOW SETTINGS</span><label>Sample input<select data-eh="input"><option value="meeting">The meeting starts at ten.</option><option value="delivery">Your order arrives tomorrow.</option></select></label><label>Target language<select data-eh="language"><option value="ko">Korean</option><option value="fr">French</option></select></label><label class="eh-check"><input type="checkbox" data-eh="failure"> Simulate a translation error</label><p class="eh-footnote">Pre-written translations · no model call</p></div>
           <div class="eh-panel"><span class="eh-eyebrow">BLOCK INSPECTOR</span><h4 data-eh="node-title">Text Translation</h4><p data-eh="node-description"></p><pre class="eh-output" data-eh="output"></pre></div></div>${ehControls("Run workflow")}`,
@@ -3573,19 +3847,25 @@
           inspect()
         }),
       )
-      ;["input", "language", "failure"].forEach((key) => q(key).addEventListener("change", () => player.reset()))
+      // Settings feed the run, so a change clears it; say so instead of silently wiping the result.
+      ;["input", "language", "failure"].forEach((key) =>
+        q(key).addEventListener("change", () => {
+          const ran = current > 0
+          player.reset()
+          if (ran) q("status").textContent = "Settings changed · run the workflow again"
+        }),
+      )
       return player.cleanup
     },
   }
 
   demos.enhansCompare = {
-    glyph: "layers",
+    glyph: "swap",
     render() {
-      return demoShell(
-        "enhans",
+      return ehShell(
         "Select LLM comparison",
-        `<div class="eh-head"><span class="eh-eyebrow">SELECT LLM / EXPERIMENTS</span><h3>One prompt. Different answers.</h3><p>Run a sample experiment, compare output variants, then inspect the evaluation.</p></div>
-          <div class="eh-experiment"><div><span class="eh-eyebrow">INSTRUCTION</span><p>Summarize this delivery update in one short sentence.</p><blockquote>Order dispatched today. Estimated arrival: Thursday. Tracking becomes available this evening.</blockquote></div><fieldset><legend>Models · fictional candidates</legend>${["A", "B", "C"].map((name) => `<label class="eh-check"><input type="checkbox" data-model="${name}" checked> Model ${name}</label>`).join("")}</fieldset></div>
+        `<div class="eh-head"><span class="eh-eyebrow">SELECT LLM / EXPERIMENTS</span></div>
+          <div class="eh-experiment"><div><span class="eh-eyebrow">INSTRUCTION</span><p>Summarize this delivery update in one short sentence.</p><blockquote>Order dispatched today. Estimated arrival: Thursday. Tracking becomes available this evening.</blockquote></div><fieldset><legend>Fictional models</legend>${["A", "B", "C"].map((name) => `<label class="eh-check"><input type="checkbox" data-model="${name}" checked> Model ${name}</label>`).join("")}</fieldset></div>
           <div class="eh-results" data-eh="results"></div><details class="eh-evaluation" data-eh="evaluation" hidden><summary>Sample evaluation · why this order?</summary><p>Model B keeps the dispatch, arrival and tracking details in one sentence. Model A omits tracking; Model C is less concise. This is an authored example, not an actual model benchmark.</p></details>${ehControls("Run comparison")}<p class="eh-footnote">Pre-written outputs, fictional model names and invented price/latency figures.</p>`,
       )
     },
@@ -3616,21 +3896,45 @@
       }
       const variants = { A: 0, B: 0, C: 0 }
       const selected = () => [...root.querySelectorAll("[data-model]:checked")].map((el) => el.dataset.model)
-      let current = 0
+      let current = 0,
+        wasRanked = false
       function results(step) {
         const models = selected()
         const ranked = models.length > 0 && step > models.length
+        // The authored evaluation judges Output 01, so the ranking reveal shows exactly what was ranked.
+        if (ranked && !wasRanked) Object.keys(variants).forEach((m) => (variants[m] = 0))
+        const reordered = ranked !== wasRanked
+        wasRanked = ranked
         const order = ranked ? ["B", "A", "C"].filter((m) => models.includes(m)) : models
         const focus = document.activeElement?.dataset.variant
+        const before = new Map(
+          [...q("results").querySelectorAll("[data-model-card]")].map((el) => [el.dataset.modelCard, el.getBoundingClientRect()]),
+        )
         q("results").innerHTML = order.length
           ? order
               .map((name, i) => {
                 const loaded = step > models.indexOf(name)
                 const record = records[name]
-                return `<article class="eh-result" data-state="${loaded ? "completed" : "pending"}"><div class="eh-result-title"><strong>Model ${name}</strong><span>${ranked ? `Best ${i + 1}` : loaded ? "Ready" : step ? "Processing…" : "Waiting"}</span></div>${loaded ? `<div class="eh-variants" role="group" aria-label="Model ${name} outputs">${[0, 1].map((v) => `<button type="button" data-variant="${name}-${v}" aria-pressed="${variants[name] === v}">Output 0${v + 1}</button>`).join("")}</div><p>${record.output[variants[name]]}</p><div class="eh-metrics"><span>Price <b>${record.price}</b></span><span>Latency <b>${record.latency}</b></span></div>` : '<div class="eh-skeleton" aria-hidden="true"><i></i><i></i><i></i></div>'}</article>`
+                return `<article class="eh-result" data-model-card="${name}" data-state="${loaded ? "completed" : "pending"}"${ranked ? ` data-rank="${i + 1}"` : ""}><div class="eh-result-title"><strong>Model ${name}</strong><span>${ranked ? `Best ${i + 1}` : loaded ? "Ready" : step ? "Processing…" : "Waiting"}</span></div>${loaded ? `<div class="eh-variants" role="group" aria-label="Model ${name} outputs">${[0, 1].map((v) => `<button type="button" data-variant="${name}-${v}" aria-pressed="${variants[name] === v}">Output 0${v + 1}</button>`).join("")}${ranked && variants[name] !== 0 ? '<span class="eh-ranked-on">Ranked on Output 01</span>' : ""}</div><p>${record.output[variants[name]]}</p><div class="eh-metrics"><span>Price <b>${record.price}</b></span><span>Latency <b>${record.latency}</b></span></div>` : '<div class="eh-skeleton" aria-hidden="true"><i></i><i></i><i></i></div>'}</article>`
               })
               .join("")
           : '<p class="eh-empty">Select at least one model to run the experiment.</p>'
+        // Slide cards into their ranked order so the reshuffle can be followed (instant when motion is off).
+        if (reordered && motionEnabled())
+          q("results")
+            .querySelectorAll("[data-model-card]")
+            .forEach((el) => {
+              const from = before.get(el.dataset.modelCard)
+              if (!from) return
+              const to = el.getBoundingClientRect()
+              const dx = from.left - to.left,
+                dy = from.top - to.top
+              if (dx || dy)
+                el.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: "none" }], {
+                  duration: 420,
+                  easing: "cubic-bezier(.2,.7,.2,1)",
+                })
+            })
         if (focus) q("results").querySelector(`[data-variant="${focus}"]`)?.focus({ preventScroll: true })
         q("evaluation").hidden = !ranked
         q("evaluation").querySelector("p").textContent =
@@ -3650,7 +3954,7 @@
           " This authored evaluation uses Output 01; it is not an actual model benchmark."
         q("play").disabled = !models.length
         q("status").textContent = ranked
-          ? "Evaluation complete · sample ranking"
+          ? "Sample ranking · on Output 01"
           : step
             ? `${Math.min(step, models.length)} / ${models.length} results received`
             : "Ready to compare"
@@ -3681,12 +3985,11 @@
   }
 
   demos.enhansRecorder = {
-    glyph: "cursor",
+    glyph: "puzzle",
     render() {
-      return demoShell(
-        "enhans",
+      return ehShell(
         "Browser action recorder",
-        `<div class="eh-head"><span class="eh-eyebrow">CHROME EXTENSION / ACTION TRACES</span><h3>Your browser actions, captured as you go.</h3><p>Click a workspace or type a search in the browser. The extension records each action, ready for you to annotate.</p></div>
+        `<div class="eh-head"><span class="eh-eyebrow">CHROME EXTENSION / ACTION TRACES</span></div>
           <div class="eh-split eh-recorder-layout">
             <section class="eh-browser eh-recorder-browser" aria-label="Sample browser window">
               <div class="eh-window-heading"><span class="eh-window-dots" aria-hidden="true">● ● ●</span><strong>Browser window</strong><span class="eh-window-tab">Workspace</span></div>
@@ -3696,7 +3999,7 @@
             <section class="eh-extension" aria-label="Action Recorder Chrome extension">
               <div class="eh-extension-heading"><span class="eh-extension-mark" aria-hidden="true">${icon("puzzle")}</span><div><span class="eh-eyebrow">CHROME EXTENSION</span><h4>Action Recorder</h4></div><span class="eh-extension-live" data-eh="live" aria-hidden="true"></span></div>
               <div class="eh-extension-body"><div class="eh-record-toolbar"><label class="eh-check"><input type="checkbox" data-eh="tracking" checked> Tracking enabled</label><button type="button" class="demo-reset" data-eh="clear">Clear trace</button></div><span class="eh-record-status" data-eh="status" role="status">Tracking on · 0 events</span>
-                <div class="eh-trace-heading"><span class="eh-eyebrow">CAPTURED ACTIONS</span><span>Newest first</span></div><div class="eh-trace" data-eh="trace"></div><div class="eh-annotation" data-eh="annotation" hidden><label>Comment for event <span data-eh="event-number"></span><textarea data-eh="comment" rows="2" maxlength="240"></textarea></label></div>
+                <div class="eh-trace-heading"><span class="eh-eyebrow">CAPTURED ACTIONS</span><span>Newest first</span></div><div class="eh-trace" data-eh="trace"></div><div class="eh-annotation" data-eh="annotation" hidden><label><span>Comment for event <span data-eh="event-number"></span></span><textarea data-eh="comment" rows="2" maxlength="240"></textarea></label></div>
                 <button type="button" class="button button-outline eh-capture-action" data-eh="capture">Add sample screenshot event</button><details class="eh-export"><summary>Inspect JSONL export preview</summary><pre data-eh="export">No events yet.</pre></details><p class="eh-footnote">Extension demo · no actual screenshots are taken.</p>
               </div>
             </section>
@@ -3719,7 +4022,7 @@
               .reverse()
               .map(
                 (r) =>
-                  `<button type="button" class="eh-trace-item" data-event="${r.actionNumber}" aria-pressed="${selected === r.actionNumber}"><span>${String(r.actionNumber).padStart(2, "0")}</span><span><b>${r.action.type}</b><small>${ehEscape(r.action.data.text || r.action.data.target)}</small></span><span aria-hidden="true">↗</span></button>`,
+                  `<button type="button" class="eh-trace-item" data-event="${r.actionNumber}" aria-pressed="${selected === r.actionNumber}"><span>${String(r.actionNumber).padStart(2, "0")}</span><span><b>${r.action.type}</b><small>${ehEscape(r.action.data.text || r.action.data.target)}</small></span><span class="eh-note"${r.comment ? "" : " hidden"}>Note</span></button>`,
               )
               .join("")
           : `<div class="eh-empty"><b>${q("tracking").checked ? "Listening to the browser…" : "Tracking paused"}</b><p>${q("tracking").checked ? "Click Seoul or Busan in the sample website. Your first action will appear here." : "Enable tracking to record actions from the sample website."}</p></div>`
@@ -3732,7 +4035,10 @@
         exportPreview()
       }
       function record(type, data) {
-        if (!q("tracking").checked) return
+        if (!q("tracking").checked) {
+          q("status").textContent = `Tracking off · not recorded · ${records.length} events`
+          return false
+        }
         const item = {
           actionNumber: nextId++,
           timestamp: new Date().toISOString(),
@@ -3744,6 +4050,7 @@
         if (records.length > 30) records.shift()
         selected = item.actionNumber
         render()
+        return true
       }
       q("tracking").addEventListener("change", render)
       q("search").addEventListener("change", () =>
@@ -3751,11 +4058,13 @@
       )
       root.querySelectorAll("[data-destination]").forEach((el) =>
         el.addEventListener("click", () => {
-          q("selection").textContent = `${el.dataset.destination} workspace selected.`
           root
             .querySelectorAll("[data-destination]")
             .forEach((button) => button.setAttribute("aria-pressed", String(button === el)))
-          record("CLICK", { target: `${el.dataset.destination} workspace` })
+          const logged = record("CLICK", { target: `${el.dataset.destination} workspace` })
+          q("selection").textContent = logged
+            ? `${el.dataset.destination} workspace selected · logged by the extension.`
+            : `${el.dataset.destination} workspace selected · not recorded, tracking is off.`
         }),
       )
       q("capture").addEventListener("click", () =>
@@ -3771,6 +4080,8 @@
       q("comment").addEventListener("input", () => {
         const item = records.find((r) => r.actionNumber === selected)
         if (item) item.comment = q("comment").value
+        const note = q("trace").querySelector(`[data-event="${selected}"] .eh-note`)
+        if (note) note.hidden = !q("comment").value
         exportPreview()
       })
       q("clear").addEventListener("click", () => {
@@ -3927,12 +4238,7 @@
       const filter = projects[b.dataset.project].category
       go(workPath(b.dataset.project, undefined, "overview", filter))
     } else if (b.dataset.visual) go(workPath(currentProject, b.dataset.visual, "overview"))
-    else if (b.dataset.filter) {
-      const filter = b.dataset.filter
-      const ids = projectOrder.filter((id) => filter === "all" || projects[id].category === filter)
-      const id = ids.includes(currentProject) ? currentProject : ids[0]
-      go(workPath(id, id === currentProject ? currentVisual : undefined, "overview", filter))
-    } else if (b.dataset.image) openImage(b.dataset.image)
+    else if (b.dataset.image) openImage(b.dataset.image)
     else if (b.dataset.related)
       go(workPath(b.dataset.related, undefined, "role", projects[b.dataset.related].category))
     else if (b.dataset.dialog) showDialog(b.dataset.dialog)

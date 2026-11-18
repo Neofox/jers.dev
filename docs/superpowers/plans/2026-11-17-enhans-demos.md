@@ -22,3 +22,5 @@
 Execution: inline in the existing clean workspace, as authorized by “Proceed with your selection.” No deployment requested. Browser behavior checks suit these reversible presentation changes; existing automated checks also run.
 
 Verification: browser checks passed for completion, replay, timer reset, workflow error/recovery, comparison variants/ranking/empty selection, recorder tracking/comments/escaping/reset, reduced motion, and all four routes at 390px without horizontal overflow or browser errors. Existing automated suite: 10/10. Lint passed. Production build passed. Independent review found no blocking issues; its annotation-retention wording correction was applied. Playback suspension on leaving Work and changing the motion setting was also browser-verified.
+
+Follow-up on 18 November 2026: the Open Design review identified lost keyboard focus on the final manual step. After the fix, Enter through ACT-1, Workflow and Compare lands on Replay. With reduced motion, ACT-1 advances manually and Replay returns focus to Next step. Mobile playback controls stay above the bottom navigation.

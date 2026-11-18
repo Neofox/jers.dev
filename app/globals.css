@@ -4799,7 +4799,7 @@ dialog::backdrop {
   text-decoration-color: var(--accent);
 }
 
-/* Asides: a mint speech bubble, shown for a few seconds, never interactive. */
+/* Asides: a mint speech bubble, shown for a few seconds; not interactive except as tap-to-dismiss on phones. */
 .portrait-aside {
   position: absolute;
   z-index: 2;
@@ -5061,7 +5061,8 @@ body:not([data-stage="home"]) .site-footer {
 .pd-answer > p {
   margin-top: var(--space-1);
 }
-.pd-answer .pd-none {
+.pd-answer .pd-none,
+.pd-answer .pd-meta {
   color: var(--faint);
 }
 .pd-bars {
@@ -5206,6 +5207,12 @@ body:not([data-stage="home"]) .site-footer {
   .dock-face {
     width: 46px;
     height: 46px;
+  }
+  /* Here the bubble covers content: it takes the tap itself (which dismisses it) instead of
+     letting it through to whatever lies underneath. Hidden bubbles stay untappable (visibility). */
+  .portrait-aside {
+    pointer-events: auto;
+    cursor: pointer;
   }
   .portrait-dock .portrait-aside {
     right: 0;

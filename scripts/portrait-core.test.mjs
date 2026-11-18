@@ -1,6 +1,13 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import { createScheduler } from "../public/portrait-core.mjs"
+import {
+  createAsideHold,
+  createScheduler,
+  fallbackReasonForStatus,
+  formatCost,
+  formatCount,
+  formatLatency,
+} from "../public/portrait-core.mjs"
 
 const highPriority = ["open_project", "open_demo", "download_resume"]
 const flush = () => new Promise((resolve) => setImmediate(resolve))
@@ -186,4 +193,99 @@ test("a throwing apply or storage never causes an unhandled rejection", async ()
   } finally {
     process.off("unhandledRejection", listener)
   }
+})
+
+test("a failed request carries its own fallback reason, defaulting to network", async () => {
+  const errors = [Object.assign(new Error("HTTP 429"), { fallbackReason: "rate_limited" }), new TypeError("offline")]
+  const { clock, applied, scheduler } = setup({
+    send: async () => {
+      throw errors.shift()
+    },
+  })
+  scheduler.trigger("open_project", "a")
+  await flush()
+  clock.t = 1
+  scheduler.trigger("open_project", "b")
+  await flush()
+  assert.deepEqual(
+    applied.map((a) => a.response.fallbackReason),
+    ["rate_limited", "network"],
+  )
+})
+
+test("maps HTTP statuses to fallback reasons", () => {
+  assert.equal(fallbackReasonForStatus(429), "rate_limited")
+  for (const status of [400, 403, 413, 500, 502]) assert.equal(fallbackReasonForStatus(status), "http_error")
+})
+
+test("local fallbacks: only high priority, at most once per gap, never sent or counted", async () => {
+  const { clock, sent, applied, scheduler, count } = setup()
+  assert.equal(scheduler.fallback("dwell", "a", "cap"), false)
+  assert.equal(scheduler.fallback("open_project", "b", "cap"), true)
+  clock.t = 5000
+  assert.equal(scheduler.fallback("open_demo", "c", "cap"), false)
+  assert.equal(scheduler.fallback("dwell", "d", "cap"), false)
+  clock.t = 10000
+  assert.equal(scheduler.fallback("download_resume", "e", "network"), true)
+  await flush()
+  assert.equal(sent.length, 0)
+  assert.equal(count(), 0)
+  assert.deepEqual(
+    applied.map((a) => [a.situation.itemId, a.response.expression, a.response.fallbackReason, a.response.asideText]),
+    [
+      ["b", "default:b", "cap", null],
+      ["e", "default:e", "network", null],
+    ],
+  )
+})
+
+test("a local fallback waits out the gap after a real send and supersedes it", async () => {
+  const resolvers = []
+  const { clock, applied, scheduler } = setup({
+    send: (situation) => new Promise((resolve) => resolvers.push(() => resolve({ tag: situation.itemId }))),
+  })
+  scheduler.trigger("open_project", "a")
+  clock.t = 3000
+  assert.equal(scheduler.fallback("open_project", "b", "network"), false)
+  clock.t = 10000
+  assert.equal(scheduler.fallback("open_project", "c", "network"), true)
+  resolvers[0]()
+  await flush()
+  assert.deepEqual(
+    applied.map((a) => a.situation.itemId),
+    ["c"],
+  )
+})
+
+test("holds an aside until it is taken, and drops it once stale", () => {
+  const clock = { t: 0 }
+  const hold = createAsideHold({ now: () => clock.t, maxAgeMs: 30000 })
+  assert.equal(hold.take(), null)
+  hold.hold("hi")
+  clock.t = 30000
+  assert.equal(hold.take(), "hi")
+  assert.equal(hold.take(), null)
+  hold.hold("stale")
+  clock.t = 60001
+  assert.equal(hold.take(), null)
+  hold.hold("cleared")
+  hold.clear()
+  assert.equal(hold.take(), null)
+  hold.hold("first")
+  hold.hold(null)
+  assert.equal(hold.take(), null)
+})
+
+test("drawer readouts render a dash for anything but a finite, non-negative number", () => {
+  for (const bad of [NaN, Infinity, -1, "12", null, undefined]) {
+    assert.equal(formatCost(bad), "—", String(bad))
+    assert.equal(formatLatency(bad), "—", String(bad))
+    assert.equal(formatCount(bad), "—", String(bad))
+  }
+  assert.equal(formatCost(0), "$0")
+  assert.equal(formatCost(0.000106), "$0.00011")
+  assert.equal(formatLatency(0), "—")
+  assert.equal(formatLatency(420), "420 ms")
+  assert.equal(formatCount(0), "0")
+  assert.equal(formatCount(7000), "7,000")
 })

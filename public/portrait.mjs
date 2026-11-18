@@ -1,12 +1,24 @@
 // Living portrait: swaps Jérôme's face in reaction to `portrait:trigger` events from portfolio.js,
 // docks as a bubble on non-home stages and explains each reaction in the "Why this face?" drawer.
 // Only { action, itemId, recent } is ever sent to /api/portrait.
-import { createScheduler } from "./portrait-core.mjs"
+import {
+  createAsideHold,
+  createScheduler,
+  fallbackReasonForStatus,
+  formatCost,
+  formatCount,
+  formatLatency,
+} from "./portrait-core.mjs"
 
 const HIGH_PRIORITY = ["open_project", "open_demo", "download_resume"]
 const ACTIONS = new Set([...HIGH_PRIORITY, "dwell", "reach_end", "idle", "return"])
 const MAX_PER_VISIT = 20
 const ASIDE_MS = 4000
+// On phones the bubble sits over the content above the dock: shorter, and a tap dismisses it.
+const PHONE_ASIDE_MS = 2500
+const PHONE = "(max-width: 599px)"
+// A reaction that lands while a dialog is open or the tab is hidden waits at most this long.
+const HOLD_MS = 30000
 const SWAP_MS = 260
 const IDLE_MS = 45000
 const AWAY_MS = 60000
@@ -33,8 +45,12 @@ const TRIGGER_WORDS = {
 const FALLBACK_COPY = {
   no_key: "No API key, showing the default face",
   limit: "Hourly limit reached, showing the default face",
-  upstream: "OpenAI didn't answer in time, showing the default face",
+  upstream_timeout: "OpenAI didn't answer in time, showing the default face",
+  upstream_error: "The request to OpenAI failed, showing the default face",
+  upstream: "OpenAI didn't answer, showing the default face",
   network: "Couldn't reach the server, showing the default face",
+  rate_limited: "Too many requests, showing the default face",
+  http_error: "The server couldn't answer, showing the default face",
   cap: "That's 20 reactions this visit, showing the default face",
   low_confidence: "Not confident enough, kept the default face",
   refused: "No usable answer, kept the default face",
@@ -63,6 +79,8 @@ const motionEnabled = () =>
   document.documentElement.dataset.motion !== "off" && !matchMedia("(prefers-reduced-motion: reduce)").matches
 const faceUrl = (expression) => `/assets/portrait/portrait-${expression}.webp`
 const fixed = (n) => (typeof n === "number" && Number.isFinite(n) ? n.toFixed(2) : "—")
+// Results that never reached OpenAI: no cache hit or miss to report.
+const NO_CALL = ["network", "cap", "no_key", "limit", "rate_limited", "http_error"]
 const count = () => Number(store("sessionStorage", KEY.count) ?? 0) || 0
 
 const dock = $("portrait-dock")
@@ -154,6 +172,7 @@ function init() {
   }
 
   // ─── Asides and names ────────────────────────────────────────────────
+  // Only clears or shows the bubble; a held aside is untouched (see present and release).
   function showAside(text) {
     clearTimeout(asideTimer)
     for (const surface of surfaces) surface.aside.classList.remove("is-shown")
@@ -162,7 +181,28 @@ function init() {
     aside.textContent = text
     void aside.offsetWidth
     aside.classList.add("is-shown")
-    asideTimer = setTimeout(() => aside.classList.remove("is-shown"), ASIDE_MS)
+    const ms = matchMedia(PHONE).matches ? PHONE_ASIDE_MS : ASIDE_MS
+    asideTimer = setTimeout(() => aside.classList.remove("is-shown"), ms)
+  }
+  // Phones: the bubble takes taps (CSS) so they never reach what it covers, and a tap dismisses it.
+  for (const surface of surfaces) surface.aside.addEventListener("click", () => showAside(null))
+
+  // Nobody can see the bubble while the tab is hidden or another dialog covers the page (the dock is
+  // hidden then too). Hold the aside and show it when the page is visible again. With the drawer
+  // open the reaction is shown there as the quote instead, so nothing is held.
+  const hold = createAsideHold({ now: () => Date.now(), maxAgeMs: HOLD_MS })
+  const covered = () => document.hidden || Boolean(document.querySelector("dialog[open]:not(#portrait-dialog)"))
+  function present(text) {
+    hold.clear()
+    showAside(null)
+    if (!text || drawer.open) return
+    if (covered()) hold.hold(text)
+    else showAside(text)
+  }
+  function release() {
+    if (muted || covered() || drawer.open) return
+    const text = hold.take()
+    if (text && text === shownAside) showAside(text)
   }
 
   function syncNames() {
@@ -180,7 +220,11 @@ function init() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ action: situation.action, itemId: situation.itemId, recent: situation.recent }),
       })
-      if (!response.ok) throw new Error(`portrait ${response.status}`)
+      if (!response.ok) {
+        throw Object.assign(new Error(`portrait ${response.status}`), {
+          fallbackReason: fallbackReasonForStatus(response.status),
+        })
+      }
       return await response.json()
     } finally {
       pending -= 1
@@ -204,7 +248,7 @@ function init() {
     if (response.react !== false) {
       shownAside = response.asideText
       setFace(response.expression, response.intensity)
-      showAside(response.asideText)
+      present(response.asideText)
       syncNames()
     }
     if (drawer.open) render()
@@ -221,15 +265,14 @@ function init() {
     setCount: (n) => store("sessionStorage", KEY.count, String(n)),
   })
 
-  // Muted, hidden, offline or before the catalog: nothing is sent. Offline and the per-visit cap
-  // still show the item's default face, like any other fallback.
+  // Muted, hidden, offline or before the catalog: nothing is sent. Offline and past the per-visit cap,
+  // high-priority moves still show the item's default face, no more often than the request gap.
   function request(action, itemId) {
     if (muted || !catalog || document.hidden || !ACTIONS.has(action) || !Object.hasOwn(catalog.items, itemId)) return
     preloadAll()
     const local = !navigator.onLine ? "network" : count() >= MAX_PER_VISIT ? "cap" : null
-    if (!local) return scheduler.trigger(action, itemId)
-    const fallback = { react: true, expression: defaultFor(itemId), asideText: null, intensity: 0 }
-    apply({ ...fallback, fallbackReason: local }, { action, itemId, recent: scheduler.recent() })
+    if (local) scheduler.fallback(action, itemId, local)
+    else scheduler.trigger(action, itemId)
   }
 
   document.addEventListener("portrait:trigger", (event) => {
@@ -276,6 +319,7 @@ function init() {
       return
     }
     markInput()
+    release()
     const away = hiddenAt !== null && Date.now() - hiddenAt >= AWAY_MS
     hiddenAt = null
     if (away && store("sessionStorage", KEY.back) !== "1" && catalog && !muted) {
@@ -292,7 +336,12 @@ function init() {
     dock.hidden = !show
     showAside(null)
   }
-  new MutationObserver(syncDock).observe(document.body, {
+  // syncDock returns early when the dock's visibility is unchanged (a dialog closing on Home), so
+  // a held aside is released after it, on every stage or dialog change.
+  new MutationObserver(() => {
+    syncDock()
+    release()
+  }).observe(document.body, {
     attributes: true,
     attributeFilter: ["data-stage", "open"],
     subtree: true,
@@ -308,7 +357,7 @@ function init() {
     if (on) {
       shownAside = null
       setFace("neutral")
-      showAside(null)
+      present(null)
       syncNames()
     }
     if (drawer.open) render()
@@ -361,8 +410,11 @@ function init() {
       answer("expression", bars(rows, expression.choice), el("p", "", `confidence ${fixed(expression.confidence)}`))
     } else answer("expression", missing())
     const aside = q.aside
-    if (aside) answer("aside", el("p", "", `${aside.choice} · confidence ${fixed(aside.confidence)}`))
-    else answer("aside", missing())
+    if (aside) {
+      const said = aside.choice === "none" ? "say nothing" : typeof aside.text === "string" ? `“${aside.text}”` : null
+      const detail = el("p", "pd-meta", `${aside.choice} · confidence ${fixed(aside.confidence)}`)
+      answer("aside", ...(said ? [el("p", "", said), detail] : [detail]))
+    } else answer("aside", missing())
     const intensity = q.intensity
     if (intensity) {
       const probability = new Map(intensity.probabilities.map((x) => [x.label, x.probability]))
@@ -389,21 +441,23 @@ function init() {
     $("pd-sent").textContent = situation
       ? `sent: ${situation.action} · ${situation.itemId} · ${situation.recent.length} recent`
       : ""
-    $("pd-quote").hidden = !shownAside
-    $("pd-quote").textContent = shownAside ?? ""
+    // The quote belongs to the latest reaction: a quiet decision ("stayed as it was") has none.
+    const quote = muted || response?.react === false ? null : (response?.asideText ?? null)
+    $("pd-quote").hidden = !quote
+    $("pd-quote").textContent = quote ?? ""
     const reason = response?.fallbackReason ?? response?.fallback ?? null
     $("pd-fallback").hidden = !reason
     $("pd-fallback").textContent = FALLBACK_COPY[reason] ?? (reason ? "Fallback, showing the default face" : "")
     renderQuestions(response)
     const usage = response?.usage
     const cachedTokens = usage?.input_tokens_details?.cached_tokens
-    const fmt = (n) => (typeof n === "number" ? n.toLocaleString("en-US") : "—")
-    $("pd-latency").textContent = response?.latencyMs > 0 ? `${response.latencyMs} ms` : "—"
-    const cost = response?.estimatedCostUsd
-    $("pd-cost").textContent = typeof cost !== "number" ? "—" : cost === 0 ? "$0" : `$${cost.toFixed(5)}`
-    const noCall = !response || ["network", "cap", "no_key", "limit"].includes(reason)
+    $("pd-latency").textContent = formatLatency(response?.latencyMs)
+    $("pd-cost").textContent = formatCost(response?.estimatedCostUsd)
+    const noCall = !response || NO_CALL.includes(reason)
     $("pd-cache").textContent = noCall ? "—" : response.cached ? "hit, no API call" : "miss"
-    $("pd-tokens").textContent = usage ? `${fmt(cachedTokens ?? 0)} / ${fmt(usage.input_tokens)} tokens` : "—"
+    $("pd-tokens").textContent = usage
+      ? `${formatCount(cachedTokens ?? 0)} / ${formatCount(usage.input_tokens)} tokens`
+      : "—"
   }
 
   function openDrawer() {

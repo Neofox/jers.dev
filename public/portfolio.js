@@ -744,6 +744,7 @@
       filter,
       chapter: chapters.some((c) => c.id === parts[1]) ? parts[1] : "3i",
       chapterExplicit: chapters.some((c) => c.id === parts[1]),
+      fullCareer: stage === "about" && parts[1] === "career",
     }
   }
   function workPath(id = currentProject, visual, inspector = currentInspector, filter = currentFilter, page = 0) {
@@ -823,7 +824,8 @@
     }
     if (r.stage === "about") {
       renderChapter(r.chapter, r.chapterExplicit)
-      if (r.chapterExplicit && (stageChanged || chapterChanged)) scrollTarget = $("career-" + r.chapter)
+      if (r.fullCareer) scrollTarget = $("chapter-list")
+      else if (r.chapterExplicit && (stageChanged || chapterChanged)) scrollTarget = $("career-" + r.chapter)
     }
     if (r.stage === "playground") renderExample(r, stageChanged)
     if (stageChanged) {

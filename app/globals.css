@@ -430,6 +430,7 @@ main {
   color: var(--muted);
 }
 [id^="case-"],
+.career-list,
 .career-item {
   scroll-margin-top: calc(var(--header-h) + var(--space-5));
 }
@@ -5080,8 +5081,8 @@ html[data-motion="off"] *::after {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       "copy"
-      "selection"
-      "person";
+      "person"
+      "selection";
     gap: var(--space-6);
     padding-top: var(--space-5);
   }
@@ -5118,10 +5119,21 @@ html[data-motion="off"] *::after {
   .selection-role {
     margin-top: var(--space-1);
   }
-  .portrait-composition,
+  .home-person {
+    display: grid;
+    grid-template-columns: clamp(112px, 36%, 220px) minmax(0, 1fr);
+    align-items: end;
+    gap: var(--space-5);
+  }
+  .home-person .portrait-composition,
   .home-person figcaption {
-    max-width: 320px;
-    margin-left: 0;
+    max-width: none;
+    margin: 0;
+  }
+  .home-person .person-portrait {
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--radius-m);
   }
   .page-head {
     padding: var(--space-6) 0 var(--space-5);
@@ -6220,10 +6232,34 @@ html[data-motion="off"] .eh-product {
 .work-head {
   padding: var(--space-6) 0 var(--space-4);
 }
+.work-rail {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-strong);
+}
+.full-career-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  color: var(--muted);
+  font-size: var(--text-sm);
+  text-decoration: none;
+}
+.full-career-link:hover,
+.full-career-link:focus-visible {
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.work-directory > .full-career-link {
+  width: 100%;
+  border-top: 1px solid var(--border);
+}
 .workplaces {
   display: flex;
   align-items: stretch;
-  border-bottom: 1px solid var(--border-strong);
 }
 .workplaces a {
   position: relative;
@@ -6519,6 +6555,16 @@ html[data-motion="off"] .eh-product {
 @media (max-width: 767px) {
   #stage-work .work-head {
     padding: 20px 0 10px;
+  }
+  .work-rail {
+    display: block;
+    border: 0;
+  }
+  .workplaces {
+    border-bottom: 1px solid var(--border-strong);
+  }
+  .full-career-link {
+    font-size: 13px;
   }
   .workplaces a {
     flex: 1;

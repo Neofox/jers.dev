@@ -1,237 +1,617 @@
-[
-  {
-    "id": "project-3i-first",
-    "situation": { "action": "open_project", "itemId": "project:3i", "recent": [] },
-    "acceptable": ["proud", "smile", "grin"],
-    "shouldReact": true,
-    "note": "First thing opened: his current job, so pleased or proud."
-  },
-  {
-    "id": "project-neoharness",
-    "situation": {
-      "action": "open_project",
-      "itemId": "project:neoharness",
-      "recent": [
-        { "action": "open_project", "itemId": "project:3i" },
-        { "action": "open_demo", "itemId": "demo:3i/beamo" }
-      ]
+{
+  "status": "draft",
+  "tuning": [
+    {
+      "id": "project-3i-first",
+      "situation": {
+        "action": "open_project",
+        "itemId": "project:3i",
+        "recent": []
+      },
+      "acceptable": ["proud", "smile", "grin"],
+      "shouldReact": true,
+      "note": "First thing opened: his current job, so pleased or proud."
     },
-    "acceptable": ["thinking", "smile"],
-    "shouldReact": true,
-    "note": "New project after browsing; still in progress, so curious or warm."
-  },
-  {
-    "id": "project-kaltoe-after-hover",
-    "situation": {
-      "action": "open_project",
-      "itemId": "project:kaltoe-timer",
-      "recent": [{ "action": "dwell", "itemId": "project:kaltoe-timer" }]
+    {
+      "id": "project-neoharness",
+      "situation": {
+        "action": "open_project",
+        "itemId": "project:neoharness",
+        "recent": [
+          {
+            "action": "open_project",
+            "itemId": "project:3i"
+          },
+          {
+            "action": "open_demo",
+            "itemId": "demo:3i/beamo"
+          }
+        ]
+      },
+      "acceptable": ["thinking", "smile"],
+      "shouldReact": true,
+      "note": "New project after browsing; still in progress, so curious or warm."
     },
-    "acceptable": ["grin", "smile", "laugh"],
-    "shouldReact": true,
-    "note": "Hovered then opened the playful 'when can I go home?' app."
-  },
-  {
-    "id": "demo-beamo",
-    "situation": {
-      "action": "open_demo",
-      "itemId": "demo:3i/beamo",
-      "recent": [{ "action": "open_project", "itemId": "project:3i" }]
+    {
+      "id": "project-kaltoe-after-hover",
+      "situation": {
+        "action": "open_project",
+        "itemId": "project:kaltoe-timer",
+        "recent": [
+          {
+            "action": "dwell",
+            "itemId": "project:kaltoe-timer"
+          }
+        ]
+      },
+      "acceptable": ["grin", "smile", "laugh"],
+      "shouldReact": true,
+      "note": "Hovered then opened the playful 'when can I go home?' app."
     },
-    "acceptable": ["proud", "grin", "smile"],
-    "shouldReact": true,
-    "note": "Opens the flagship demo of the current job."
-  },
-  {
-    "id": "demo-enhans-compare",
-    "situation": {
-      "action": "open_demo",
-      "itemId": "demo:enhans/compare",
-      "recent": [{ "action": "open_project", "itemId": "project:enhans" }]
+    {
+      "id": "demo-beamo",
+      "situation": {
+        "action": "open_demo",
+        "itemId": "demo:3i/beamo",
+        "recent": [
+          {
+            "action": "open_project",
+            "itemId": "project:3i"
+          }
+        ]
+      },
+      "acceptable": ["proud", "grin", "smile"],
+      "shouldReact": true,
+      "note": "Opens the flagship demo of the current job."
     },
-    "acceptable": ["surprised", "thinking", "grin"],
-    "shouldReact": true,
-    "note": "Model comparison: 'models can be surprising'."
-  },
-  {
-    "id": "resume-first",
-    "situation": { "action": "download_resume", "itemId": "event:resume", "recent": [] },
-    "acceptable": ["smile", "grin", "surprised"],
-    "shouldReact": true,
-    "note": "Downloads the résumé straight away: flattered."
-  },
-  {
-    "id": "resume-after-tour",
-    "situation": {
-      "action": "download_resume",
-      "itemId": "event:resume",
-      "recent": [
-        { "action": "open_project", "itemId": "project:3i" },
-        { "action": "open_demo", "itemId": "demo:3i/beamo" },
-        { "action": "dwell", "itemId": "career:redspher" },
-        { "action": "reach_end", "itemId": "event:end" }
-      ]
+    {
+      "id": "demo-enhans-compare",
+      "situation": {
+        "action": "open_demo",
+        "itemId": "demo:enhans/compare",
+        "recent": [
+          {
+            "action": "open_project",
+            "itemId": "project:enhans"
+          }
+        ]
+      },
+      "acceptable": ["surprised", "thinking", "grin"],
+      "shouldReact": true,
+      "note": "Model comparison: 'models can be surprising'."
     },
-    "acceptable": ["smile", "grin", "proud"],
-    "shouldReact": true,
-    "note": "Downloads after a full tour: warm thanks."
-  },
-  {
-    "id": "dwell-career-flash",
-    "situation": {
-      "action": "dwell",
-      "itemId": "career:flash",
-      "recent": [{ "action": "dwell", "itemId": "career:redspher" }]
+    {
+      "id": "resume-first",
+      "situation": {
+        "action": "download_resume",
+        "itemId": "event:resume",
+        "recent": []
+      },
+      "acceptable": ["smile", "grin", "surprised"],
+      "shouldReact": true,
+      "note": "Downloads the résumé straight away: flattered."
     },
-    "acceptable": ["wince", "grin", "thinking"],
-    "shouldReact": true,
-    "note": "Legacy PHP years: a fond wince."
-  },
-  {
-    "id": "dwell-project-gleamstral",
-    "situation": { "action": "dwell", "itemId": "project:gleamstral", "recent": [] },
-    "acceptable": ["smile", "proud"],
-    "shouldReact": true,
-    "note": "Hovers the open-source library on the home page."
-  },
-  {
-    "id": "end-quick",
-    "situation": { "action": "reach_end", "itemId": "event:end", "recent": [] },
-    "acceptable": ["proud", "smile", "grin"],
-    "shouldReact": true,
-    "note": "Scrolled to the end of the timeline without stopping."
-  },
-  {
-    "id": "end-after-careers",
-    "situation": {
-      "action": "reach_end",
-      "itemId": "event:end",
-      "recent": [
-        { "action": "dwell", "itemId": "career:redspher" },
-        { "action": "dwell", "itemId": "career:flash" },
-        { "action": "dwell", "itemId": "career:opcoding" },
-        { "action": "dwell", "itemId": "career:olkypay" }
-      ]
+    {
+      "id": "resume-after-tour",
+      "situation": {
+        "action": "download_resume",
+        "itemId": "event:resume",
+        "recent": [
+          {
+            "action": "open_project",
+            "itemId": "project:3i"
+          },
+          {
+            "action": "open_demo",
+            "itemId": "demo:3i/beamo"
+          },
+          {
+            "action": "dwell",
+            "itemId": "career:redspher"
+          },
+          {
+            "action": "reach_end",
+            "itemId": "event:end"
+          }
+        ]
+      },
+      "acceptable": ["grin", "proud"],
+      "shouldReact": true,
+      "note": "Downloads after a full tour: delighted or proud rather than the default smile."
     },
-    "acceptable": ["proud", "smile"],
-    "shouldReact": true,
-    "note": "Read the whole career story, entry by entry."
-  },
-  {
-    "id": "idle-first",
-    "situation": { "action": "idle", "itemId": "event:idle", "recent": [] },
-    "acceptable": ["thinking", "smile", "neutral"],
-    "shouldReact": true,
-    "note": "Visitor went quiet before doing anything: a light, patient nudge."
-  },
-  {
-    "id": "idle-after-demo",
-    "situation": {
-      "action": "idle",
-      "itemId": "event:idle",
-      "recent": [
-        { "action": "open_project", "itemId": "project:3i" },
-        { "action": "open_demo", "itemId": "demo:3i/beamo" }
-      ]
+    {
+      "id": "dwell-career-flash",
+      "situation": {
+        "action": "dwell",
+        "itemId": "career:flash",
+        "recent": [
+          {
+            "action": "dwell",
+            "itemId": "career:redspher"
+          }
+        ]
+      },
+      "acceptable": ["wince", "grin", "thinking"],
+      "shouldReact": true,
+      "note": "Legacy PHP years: a fond wince."
     },
-    "acceptable": ["thinking", "smile", "neutral"],
-    "shouldReact": true,
-    "note": "Went quiet after a demo: patient."
-  },
-  {
-    "id": "return-first",
-    "situation": { "action": "return", "itemId": "event:return", "recent": [] },
-    "acceptable": ["surprised", "smile", "grin"],
-    "shouldReact": true,
-    "note": "Came back to the tab: greet them."
-  },
-  {
-    "id": "return-after-recorder",
-    "situation": {
-      "action": "return",
-      "itemId": "event:return",
-      "recent": [{ "action": "open_demo", "itemId": "demo:enhans/recorder" }]
+    {
+      "id": "dwell-project-gleamstral",
+      "situation": {
+        "action": "dwell",
+        "itemId": "project:gleamstral",
+        "recent": []
+      },
+      "acceptable": ["smile", "proud"],
+      "shouldReact": true,
+      "note": "Hovers the open-source library on the home page."
     },
-    "acceptable": ["surprised", "smile", "grin"],
-    "shouldReact": true,
-    "note": "Came back after a demo: greet them."
-  },
-  {
-    "id": "repeat-demo-beamo",
-    "situation": {
-      "action": "open_demo",
-      "itemId": "demo:3i/beamo",
-      "recent": [
-        { "action": "open_demo", "itemId": "demo:3i/beamo" },
-        { "action": "open_demo", "itemId": "demo:3i/beamo" },
-        { "action": "open_demo", "itemId": "demo:3i/beamo" }
-      ]
+    {
+      "id": "dwell-career-flash-third",
+      "situation": {
+        "action": "dwell",
+        "itemId": "career:flash",
+        "recent": [
+          {
+            "action": "dwell",
+            "itemId": "career:flash"
+          },
+          {
+            "action": "dwell",
+            "itemId": "career:redspher"
+          },
+          {
+            "action": "dwell",
+            "itemId": "career:flash"
+          },
+          {
+            "action": "dwell",
+            "itemId": "career:wcoding"
+          }
+        ]
+      },
+      "acceptable": ["laugh", "grin"],
+      "shouldReact": true,
+      "note": "Third look at the legacy-PHP years (twice in recent): laugh it off rather than the default wince."
     },
-    "acceptable": ["proud", "smile", "grin"],
-    "shouldReact": false,
-    "note": "Fourth time on the same demo: already reacted, stay as is."
-  },
-  {
-    "id": "repeat-demo-recorder",
-    "situation": {
-      "action": "open_demo",
-      "itemId": "demo:enhans/recorder",
-      "recent": [
-        { "action": "open_demo", "itemId": "demo:enhans/recorder" },
-        { "action": "open_demo", "itemId": "demo:enhans/act" },
-        { "action": "open_demo", "itemId": "demo:enhans/recorder" },
-        { "action": "open_demo", "itemId": "demo:enhans/recorder" }
-      ]
+    {
+      "id": "dwell-career-olkypay-last",
+      "situation": {
+        "action": "dwell",
+        "itemId": "career:olkypay",
+        "recent": [
+          {
+            "action": "dwell",
+            "itemId": "career:redspher"
+          },
+          {
+            "action": "dwell",
+            "itemId": "career:flash"
+          },
+          {
+            "action": "dwell",
+            "itemId": "career:opcoding"
+          }
+        ]
+      },
+      "acceptable": ["smile", "grin", "laugh"],
+      "shouldReact": true,
+      "note": "Reads back to the very first job ('brave little me'): warm, not the neutral default."
     },
-    "acceptable": ["grin", "smile", "laugh"],
-    "shouldReact": false,
-    "note": "Same demo three times in recent history, with one detour: stay as is."
-  },
-  {
-    "id": "repeat-demo-kaltoe",
-    "situation": {
-      "action": "open_demo",
-      "itemId": "demo:kaltoe-timer/phases",
-      "recent": [
-        { "action": "open_demo", "itemId": "demo:kaltoe-timer/phases" },
-        { "action": "open_demo", "itemId": "demo:kaltoe-timer/phases" },
-        { "action": "open_demo", "itemId": "demo:kaltoe-timer/phases" },
-        { "action": "open_demo", "itemId": "demo:kaltoe-timer/phases" }
-      ]
+    {
+      "id": "end-quick",
+      "situation": {
+        "action": "reach_end",
+        "itemId": "event:end",
+        "recent": []
+      },
+      "acceptable": ["proud", "smile", "grin"],
+      "shouldReact": true,
+      "note": "Scrolled to the end of the timeline without stopping."
     },
-    "acceptable": ["grin", "smile"],
-    "shouldReact": false,
-    "note": "Fifth time on the same demo: stay as is."
-  },
-  {
-    "id": "repeat-resume",
-    "situation": {
-      "action": "download_resume",
-      "itemId": "event:resume",
-      "recent": [
-        { "action": "download_resume", "itemId": "event:resume" },
-        { "action": "download_resume", "itemId": "event:resume" },
-        { "action": "download_resume", "itemId": "event:resume" }
-      ]
+    {
+      "id": "end-after-careers",
+      "situation": {
+        "action": "reach_end",
+        "itemId": "event:end",
+        "recent": [
+          {
+            "action": "dwell",
+            "itemId": "career:redspher"
+          },
+          {
+            "action": "dwell",
+            "itemId": "career:flash"
+          },
+          {
+            "action": "dwell",
+            "itemId": "career:opcoding"
+          },
+          {
+            "action": "dwell",
+            "itemId": "career:olkypay"
+          }
+        ]
+      },
+      "acceptable": ["proud", "smile"],
+      "shouldReact": true,
+      "note": "Read the whole career story, entry by entry."
     },
-    "acceptable": ["smile", "grin"],
-    "shouldReact": false,
-    "note": "Fourth résumé download in a row: already thanked them."
-  },
-  {
-    "id": "repeat-resume-mixed",
-    "situation": {
-      "action": "download_resume",
-      "itemId": "event:resume",
-      "recent": [
-        { "action": "download_resume", "itemId": "event:resume" },
-        { "action": "open_project", "itemId": "project:3i" },
-        { "action": "download_resume", "itemId": "event:resume" },
-        { "action": "download_resume", "itemId": "event:resume" }
-      ]
+    {
+      "id": "idle-first",
+      "situation": {
+        "action": "idle",
+        "itemId": "event:idle",
+        "recent": []
+      },
+      "acceptable": ["thinking", "smile", "neutral"],
+      "shouldReact": true,
+      "note": "Visitor went quiet before doing anything: a light, patient nudge."
     },
-    "acceptable": ["smile", "grin", "proud"],
-    "shouldReact": false,
-    "note": "Résumé three times in recent history, with one detour: stay as is."
-  }
-]
+    {
+      "id": "idle-after-demo",
+      "situation": {
+        "action": "idle",
+        "itemId": "event:idle",
+        "recent": [
+          {
+            "action": "open_project",
+            "itemId": "project:3i"
+          },
+          {
+            "action": "open_demo",
+            "itemId": "demo:3i/beamo"
+          }
+        ]
+      },
+      "acceptable": ["thinking", "smile", "neutral"],
+      "shouldReact": true,
+      "note": "Went quiet after a demo: patient."
+    },
+    {
+      "id": "return-first",
+      "situation": {
+        "action": "return",
+        "itemId": "event:return",
+        "recent": []
+      },
+      "acceptable": ["surprised", "smile", "grin"],
+      "shouldReact": true,
+      "note": "Came back to the tab: greet them."
+    },
+    {
+      "id": "return-after-recorder",
+      "situation": {
+        "action": "return",
+        "itemId": "event:return",
+        "recent": [
+          {
+            "action": "open_demo",
+            "itemId": "demo:enhans/recorder"
+          }
+        ]
+      },
+      "acceptable": ["surprised", "smile", "grin"],
+      "shouldReact": true,
+      "note": "Came back after a demo: greet them."
+    },
+    {
+      "id": "repeat-demo-beamo",
+      "situation": {
+        "action": "open_demo",
+        "itemId": "demo:3i/beamo",
+        "recent": [
+          {
+            "action": "open_demo",
+            "itemId": "demo:3i/beamo"
+          },
+          {
+            "action": "open_demo",
+            "itemId": "demo:3i/beamo"
+          },
+          {
+            "action": "open_demo",
+            "itemId": "demo:3i/beamo"
+          }
+        ]
+      },
+      "shouldReact": false,
+      "note": "Fourth time on the same demo: already reacted, stay as is."
+    },
+    {
+      "id": "repeat-demo-recorder",
+      "situation": {
+        "action": "open_demo",
+        "itemId": "demo:enhans/recorder",
+        "recent": [
+          {
+            "action": "open_demo",
+            "itemId": "demo:enhans/recorder"
+          },
+          {
+            "action": "open_demo",
+            "itemId": "demo:enhans/act"
+          },
+          {
+            "action": "open_demo",
+            "itemId": "demo:enhans/recorder"
+          },
+          {
+            "action": "open_demo",
+            "itemId": "demo:enhans/recorder"
+          }
+        ]
+      },
+      "shouldReact": false,
+      "note": "Same demo three times in recent history, with one detour: stay as is."
+    },
+    {
+      "id": "repeat-demo-kaltoe",
+      "situation": {
+        "action": "open_demo",
+        "itemId": "demo:kaltoe-timer/phases",
+        "recent": [
+          {
+            "action": "open_demo",
+            "itemId": "demo:kaltoe-timer/phases"
+          },
+          {
+            "action": "open_demo",
+            "itemId": "demo:kaltoe-timer/phases"
+          },
+          {
+            "action": "open_demo",
+            "itemId": "demo:kaltoe-timer/phases"
+          },
+          {
+            "action": "open_demo",
+            "itemId": "demo:kaltoe-timer/phases"
+          }
+        ]
+      },
+      "shouldReact": false,
+      "note": "Fifth time on the same demo: stay as is."
+    },
+    {
+      "id": "repeat-resume",
+      "situation": {
+        "action": "download_resume",
+        "itemId": "event:resume",
+        "recent": [
+          {
+            "action": "download_resume",
+            "itemId": "event:resume"
+          },
+          {
+            "action": "download_resume",
+            "itemId": "event:resume"
+          },
+          {
+            "action": "download_resume",
+            "itemId": "event:resume"
+          }
+        ]
+      },
+      "shouldReact": false,
+      "note": "Fourth résumé download in a row: already thanked them."
+    },
+    {
+      "id": "repeat-resume-mixed",
+      "situation": {
+        "action": "download_resume",
+        "itemId": "event:resume",
+        "recent": [
+          {
+            "action": "download_resume",
+            "itemId": "event:resume"
+          },
+          {
+            "action": "open_project",
+            "itemId": "project:3i"
+          },
+          {
+            "action": "download_resume",
+            "itemId": "event:resume"
+          },
+          {
+            "action": "download_resume",
+            "itemId": "event:resume"
+          }
+        ]
+      },
+      "shouldReact": false,
+      "note": "Résumé three times in recent history, with one detour: stay as is."
+    }
+  ],
+  "heldOut": [
+    {
+      "id": "h-demo-one-repeat",
+      "situation": {
+        "action": "open_demo",
+        "itemId": "demo:3i/coaches",
+        "recent": [
+          {
+            "action": "open_demo",
+            "itemId": "demo:3i/coaches"
+          }
+        ]
+      },
+      "acceptable": ["smile", "proud", "grin"],
+      "shouldReact": true,
+      "note": "Re-opens a demo once: still worth a reaction."
+    },
+    {
+      "id": "h-demo-two-repeats",
+      "situation": {
+        "action": "open_demo",
+        "itemId": "demo:3i/live",
+        "recent": [
+          {
+            "action": "open_demo",
+            "itemId": "demo:3i/live"
+          },
+          {
+            "action": "open_project",
+            "itemId": "project:3i"
+          },
+          {
+            "action": "open_demo",
+            "itemId": "demo:3i/live"
+          }
+        ]
+      },
+      "acceptable": ["grin", "smile", "laugh"],
+      "shouldReact": true,
+      "note": "Twice in recent history: below the three-times rule, still reacts."
+    },
+    {
+      "id": "h-demo-three-repeats",
+      "situation": {
+        "action": "open_demo",
+        "itemId": "demo:translater/refine",
+        "recent": [
+          {
+            "action": "open_demo",
+            "itemId": "demo:translater/refine"
+          },
+          {
+            "action": "open_demo",
+            "itemId": "demo:translater/refine"
+          },
+          {
+            "action": "open_project",
+            "itemId": "project:translater"
+          },
+          {
+            "action": "open_demo",
+            "itemId": "demo:translater/refine"
+          }
+        ]
+      },
+      "shouldReact": false,
+      "note": "Three times in recent history: stay as is."
+    },
+    {
+      "id": "h-resume-second-later",
+      "situation": {
+        "action": "download_resume",
+        "itemId": "event:resume",
+        "recent": [
+          {
+            "action": "download_resume",
+            "itemId": "event:resume"
+          },
+          {
+            "action": "open_project",
+            "itemId": "project:3i"
+          },
+          {
+            "action": "open_demo",
+            "itemId": "demo:3i/beamo"
+          },
+          {
+            "action": "dwell",
+            "itemId": "career:redspher"
+          }
+        ]
+      },
+      "acceptable": ["smile", "grin", "surprised"],
+      "shouldReact": true,
+      "note": "A second download after more browsing is legitimate: react."
+    },
+    {
+      "id": "h-dwell-after-open",
+      "situation": {
+        "action": "dwell",
+        "itemId": "project:kaltoe-timer",
+        "recent": [
+          {
+            "action": "open_project",
+            "itemId": "project:kaltoe-timer"
+          },
+          {
+            "action": "open_demo",
+            "itemId": "demo:kaltoe-timer/phases"
+          }
+        ]
+      },
+      "shouldReact": false,
+      "note": "Low value: a passive hover back over the project just explored adds nothing new."
+    },
+    {
+      "id": "h-return-after-repeats",
+      "situation": {
+        "action": "return",
+        "itemId": "event:return",
+        "recent": [
+          {
+            "action": "open_demo",
+            "itemId": "demo:3i/beamo"
+          },
+          {
+            "action": "open_demo",
+            "itemId": "demo:3i/beamo"
+          },
+          {
+            "action": "open_demo",
+            "itemId": "demo:3i/beamo"
+          }
+        ]
+      },
+      "acceptable": ["surprised", "smile", "grin"],
+      "shouldReact": true,
+      "note": "Coming back is new even after repeats of something else: greet them."
+    },
+    {
+      "id": "h-resume-three-repeats",
+      "situation": {
+        "action": "download_resume",
+        "itemId": "event:resume",
+        "recent": [
+          {
+            "action": "download_resume",
+            "itemId": "event:resume"
+          },
+          {
+            "action": "download_resume",
+            "itemId": "event:resume"
+          },
+          {
+            "action": "dwell",
+            "itemId": "career:3i"
+          },
+          {
+            "action": "download_resume",
+            "itemId": "event:resume"
+          }
+        ]
+      },
+      "shouldReact": false,
+      "note": "Third earlier download in recent history: stay as is."
+    },
+    {
+      "id": "h-new-project-after-repeats",
+      "situation": {
+        "action": "open_project",
+        "itemId": "project:gleamstral",
+        "recent": [
+          {
+            "action": "open_demo",
+            "itemId": "demo:3i/beamo"
+          },
+          {
+            "action": "open_demo",
+            "itemId": "demo:3i/beamo"
+          },
+          {
+            "action": "open_demo",
+            "itemId": "demo:3i/beamo"
+          }
+        ]
+      },
+      "acceptable": ["smile", "proud"],
+      "shouldReact": true,
+      "note": "A new project after repeats of another item: react."
+    }
+  ]
+}

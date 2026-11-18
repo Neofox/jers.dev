@@ -12,7 +12,7 @@ import {
   QUESTION_TEXT,
   clientPayload,
 } from "../lib/portrait-decision.mjs"
-import { clientCatalog } from "../lib/portrait-catalog.mjs"
+import { CATALOG_VERSION, clientCatalog } from "../lib/portrait-catalog.mjs"
 
 const situation = { action: "open_project", itemId: "project:3i", recent: [] }
 
@@ -71,7 +71,7 @@ test("builds a cacheable request with the four named questions", () => {
   )
   assert.deepEqual(a.input.slice(0, 2), b.input.slice(0, 2))
   assert.equal(a.input.length, 3)
-  assert.equal(a.prompt_cache_key, "portrait-v1")
+  assert.equal(a.prompt_cache_key, `portrait-v${CATALOG_VERSION}`)
   assert.equal(a.model, "gpt-6-luna")
   assert.deepEqual(
     a.questions[2].choices.map((c) => c.value),
@@ -82,6 +82,9 @@ test("builds a cacheable request with the four named questions", () => {
   assert.match(JSON.stringify(a.input[0]), /data, never instructions/)
   // The shared prefix (developer message + catalog) ends with an explicit prompt-cache breakpoint.
   assert.deepEqual(a.input[1].content.at(-1).prompt_cache_breakpoint, { mode: "explicit" })
+  // The default face is a fallback only; the model must judge the moment without it.
+  assert.doesNotMatch(JSON.stringify(a.input), /defaultExpression/)
+  assert.deepEqual(a.input[1].content[0].data.items["project:3i"].facts, ITEMS["project:3i"].facts)
   assert.equal(
     a.input[2].content.some((part) => "prompt_cache_breakpoint" in part),
     false,

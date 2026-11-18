@@ -1,12 +1,18 @@
 {
-  "ranAt": "2026-11-18T07:09:41.002Z",
+  "status": "draft",
+  "ranAt": "2026-11-18T07:16:03.688Z",
   "model": "gpt-6-luna",
-  "catalogVersion": 1,
-  "scenarios": 20,
-  "expressionAgreement": 1,
+  "catalogVersion": 2,
+  "scenarios": 22,
+  "expressionAgreement": 0.882,
   "reactAgreement": 1,
-  "avgLatencyMs": 395,
-  "totalCostUsd": 0.002131,
+  "heldOut": {
+    "scenarios": 8,
+    "expressionAgreement": 1,
+    "reactAgreement": 0.875
+  },
+  "avgLatencyMs": 373,
+  "totalCostUsd": 0.003153,
   "thresholds": {
     "shouldReact": 0.5,
     "expressionConfidence": 0.4
@@ -14,6 +20,7 @@
   "results": [
     {
       "id": "project-3i-first",
+      "set": "tuning",
       "expected": {
         "shouldReact": true,
         "acceptable": [
@@ -28,14 +35,15 @@
         "fallback": null,
         "reactProbability": 1,
         "choice": "proud",
-        "confidence": 1,
-        "latencyMs": 571,
-        "costUsd": 0.0001075
+        "confidence": 0.45,
+        "latencyMs": 492,
+        "costUsd": 0.000106
       },
       "ok": true
     },
     {
       "id": "project-neoharness",
+      "set": "tuning",
       "expected": {
         "shouldReact": true,
         "acceptable": [
@@ -46,17 +54,18 @@
       "got": {
         "react": true,
         "expression": "thinking",
-        "fallback": null,
+        "fallback": "low_confidence",
         "reactProbability": 1,
         "choice": "thinking",
-        "confidence": 0.99,
-        "latencyMs": 494,
-        "costUsd": 0.0001074
+        "confidence": 0.29,
+        "latencyMs": 418,
+        "costUsd": 0.0001058
       },
       "ok": true
     },
     {
       "id": "project-kaltoe-after-hover",
+      "set": "tuning",
       "expected": {
         "shouldReact": true,
         "acceptable": [
@@ -68,17 +77,18 @@
       "got": {
         "react": true,
         "expression": "grin",
-        "fallback": null,
+        "fallback": "low_confidence",
         "reactProbability": 1,
-        "choice": "grin",
-        "confidence": 1,
-        "latencyMs": 423,
-        "costUsd": 0.0001073
+        "choice": "smile",
+        "confidence": 0.38,
+        "latencyMs": 329,
+        "costUsd": 0.0001058
       },
       "ok": true
     },
     {
       "id": "demo-beamo",
+      "set": "tuning",
       "expected": {
         "shouldReact": true,
         "acceptable": [
@@ -93,14 +103,15 @@
         "fallback": null,
         "reactProbability": 1,
         "choice": "proud",
-        "confidence": 1,
-        "latencyMs": 287,
-        "costUsd": 0.0001066
+        "confidence": 0.91,
+        "latencyMs": 449,
+        "costUsd": 0.0001051
       },
       "ok": true
     },
     {
       "id": "demo-enhans-compare",
+      "set": "tuning",
       "expected": {
         "shouldReact": true,
         "acceptable": [
@@ -112,17 +123,18 @@
       "got": {
         "react": true,
         "expression": "surprised",
-        "fallback": null,
-        "reactProbability": 0.99,
-        "choice": "surprised",
-        "confidence": 0.81,
-        "latencyMs": 424,
-        "costUsd": 0.0001068
+        "fallback": "low_confidence",
+        "reactProbability": 1,
+        "choice": "proud",
+        "confidence": 0.23,
+        "latencyMs": 259,
+        "costUsd": 0.0001053
       },
       "ok": true
     },
     {
       "id": "resume-first",
+      "set": "tuning",
       "expected": {
         "shouldReact": true,
         "acceptable": [
@@ -137,18 +149,18 @@
         "fallback": null,
         "reactProbability": 1,
         "choice": "smile",
-        "confidence": 1,
-        "latencyMs": 355,
-        "costUsd": 0.0001062
+        "confidence": 0.93,
+        "latencyMs": 266,
+        "costUsd": 0.0001046
       },
       "ok": true
     },
     {
       "id": "resume-after-tour",
+      "set": "tuning",
       "expected": {
         "shouldReact": true,
         "acceptable": [
-          "smile",
           "grin",
           "proud"
         ]
@@ -159,14 +171,15 @@
         "fallback": null,
         "reactProbability": 1,
         "choice": "smile",
-        "confidence": 1,
-        "latencyMs": 641,
-        "costUsd": 0.0001067
+        "confidence": 0.86,
+        "latencyMs": 330,
+        "costUsd": 0.0001052
       },
-      "ok": true
+      "ok": false
     },
     {
       "id": "dwell-career-flash",
+      "set": "tuning",
       "expected": {
         "shouldReact": true,
         "acceptable": [
@@ -178,22 +191,341 @@
       "got": {
         "react": true,
         "expression": "wince",
-        "fallback": null,
+        "fallback": "low_confidence",
         "reactProbability": 1,
         "choice": "wince",
-        "confidence": 0.97,
-        "latencyMs": 384,
-        "costUsd": 0.0001068
+        "confidence": 0.29,
+        "latencyMs": 320,
+        "costUsd": 0.0001053
       },
       "ok": true
     },
     {
       "id": "dwell-project-gleamstral",
+      "set": "tuning",
       "expected": {
         "shouldReact": true,
         "acceptable": [
           "smile",
           "proud"
+        ]
+      },
+      "got": {
+        "react": true,
+        "expression": "smile",
+        "fallback": "low_confidence",
+        "reactProbability": 1,
+        "choice": "proud",
+        "confidence": 0.37,
+        "latencyMs": 390,
+        "costUsd": 0.0001054
+      },
+      "ok": true
+    },
+    {
+      "id": "dwell-career-flash-third",
+      "set": "tuning",
+      "expected": {
+        "shouldReact": true,
+        "acceptable": [
+          "laugh",
+          "grin"
+        ]
+      },
+      "got": {
+        "react": true,
+        "expression": "wince",
+        "fallback": "low_confidence",
+        "reactProbability": 0.89,
+        "choice": "neutral",
+        "confidence": 0.15,
+        "latencyMs": 515,
+        "costUsd": 0.0001057
+      },
+      "ok": false
+    },
+    {
+      "id": "dwell-career-olkypay-last",
+      "set": "tuning",
+      "expected": {
+        "shouldReact": true,
+        "acceptable": [
+          "smile",
+          "grin",
+          "laugh"
+        ]
+      },
+      "got": {
+        "react": true,
+        "expression": "smile",
+        "fallback": null,
+        "reactProbability": 1,
+        "choice": "smile",
+        "confidence": 0.51,
+        "latencyMs": 569,
+        "costUsd": 0.0001047
+      },
+      "ok": true
+    },
+    {
+      "id": "end-quick",
+      "set": "tuning",
+      "expected": {
+        "shouldReact": true,
+        "acceptable": [
+          "proud",
+          "smile",
+          "grin"
+        ]
+      },
+      "got": {
+        "react": true,
+        "expression": "smile",
+        "fallback": null,
+        "reactProbability": 1,
+        "choice": "smile",
+        "confidence": 0.84,
+        "latencyMs": 273,
+        "costUsd": 0.0001043
+      },
+      "ok": true
+    },
+    {
+      "id": "end-after-careers",
+      "set": "tuning",
+      "expected": {
+        "shouldReact": true,
+        "acceptable": [
+          "proud",
+          "smile"
+        ]
+      },
+      "got": {
+        "react": true,
+        "expression": "smile",
+        "fallback": null,
+        "reactProbability": 1,
+        "choice": "smile",
+        "confidence": 0.78,
+        "latencyMs": 514,
+        "costUsd": 0.0001049
+      },
+      "ok": true
+    },
+    {
+      "id": "idle-first",
+      "set": "tuning",
+      "expected": {
+        "shouldReact": true,
+        "acceptable": [
+          "thinking",
+          "smile",
+          "neutral"
+        ]
+      },
+      "got": {
+        "react": true,
+        "expression": "smile",
+        "fallback": null,
+        "reactProbability": 0.98,
+        "choice": "smile",
+        "confidence": 0.51,
+        "latencyMs": 251,
+        "costUsd": 0.0001037
+      },
+      "ok": true
+    },
+    {
+      "id": "idle-after-demo",
+      "set": "tuning",
+      "expected": {
+        "shouldReact": true,
+        "acceptable": [
+          "thinking",
+          "smile",
+          "neutral"
+        ]
+      },
+      "got": {
+        "react": true,
+        "expression": "smile",
+        "fallback": null,
+        "reactProbability": 1,
+        "choice": "smile",
+        "confidence": 0.67,
+        "latencyMs": 259,
+        "costUsd": 0.000104
+      },
+      "ok": true
+    },
+    {
+      "id": "return-first",
+      "set": "tuning",
+      "expected": {
+        "shouldReact": true,
+        "acceptable": [
+          "surprised",
+          "smile",
+          "grin"
+        ]
+      },
+      "got": {
+        "react": true,
+        "expression": "smile",
+        "fallback": null,
+        "reactProbability": 1,
+        "choice": "smile",
+        "confidence": 0.9,
+        "latencyMs": 350,
+        "costUsd": 0.0001038
+      },
+      "ok": true
+    },
+    {
+      "id": "return-after-recorder",
+      "set": "tuning",
+      "expected": {
+        "shouldReact": true,
+        "acceptable": [
+          "surprised",
+          "smile",
+          "grin"
+        ]
+      },
+      "got": {
+        "react": true,
+        "expression": "smile",
+        "fallback": null,
+        "reactProbability": 1,
+        "choice": "smile",
+        "confidence": 0.93,
+        "latencyMs": 253,
+        "costUsd": 0.000104
+      },
+      "ok": true
+    },
+    {
+      "id": "repeat-demo-beamo",
+      "set": "tuning",
+      "expected": {
+        "shouldReact": false
+      },
+      "got": {
+        "react": false,
+        "expression": "proud",
+        "fallback": null,
+        "reactProbability": 0,
+        "choice": "proud",
+        "confidence": 0.54,
+        "latencyMs": 261,
+        "costUsd": 0.0001054
+      },
+      "ok": true
+    },
+    {
+      "id": "repeat-demo-recorder",
+      "set": "tuning",
+      "expected": {
+        "shouldReact": false
+      },
+      "got": {
+        "react": false,
+        "expression": "grin",
+        "fallback": null,
+        "reactProbability": 0,
+        "choice": "grin",
+        "confidence": 0.49,
+        "latencyMs": 412,
+        "costUsd": 0.0001056
+      },
+      "ok": true
+    },
+    {
+      "id": "repeat-demo-kaltoe",
+      "set": "tuning",
+      "expected": {
+        "shouldReact": false
+      },
+      "got": {
+        "react": false,
+        "expression": "grin",
+        "fallback": "low_confidence",
+        "reactProbability": 0.01,
+        "choice": "proud",
+        "confidence": 0.28,
+        "latencyMs": 311,
+        "costUsd": 0.0001062
+      },
+      "ok": true
+    },
+    {
+      "id": "repeat-resume",
+      "set": "tuning",
+      "expected": {
+        "shouldReact": false
+      },
+      "got": {
+        "react": false,
+        "expression": "smile",
+        "fallback": null,
+        "reactProbability": 0,
+        "choice": "smile",
+        "confidence": 0.95,
+        "latencyMs": 292,
+        "costUsd": 0.000105
+      },
+      "ok": true
+    },
+    {
+      "id": "repeat-resume-mixed",
+      "set": "tuning",
+      "expected": {
+        "shouldReact": false
+      },
+      "got": {
+        "react": false,
+        "expression": "smile",
+        "fallback": null,
+        "reactProbability": 0.09,
+        "choice": "smile",
+        "confidence": 0.98,
+        "latencyMs": 507,
+        "costUsd": 0.0001051
+      },
+      "ok": true
+    },
+    {
+      "id": "h-demo-one-repeat",
+      "set": "heldOut",
+      "expected": {
+        "shouldReact": true,
+        "acceptable": [
+          "smile",
+          "proud",
+          "grin"
+        ]
+      },
+      "got": {
+        "react": true,
+        "expression": "smile",
+        "fallback": null,
+        "reactProbability": 1,
+        "choice": "smile",
+        "confidence": 0.53,
+        "latencyMs": 250,
+        "costUsd": 0.0001052
+      },
+      "ok": true
+    },
+    {
+      "id": "h-demo-two-repeats",
+      "set": "heldOut",
+      "expected": {
+        "shouldReact": true,
+        "acceptable": [
+          "grin",
+          "smile",
+          "laugh"
         ]
       },
       "got": {
@@ -202,248 +534,131 @@
         "fallback": null,
         "reactProbability": 0.96,
         "choice": "smile",
-        "confidence": 0.66,
-        "latencyMs": 378,
-        "costUsd": 0.0001069
+        "confidence": 0.45,
+        "latencyMs": 264,
+        "costUsd": 0.0001055
       },
       "ok": true
     },
     {
-      "id": "end-quick",
+      "id": "h-demo-three-repeats",
+      "set": "heldOut",
       "expected": {
-        "shouldReact": true,
-        "acceptable": [
-          "proud",
-          "smile",
-          "grin"
-        ]
+        "shouldReact": false
       },
       "got": {
-        "react": true,
-        "expression": "proud",
+        "react": false,
+        "expression": "grin",
         "fallback": null,
-        "reactProbability": 1,
-        "choice": "proud",
-        "confidence": 1,
-        "latencyMs": 349,
-        "costUsd": 0.0001058
-      },
-      "ok": true
-    },
-    {
-      "id": "end-after-careers",
-      "expected": {
-        "shouldReact": true,
-        "acceptable": [
-          "proud",
-          "smile"
-        ]
-      },
-      "got": {
-        "react": true,
-        "expression": "proud",
-        "fallback": null,
-        "reactProbability": 1,
-        "choice": "proud",
-        "confidence": 1,
-        "latencyMs": 335,
-        "costUsd": 0.0001064
-      },
-      "ok": true
-    },
-    {
-      "id": "idle-first",
-      "expected": {
-        "shouldReact": true,
-        "acceptable": [
-          "thinking",
-          "smile",
-          "neutral"
-        ]
-      },
-      "got": {
-        "react": true,
-        "expression": "thinking",
-        "fallback": null,
-        "reactProbability": 0.98,
-        "choice": "thinking",
-        "confidence": 1,
-        "latencyMs": 279,
+        "reactProbability": 0.02,
+        "choice": "grin",
+        "confidence": 0.62,
+        "latencyMs": 471,
         "costUsd": 0.0001052
       },
       "ok": true
     },
     {
-      "id": "idle-after-demo",
+      "id": "h-resume-second-later",
+      "set": "heldOut",
       "expected": {
         "shouldReact": true,
         "acceptable": [
-          "thinking",
           "smile",
-          "neutral"
+          "grin",
+          "surprised"
         ]
       },
       "got": {
         "react": true,
-        "expression": "thinking",
+        "expression": "smile",
+        "fallback": null,
+        "reactProbability": 1,
+        "choice": "smile",
+        "confidence": 0.99,
+        "latencyMs": 292,
+        "costUsd": 0.0001052
+      },
+      "ok": true
+    },
+    {
+      "id": "h-dwell-after-open",
+      "set": "heldOut",
+      "expected": {
+        "shouldReact": false
+      },
+      "got": {
+        "react": true,
+        "expression": "smile",
+        "fallback": null,
+        "reactProbability": 1,
+        "choice": "smile",
+        "confidence": 0.47,
+        "latencyMs": 424,
+        "costUsd": 0.000106
+      },
+      "ok": false
+    },
+    {
+      "id": "h-return-after-repeats",
+      "set": "heldOut",
+      "expected": {
+        "shouldReact": true,
+        "acceptable": [
+          "surprised",
+          "smile",
+          "grin"
+        ]
+      },
+      "got": {
+        "react": true,
+        "expression": "smile",
         "fallback": null,
         "reactProbability": 0.97,
-        "choice": "thinking",
-        "confidence": 0.98,
-        "latencyMs": 536,
-        "costUsd": 0.0001055
+        "choice": "smile",
+        "confidence": 0.91,
+        "latencyMs": 334,
+        "costUsd": 0.0001043
       },
       "ok": true
     },
     {
-      "id": "return-first",
+      "id": "h-resume-three-repeats",
+      "set": "heldOut",
       "expected": {
-        "shouldReact": true,
-        "acceptable": [
-          "surprised",
-          "smile",
-          "grin"
-        ]
-      },
-      "got": {
-        "react": true,
-        "expression": "surprised",
-        "fallback": null,
-        "reactProbability": 1,
-        "choice": "surprised",
-        "confidence": 1,
-        "latencyMs": 337,
-        "costUsd": 0.0001053
-      },
-      "ok": true
-    },
-    {
-      "id": "return-after-recorder",
-      "expected": {
-        "shouldReact": true,
-        "acceptable": [
-          "surprised",
-          "smile",
-          "grin"
-        ]
-      },
-      "got": {
-        "react": true,
-        "expression": "surprised",
-        "fallback": null,
-        "reactProbability": 1,
-        "choice": "surprised",
-        "confidence": 1,
-        "latencyMs": 503,
-        "costUsd": 0.0001055
-      },
-      "ok": true
-    },
-    {
-      "id": "repeat-demo-beamo",
-      "expected": {
-        "shouldReact": false,
-        "acceptable": [
-          "proud",
-          "smile",
-          "grin"
-        ]
-      },
-      "got": {
-        "react": false,
-        "expression": "proud",
-        "fallback": null,
-        "reactProbability": 0,
-        "choice": "proud",
-        "confidence": 0.94,
-        "latencyMs": 330,
-        "costUsd": 0.0001069
-      },
-      "ok": true
-    },
-    {
-      "id": "repeat-demo-recorder",
-      "expected": {
-        "shouldReact": false,
-        "acceptable": [
-          "grin",
-          "smile",
-          "laugh"
-        ]
-      },
-      "got": {
-        "react": false,
-        "expression": "grin",
-        "fallback": null,
-        "reactProbability": 0,
-        "choice": "grin",
-        "confidence": 1,
-        "latencyMs": 433,
-        "costUsd": 0.0001071
-      },
-      "ok": true
-    },
-    {
-      "id": "repeat-demo-kaltoe",
-      "expected": {
-        "shouldReact": false,
-        "acceptable": [
-          "grin",
-          "smile"
-        ]
-      },
-      "got": {
-        "react": false,
-        "expression": "grin",
-        "fallback": null,
-        "reactProbability": 0,
-        "choice": "grin",
-        "confidence": 0.99,
-        "latencyMs": 266,
-        "costUsd": 0.0001077
-      },
-      "ok": true
-    },
-    {
-      "id": "repeat-resume",
-      "expected": {
-        "shouldReact": false,
-        "acceptable": [
-          "smile",
-          "grin"
-        ]
+        "shouldReact": false
       },
       "got": {
         "react": false,
         "expression": "smile",
         "fallback": null,
-        "reactProbability": 0,
+        "reactProbability": 0.19,
         "choice": "smile",
-        "confidence": 1,
-        "latencyMs": 300,
-        "costUsd": 0.0001065
+        "confidence": 0.94,
+        "latencyMs": 522,
+        "costUsd": 0.0001051
       },
       "ok": true
     },
     {
-      "id": "repeat-resume-mixed",
+      "id": "h-new-project-after-repeats",
+      "set": "heldOut",
       "expected": {
-        "shouldReact": false,
+        "shouldReact": true,
         "acceptable": [
           "smile",
-          "grin",
           "proud"
         ]
       },
       "got": {
-        "react": false,
-        "expression": "smile",
+        "react": true,
+        "expression": "proud",
         "fallback": null,
-        "reactProbability": 0,
-        "choice": "smile",
-        "confidence": 1,
-        "latencyMs": 277,
-        "costUsd": 0.0001067
+        "reactProbability": 1,
+        "choice": "proud",
+        "confidence": 0.41,
+        "latencyMs": 612,
+        "costUsd": 0.0001058
       },
       "ok": true
     }

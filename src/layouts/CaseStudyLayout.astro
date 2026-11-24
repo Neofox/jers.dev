@@ -20,6 +20,7 @@ const group = employer === "Independent" ? "side-projects" : employer.toLowerCas
 ---
 
 <PortfolioLayout {...metadata} stage="study" type="article">
+  <link slot="head" rel="preload" as="image" href={metadata.image} imagesrcset={srcset} imagesizes={sizes} fetchpriority="high" />
   <a class="skip" href="#main">Skip to case study</a>
   <div class="study">
     <header class="mast">
@@ -35,7 +36,7 @@ const group = employer === "Independent" ? "side-projects" : employer.toLowerCas
           <p class="byline">Jérôme Schaeffer{employer !== "Independent" && ` · ${employer === "3i" ? "Frontend Developer & AX Engineer" : "Frontend Developer"}`}</p>
         </header>
         <figure>
-          <img class="scene" src={metadata.image} {srcset} {sizes} width={metadata.imageWidth}
+          <img id="study-preview" class="scene" src={metadata.image} {srcset} {sizes} width={metadata.imageWidth}
             height={metadata.imageHeight} fetchpriority="high" alt={metadata.imageAlt} />
           <figcaption><slot name="caption" /></figcaption>
         </figure>

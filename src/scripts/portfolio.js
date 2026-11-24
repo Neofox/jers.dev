@@ -1463,28 +1463,6 @@ import { icon } from "./icons.js"
   document.addEventListener("click", (e) => {
     if (e.target.closest?.('a[href$=".pdf"]')) emitRepeatable("download_resume", "event:resume")
   })
-  // Reaching the end of the career timeline, once per visit (sessionStorage).
-  const endKey = "jerome-portrait-end"
-  let endReached = false
-  try {
-    endReached = sessionStorage.getItem(endKey) === "1"
-  } catch {}
-  const lastCareer = document.querySelector("#chapter-list .career-item:last-child")
-  if (!endReached && lastCareer && "IntersectionObserver" in window) {
-    const endObserver = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((entry) => entry.isIntersecting)) return
-        endObserver.disconnect()
-        try {
-          sessionStorage.setItem(endKey, "1")
-        } catch {}
-        emitTrigger("reach_end", "event:end")
-      },
-      { threshold: 0.5 },
-    )
-    endObserver.observe(lastCareer)
-  }
-
   // Pointer response is input-driven only, never an ambient loop.
   let portraitFrame = 0
   const portrait = $("portrait-composition")

@@ -11,6 +11,9 @@ const socialDescription = "I build the experience. And what makes it work."
 ---
 
 <PortfolioLayout path="/" {title} {description} {socialDescription}>
+    <script slot="head" is:inline>
+      if (location.hash === "#about/career") location.replace("/career/" + location.search)
+    </script>
     <div id="portfolio">
       <a class="skip" href="#main" data-focus-id="skip-navigation">Skip to content</a>
       <div class="shell">

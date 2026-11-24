@@ -50,7 +50,7 @@ const groups = [
     <main>
       <div class="work-intro" id="page-intro">
         <h1 id="work" tabindex="-1">Work</h1>
-        <a class="button button-outline career-link" href="/#about/career">View full career history <span aria-hidden="true">→</span></a>
+        <a class="button button-outline career-link" href="/career/"><span>View full <span data-career-title>career history</span></span> <span aria-hidden="true">→</span></a>
       </div>
       {groups.map(group => (
         <section aria-labelledby={group.id}>
@@ -86,6 +86,7 @@ const groups = [
   header a:first-child { font: 600 var(--text-lg) var(--font-display); }
   header a:last-child { font-size: var(--text-sm); }
   .work-intro { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-4); margin: clamp(40px, 7vw, 80px) 0; }
+  [data-career-title] { display: inline-block; }
   .career-link { color: var(--accent); }
   h1 { margin: 0; font-size: clamp(46px, 8vw, 96px); line-height: 1; letter-spacing: -0.05em; }
   section { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.3fr); gap: var(--space-6); padding: var(--space-5) 0 var(--space-7); border-top: 1px solid var(--border-strong); }

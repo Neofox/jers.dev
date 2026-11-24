@@ -4465,7 +4465,7 @@ html[data-motion="on"] .illo.is-live .tr-arrow .ui-icon {
   color: var(--accent);
   font-weight: 600;
 }
-.career-main h4 {
+.career-main :is(h2, h4) {
   font-size: var(--text-xl);
   line-height: 1.25;
 }
@@ -5267,11 +5267,30 @@ html[data-motion="off"] .portrait-aside:not(.is-shown) {
 
 /* ─── Motion ─────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: no-preference) {
-  .index > header, .study > .mast { view-transition-name: work-masthead; }
+  .index > header, .study > .mast, .career-page > .mast { view-transition-name: work-masthead; }
   .portrait-dock:not([hidden]) { view-transition-name: portrait-dock; }
 
   ::view-transition-group(*) { animation-duration: 200ms; animation-timing-function: ease-out; }
   ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 200ms; }
+  [data-work-title] { display: inline-block; }
+  ::view-transition-group(project-preview),
+  ::view-transition-group(career-label),
+  ::view-transition-group(work-label) {
+    animation-duration: 380ms;
+    animation-timing-function: cubic-bezier(.22,.78,.2,1);
+  }
+  ::view-transition-image-pair(project-preview) { overflow: clip; border-radius: 7px; }
+  ::view-transition-old(project-preview), ::view-transition-new(project-preview) {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  html:active-view-transition-type(timeline-in) .career-item:nth-child(1) { view-transition-name: career-first; }
+  html:active-view-transition-type(timeline-in) .career-item:nth-child(2) { view-transition-name: career-second; }
+  html:active-view-transition-type(timeline-in) .career-item:nth-child(3) { view-transition-name: career-third; }
+  ::view-transition-new(career-first), ::view-transition-new(career-second), ::view-transition-new(career-third) {
+    animation: timeline-arrive 320ms cubic-bezier(.2,.72,.24,1) both;
+  }
+  ::view-transition-new(career-second) { animation-delay: 35ms; }
+  ::view-transition-new(career-third) { animation-delay: 70ms; }
   html:active-view-transition-type(forward) { --page-arrival: 12px; }
   html:active-view-transition-type(backward) { --page-arrival: -12px; }
   html:is(:active-view-transition-type(forward), :active-view-transition-type(backward))::view-transition-old(root) {
@@ -5281,10 +5300,14 @@ html[data-motion="off"] .portrait-aside:not(.is-shown) {
     animation: page-enter 210ms cubic-bezier(.2,.7,.2,1) both;
   }
 }
+@keyframes timeline-arrive {
+  from { opacity: 0; transform: translateY(16px); clip-path: inset(0 0 22% 0); }
+  to { opacity: 1; transform: translateY(0); clip-path: inset(0); }
+}
 @keyframes page-leave { to { opacity: 0; transform: translateX(calc(-1 * var(--page-arrival))); } }
 @keyframes page-enter { from { opacity: 0; transform: translateX(var(--page-arrival)); } }
 @media (max-width: 767px) {
-  body[data-stage="study"] .portrait-dock { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+  body:is([data-stage="study"], [data-stage="career"]) .portrait-dock { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
   body[data-stage="study"]:has(.demo-enhans .eh-controls) .portrait-dock {
     bottom: calc(var(--mobile-nav-h) + env(safe-area-inset-bottom, 0px) + 116px);
   }

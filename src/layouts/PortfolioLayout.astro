@@ -4,7 +4,7 @@ import SpeedInsights from "@vercel/speed-insights/astro"
 import "../styles/globals.css"
 
 interface Props {
-  stage?: "work" | "study"
+  stage?: "work" | "study" | "career"
   title: string
   description: string
   socialDescription?: string
@@ -39,7 +39,8 @@ const socialImage = new URL(image, Astro.site)
     <style is:inline>
       @media (prefers-reduced-motion: no-preference) { @view-transition { navigation: auto; } }
     </style>
-    <link rel="expect" href="#page-intro" blocking="render" media="(prefers-reduced-motion: no-preference)" />
+    <slot name="head" />
+    <link rel="expect" href={stage === "study" ? "#study-preview" : "#page-intro"} blocking="render" media="(prefers-reduced-motion: no-preference)" />
     <script is:inline>
       (() => {
         const root = document.documentElement
@@ -52,6 +53,38 @@ const socialImage = new URL(image, Astro.site)
         sync()
         reduced.addEventListener("change", sync)
         window.addEventListener("pageshow", sync)
+        function depth(url) {
+          if (url.pathname === "/") return /^#(about|work)/.test(url.hash) ? 2 : 0
+          return url.pathname === "/work/" ? 1 : 2
+        }
+
+        // Name only the clicked pair. Unrelated rows stay in the ordinary page snapshot.
+        function connect(transition, other) {
+          const here = location.pathname
+          const there = other.pathname
+          const onIndex = here === "/work/"
+          if (!onIndex && there !== "/work/") return
+          const detail = onIndex ? there : here
+          let element, name
+          if (detail === "/career/") {
+            element = document.querySelector("[data-career-title]")
+            name = "career-label"
+          } else if (detail.startsWith("/work/")) {
+            element = onIndex
+              ? [...document.querySelectorAll("a.entry")].find(link => link.pathname === detail)?.querySelector("img")
+              : document.querySelector("#study-preview")
+            name = "project-preview"
+          } else if (detail === "/" && !(onIndex ? other.hash : location.hash)) {
+            element = document.querySelector(onIndex ? "h1" : "[data-work-title]")
+            name = "work-label"
+          }
+          if (!element) return
+          const bounds = element.getBoundingClientRect()
+          if (!bounds.width || bounds.bottom <= 0 || bounds.top >= innerHeight) return
+          element.style.viewTransitionName = name
+          transition.finished.finally(() => element.style.removeProperty("view-transition-name"))
+        }
+
         window.addEventListener("pagereveal", event => {
           const transition = event.viewTransition
           if (!transition) return
@@ -59,15 +92,17 @@ const socialImage = new URL(image, Astro.site)
           if (root.dataset.motion === "off") return transition.skipTransition()
           const from = window.navigation?.activation?.from
           if (!from?.url) return
-          function depth(url) {
-            if (url.pathname === "/") return url.hash.startsWith("#about") || url.hash.startsWith("#work") ? 2 : 0
-            return url.pathname.replace(/\/$/, "") === "/work" ? 1 : 2
-          }
-          const direction = depth(location) - depth(new URL(from.url))
+          const previous = new URL(from.url)
+          const direction = depth(location) - depth(previous)
           if (direction) transition.types?.add(direction > 0 ? "forward" : "backward")
+          if (location.pathname === "/career/" && previous.pathname === "/work/") transition.types?.add("timeline-in")
+          connect(transition, previous)
         })
         window.addEventListener("pageswap", event => {
-          if (root.dataset.motion === "off") event.viewTransition?.skipTransition()
+          const transition = event.viewTransition
+          if (!transition) return
+          if (root.dataset.motion === "off") return transition.skipTransition()
+          if (event.activation?.entry?.url) connect(transition, new URL(event.activation.entry.url))
         })
       })()
     </script>

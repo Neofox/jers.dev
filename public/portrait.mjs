@@ -324,6 +324,20 @@ function init() {
     if (document.hidden) stopDwell(dwellTarget)
   })
 
+  function watchCareerEnd() {
+    const last = document.querySelector("#chapter-list .career-item:last-child")
+    const key = "jerome-portrait-end"
+    if (!last || !("IntersectionObserver" in window) || store("sessionStorage", key) === "1") return
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.intersectionRatio < 0.5) return
+      observer.disconnect()
+      if (store("sessionStorage", key) === "1") return
+      store("sessionStorage", key, "1")
+      request("reach_end", "event:end")
+    }, { threshold: 0.5 })
+    observer.observe(last)
+  }
+
   function watchStudy() {
     const demo = document.querySelector("[data-portrait-study]")
     if (!demo) return
@@ -382,6 +396,7 @@ function init() {
         $(`pd-q-${name}`).textContent = question.instructions
         $(`pd-t-${name}`).textContent = String(question.type ?? "")
       }
+      watchCareerEnd()
       watchStudy()
       setTimeout(checkIdle, IDLE_MS)
     })

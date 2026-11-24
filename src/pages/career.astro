@@ -1,0 +1,33 @@
+---
+import CareerTimeline from "../components/CareerTimeline.astro"
+import PortraitDock from "../components/PortraitDock.astro"
+import PortfolioLayout from "../layouts/PortfolioLayout.astro"
+---
+
+<PortfolioLayout stage="career" path="/career/" title="Career history — Jérôme Schaeffer"
+  description="Jérôme Schaeffer’s engineering and teaching roles since 2015, from banking and logistics in Europe to AI products and digital twins in Seoul.">
+  <a class="skip" href="#career-title">Skip to career history</a>
+  <div class="career-page">
+    <header class="mast">
+      <a href="/" aria-label="Jérôme Schaeffer, portfolio home">Jérôme Schaeffer</a>
+      <a href="/work/">Work</a>
+    </header>
+    <main>
+      <div id="page-intro">
+        <h1 id="career-title" tabindex="-1" data-career-title>Career history</h1>
+      </div>
+      <CareerTimeline headingLevel="h2" />
+    </main>
+    <footer><a class="text-link" href="/assets/resume-en.pdf" hreflang="en">English résumé (PDF)</a><a class="text-link" href="/assets/resume-ko.pdf" hreflang="ko" lang="ko">한국어 이력서 (PDF)</a></footer>
+  </div>
+  <PortraitDock />
+</PortfolioLayout>
+
+<style>
+  .career-page { width: min(calc(100% - 2 * var(--gutter)), 1080px); margin: 0 auto var(--space-8); }
+  .mast, footer { display: flex; align-items: baseline; gap: var(--space-4); padding: var(--space-5) 0; }
+  .mast { justify-content: space-between; font-size: var(--text-sm); border-bottom: 1px solid var(--border); }
+  .mast a:first-child { font: 600 var(--text-lg) var(--font-display); }
+  h1 { width: fit-content; margin: clamp(36px, 6vw, 72px) 0; font-size: clamp(42px, 7vw, 88px); line-height: 1; letter-spacing: -.05em; }
+  footer { flex-wrap: wrap; }
+</style>

@@ -1,0 +1,19 @@
+---
+import { portraitSizes, portraitSources } from "../../public/portrait-core.mjs"
+interface Props {
+  surface: keyof typeof portraitSizes
+  id?: string
+}
+const { surface, id } = Astro.props
+---
+
+<img
+  id={id}
+  {...portraitSources("neutral")}
+  sizes={portraitSizes[surface]}
+  width="960"
+  height="960"
+  alt="Jérôme, calm"
+  loading={surface === "home" ? "eager" : "lazy"}
+  fetchpriority={surface === "home" ? "high" : "low"}
+/>

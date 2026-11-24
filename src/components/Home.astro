@@ -1,3 +1,6 @@
+---
+import PortraitImage from "./PortraitImage.astro"
+---
 <section class="stage" id="stage-home" aria-labelledby="home-title" data-focus-id="home">
   <div class="home-grid">
     <div class="hero-copy" data-reveal>
@@ -15,10 +18,10 @@
       <div class="home-actions">
         <a
           class="button button-primary"
-          href="#work/3i/beamo/overview?filter=professional"
+          href="/work/beamo/"
           data-focus-id="home-selected-work"
         >
-          Explore professional work <span aria-hidden="true">→</span>
+          Explore the Beamo viewer <span aria-hidden="true">→</span>
         </a>
       </div>
     </div>
@@ -33,7 +36,7 @@
           aria-label="Jérôme's reaction: neutral"
         >
           <span class="pf-face" id="portrait-home-face">
-            <img src="/assets/portrait/portrait-neutral.webp" width="960" height="960" alt="Jérôme, calm" />
+            <PortraitImage surface="home" />
           </span><span class="pf-tag" aria-hidden="true">
             <i></i><span id="portrait-home-tag">neutral</span><span class="pf-why">· why this face?</span>
           </span>

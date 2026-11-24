@@ -1,0 +1,210 @@
+---
+import PortfolioLayout from "../../layouts/PortfolioLayout.astro"
+
+const title = "Building Beamo’s React and Three.js digital-twin viewer — Jérôme Schaeffer"
+const description =
+  "Explore Jérôme Schaeffer’s work on Beamo at 3i. Navigate captured sites, measure in 3D, and inspect building elements in an interactive sample room."
+---
+
+<PortfolioLayout
+  path="/work/beamo/"
+  {title}
+  {description}
+  type="article"
+  image="/assets/beamo-measurement.webp"
+  imageWidth={1200}
+  imageHeight={630}
+  imageAlt="Two distances marked across the floor and window of a sample room in the Beamo viewer demo."
+>
+  <a class="skip" href="#main">Skip to case study</a>
+  <div class="study">
+    <header class="mast">
+      <a class="signature" href="/">Jérôme Schaeffer</a>
+      <a href="/#work/3i">Selected work <span aria-hidden="true">↗</span></a>
+    </header>
+    <main id="main" tabindex="-1">
+      <article>
+        <header class="opening">
+          <p class="eyebrow">3i · Frontend engineering</p>
+          <h1>Building Beamo’s digital-twin viewer</h1>
+          <p class="lead">
+            At 3i, I develop the React and Three.js viewer for Beamo. It lets people walk through a captured site,
+            measure the space, and inspect the building elements around them.
+          </p>
+          <p class="byline">Jérôme Schaeffer · Frontend Developer &amp; AX Engineer</p>
+        </header>
+        <figure>
+          <img
+            class="scene"
+            src="/assets/beamo-measurement.webp"
+            width="1200"
+            height="630"
+            fetchpriority="high"
+            alt="An orbit view of a sample room with a six-metre floor edge and a two-metre vertical measurement."
+          />
+          <figcaption>Measurement tools in my portfolio demo. The room and its measurements are synthetic.</figcaption>
+        </figure>
+        <section class="chapter" aria-labelledby="navigation">
+          <h2 id="navigation">Finding your way around a capture</h2>
+          <div>
+            <p>
+              Beamo brings 360° panoramas, Gaussian splat captures, building information models (BIM), and indoor maps
+              (IMDF) into the viewer. Waypoints connect locations so someone can move from one captured viewpoint to the
+              next.
+            </p>
+            <p>
+              Two camera modes let people ask different questions of the same space. In orbit mode you rotate around a
+              point, which is useful for seeing how a column sits against a wall. In first person you can walk up to the
+              column and look back across the room from eye level.
+            </p>
+          </div>
+        </section>
+        <section class="chapter" aria-labelledby="measurement">
+          <h2 id="measurement">Placing a ruler in three dimensions</h2>
+          <div>
+            <p>
+              A line can look straight from one camera angle and run diagonally into the room. The measurement tool
+              gives feedback before the second click. A dashed line previews the segment, nearby endpoints snap into
+              place, and an axis guide shows when the segment lines up with the room.
+            </p>
+            <p>
+              For a volume, you pick a corner, then set the edge, depth, and height of the box. A section
+              box lets you clip away part of the scene to see inside. In orbit mode, selecting a building element
+              reveals its IFC type and identifier.
+            </p>
+          </div>
+        </section>
+        <section class="demo-section" aria-labelledby="demo-title">
+          <h2 id="demo-title">Measure the sample room</h2>
+          <p>
+            Place two points along the floor, then orbit the camera to see where they landed. You can also use the
+            target controls and the Place point button. I recreated these interactions with a lightweight SVG projection
+            for this portfolio.
+          </p>
+          <div id="sample-room">
+            <button class="button button-primary" id="open-demo" type="button" hidden>Open measurement demo</button>
+            <noscript><p>Enable JavaScript to use the measurement tools.</p></noscript>
+          </div>
+        </section>
+      </article>
+    </main>
+    <footer><a class="text-link" href="/#work/3i">More of my work at 3i <span aria-hidden="true">→</span></a></footer>
+  </div>
+  <script>
+    const stage = document.querySelector<HTMLElement>("#sample-room")!
+    const open = document.querySelector<HTMLButtonElement>("#open-demo")!
+    open.hidden = false
+    open.addEventListener(
+      "click",
+      async () => {
+        open.disabled = true
+        open.textContent = "Loading demo…"
+        try {
+          const { mount } = await import("../../demos/beamo.js")
+          let dispose: (() => void) | undefined
+          function start() {
+            dispose?.()
+            dispose = mount(stage)
+            stage.querySelector("[data-demo-reset]")?.addEventListener("click", start)
+            stage.querySelector<SVGElement>("[data-bm=svg]")?.focus({ preventScroll: true })
+          }
+          start()
+        } catch {
+          open.disabled = false
+          open.textContent = "Reload to open the demo"
+          open.onclick = () => location.reload()
+          stage.replaceChildren(open)
+        }
+      },
+      { once: true },
+    )
+  </script>
+</PortfolioLayout>
+
+<style>
+  .study {
+    width: min(calc(100% - 2 * var(--gutter)), 1080px);
+    margin: 0 auto;
+  }
+  .mast,
+  footer {
+    padding: 24px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .mast {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: baseline;
+  }
+  .mast a {
+    font-size: var(--text-sm);
+  }
+  .mast .signature {
+    font: 600 var(--text-lg) var(--font-display);
+  }
+  .opening {
+    padding: clamp(40px, 7vw, 88px) 0 32px;
+  }
+  h1 {
+    max-width: 15ch;
+    font-size: clamp(42px, 7vw, 92px);
+    line-height: 1;
+    letter-spacing: -0.045em;
+    margin: 16px 0 24px;
+  }
+  h2 {
+    font-size: clamp(24px, 3vw, 36px);
+    line-height: 1.15;
+  }
+  .lead {
+    max-width: 57ch;
+    font-size: clamp(18px, 2vw, 24px);
+    line-height: 1.5;
+  }
+  .byline,
+  figcaption {
+    color: var(--muted);
+    font-size: var(--text-sm);
+    margin-top: 14px;
+  }
+  .scene {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+  }
+  figure {
+    margin: 0 0 40px;
+  }
+  .chapter {
+    display: grid;
+    grid-template-columns: 1fr 1.8fr;
+    gap: 48px;
+  }
+  .chapter,
+  .demo-section {
+    border-top: 1px solid var(--border);
+    padding: clamp(28px, 5vw, 52px) 0;
+  }
+  .chapter p,
+  .demo-section p {
+    max-width: 65ch;
+  }
+  .chapter p + p,
+  .demo-section > p,
+  #sample-room {
+    margin-top: 16px;
+  }
+  footer {
+    border-bottom: 0;
+    border-top: 1px solid var(--border);
+  }
+  @media (max-width: 700px) {
+    .chapter {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+</style>

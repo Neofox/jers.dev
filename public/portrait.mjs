@@ -8,6 +8,8 @@ import {
   formatCost,
   formatCount,
   formatLatency,
+  portraitSizes,
+  portraitSources,
 } from "./portrait-core.mjs"
 
 const HIGH_PRIORITY = ["open_project", "open_demo", "download_resume"]
@@ -77,7 +79,6 @@ function store(area, key, value) {
 }
 const motionEnabled = () =>
   document.documentElement.dataset.motion !== "off" && !matchMedia("(prefers-reduced-motion: reduce)").matches
-const faceUrl = (expression) => `/assets/portrait/portrait-${expression}.webp`
 const fixed = (n) => (typeof n === "number" && Number.isFinite(n) ? n.toFixed(2) : "—")
 // Results that never reached OpenAI: no cache hit or miss to report.
 const NO_CALL = ["network", "cap", "no_key", "limit", "rate_limited", "http_error"]
@@ -99,7 +100,6 @@ function init() {
   let shownAside = null
   let face = "neutral"
   let muted = store("localStorage", KEY.muted) === "1"
-  let preloaded = false
   let asideTimer = 0
   let pending = 0
   let tilt = 1
@@ -115,7 +115,10 @@ function init() {
     const token = ++surface.token
     const img = new Image(960, 960)
     img.alt = ALT[expression] ?? `Jérôme, ${expression}`
-    img.src = faceUrl(expression)
+    const { src, srcset } = portraitSources(expression)
+    img.sizes = surface.home ? portraitSizes.home : portraitSizes.dock
+    img.srcset = srcset
+    img.src = src
     try {
       await img.decode()
     } catch {
@@ -163,12 +166,6 @@ function init() {
         if (surface === active()) pop(surface, intensity)
       })
     }
-  }
-
-  function preloadAll() {
-    if (preloaded || !catalog) return
-    preloaded = true
-    for (const expression of catalog.expressions) if (expression !== "neutral") new Image().src = faceUrl(expression)
   }
 
   // ─── Asides and names ────────────────────────────────────────────────
@@ -269,7 +266,6 @@ function init() {
   // high-priority moves still show the item's default face, no more often than the request gap.
   function request(action, itemId) {
     if (muted || !catalog || document.hidden || !ACTIONS.has(action) || !Object.hasOwn(catalog.items, itemId)) return
-    preloadAll()
     const local = !navigator.onLine ? "network" : count() >= MAX_PER_VISIT ? "cap" : null
     if (local) scheduler.fallback(action, itemId, local)
     else scheduler.trigger(action, itemId)
@@ -430,7 +426,9 @@ function init() {
 
   function render() {
     const { response, situation } = latest ?? {}
-    $("pd-face").src = faceUrl(face)
+    const { src, srcset } = portraitSources(face)
+    $("pd-face").srcset = srcset
+    $("pd-face").src = src
     $("pd-face").alt = ALT[face] ?? ""
     if (muted) $("pd-trigger").textContent = "Muted. I'll keep a straight face."
     else if (!situation) $("pd-trigger").textContent = "No reaction yet. Open a project and watch my face."

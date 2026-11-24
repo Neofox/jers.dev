@@ -138,3 +138,17 @@ export function createScheduler({
     recent: () => recent.slice(),
   }
 }
+
+// The full-size originals are 960px. Astro prerenders the smaller WebPs at build time.
+export const portraitWidths = [96, 192, 320, 400, 640, 800]
+export const portraitSizes = {
+  home: "(max-width: 767px) clamp(112px, 33vw, 220px), (max-width: 1023px) 38vw, min(34vw, 400px)",
+  dock: "(max-width: 599px) 46px, 56px",
+  drawer: "72px",
+}
+
+export function portraitSources(expression) {
+  const src = `/assets/portrait/portrait-${expression}.webp`
+  const candidates = portraitWidths.map(width => `/assets/portrait/resized/${expression}-${width}.webp ${width}w`)
+  return { src, srcset: [...candidates, `${src} 960w`].join(", ") }
+}

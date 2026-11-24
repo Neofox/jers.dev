@@ -1191,6 +1191,9 @@ import { demoLoaders } from "./demo-loaders.js"
       }
     }
     $("visual-annotation").innerHTML = "<strong>" + chapter[2] + "</strong> " + chapter[3]
+    if (selected.preview === "beamo") {
+      $("visual-annotation").insertAdjacentHTML("beforeend", ' <a class="text-link" href="/work/beamo/">Read the Beamo case study</a>')
+    }
   }
   function renderWorkplaces() {
     $("workplaces").innerHTML = workplaces

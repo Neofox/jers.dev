@@ -1,6 +1,6 @@
 ---
 interface Props {
-  demo: "beamo" | "meet"
+  demo: "beamo" | "meet" | "cloud"
   label: string
   fallback: string
 }
@@ -16,7 +16,7 @@ const { demo, label, fallback } = Astro.props
   import { demoLoaders } from "../scripts/demo-loaders.js"
 
   for (const stage of document.querySelectorAll<HTMLElement>("[data-study-demo]")) {
-    const demo = stage.dataset.studyDemo as "beamo" | "meet"
+    const demo = stage.dataset.studyDemo as "beamo" | "meet" | "cloud"
     const open = stage.querySelector<HTMLButtonElement>("button")!
     open.hidden = false
     open.addEventListener("click", async () => {
@@ -29,7 +29,7 @@ const { demo, label, fallback } = Astro.props
           dispose?.()
           dispose = mount(stage)
           stage.querySelector("[data-demo-reset]")?.addEventListener("click", start)
-          stage.querySelector<HTMLElement | SVGElement>("[data-bm=svg], [data-pm-layout][aria-pressed=true]")?.focus({ preventScroll: true })
+          stage.querySelector<HTMLElement | SVGElement>("[data-bm=svg], [data-pm-layout][aria-pressed=true], [data-pc-tab][aria-selected=true]")?.focus({ preventScroll: true })
         }
         start()
       } catch {

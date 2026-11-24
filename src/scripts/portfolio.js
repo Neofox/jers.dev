@@ -1085,7 +1085,7 @@ import { demoLoaders } from "./demo-loaders.js"
     "3i": [
       { name: "Beamo", description: "Digital twin viewer", preview: "beamo", caseStudy: "/work/beamo/", views: ["beamo"] },
       { name: "Pivo Meet", description: "Remote video lessons", preview: "meet", caseStudy: "/work/pivo-meet/", views: ["live"] },
-      { name: "Pivo Cloud", description: "Personal video library", preview: "cloud", views: ["library"] },
+      { name: "Pivo Cloud", description: "Personal video library", preview: "cloud", caseStudy: "/work/pivo-cloud/", views: ["library"] },
       { name: "Pivo Coaches", description: "Equestrian coach discovery", preview: "coaches", views: ["coaches"] },
       { name: "CS / QA app", description: "Internal support triage", preview: "cs", views: ["cs"] },
       { name: "AI / AX", description: "Company-wide AI adoption", views: ["ax"] },

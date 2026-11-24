@@ -1,0 +1,69 @@
+---
+import { getImage } from "astro:assets"
+import lesson from "../../assets/pivo-meet-lesson.webp"
+import CaseStudyDemo from "../../components/CaseStudyDemo.astro"
+import CaseStudyLayout from "../../layouts/CaseStudyLayout.astro"
+
+const [small, medium] = await Promise.all([480, 800].map(width => getImage({ src: lesson, width, format: "webp" })))
+---
+
+<CaseStudyLayout
+  path="/work/pivo-meet/"
+  title="Pivo Meet remote coaching lessons with Vue and Agora — Jérôme Schaeffer"
+  description="A frontend case study of Pivo Meet at 3i. Try a two-person riding lesson, grant the coach camera control, and follow a simulated cloud recording."
+  heading="Coaching a rider with Pivo Meet"
+  image={lesson.src}
+  imageWidth={lesson.width}
+  imageHeight={lesson.height}
+  srcset={`${small.src} 480w, ${medium.src} 800w, ${lesson.src} ${lesson.width}w`}
+  sizes="(min-width: 1174px) 1080px, (max-width: 500px) calc(100vw - 40px), 92vw"
+  imageAlt="The rider fills the guest view in the Pivo Meet demo. The coach’s own preview sits in the lower right corner."
+>
+  <Fragment slot="lead">
+    A coach watching a riding lesson needs to see both horse and rider, even as they cross the arena.
+    At 3i, I maintain and extend Pivo Meet, the Vue 3 and Agora web app that lets a coach join a rider by video
+    and adjust the camera with the rider’s permission.
+  </Fragment>
+  <Fragment slot="caption">
+    A sample lesson in the portfolio demo, with the coach’s preview tucked into the corner.
+    Arena photograph by <a class="text-link" href="https://www.flickr.com/photos/76340031@N02/53003001579/">Jeremy T. Dyer, BLM Utah</a>.
+  </Fragment>
+
+  <section class="chapter" aria-labelledby="camera-control">
+    <h2 id="camera-control">Who controls the rider’s camera?</h2>
+    <div>
+      <p>
+        The side-by-side layout gives coach and rider equal space to talk. When the rider sets off, the coach can
+        switch to a small self-preview and use most of the screen to watch the horse.
+      </p>
+      <p>
+        Changing the layout only changes the coach’s screen. To move the rider’s Pivo Pod, the rider first
+        enables Guest Control. The coach can then hold an arrow to pan or zoom. If the rider withdraws
+        permission, movement stops.
+      </p>
+    </div>
+  </section>
+  <section class="chapter" aria-labelledby="recording">
+    <h2 id="recording">When is a lesson recording ready?</h2>
+    <div>
+      <p>
+        The room timer starts when the participants join. Recording has a separate clock. Choosing Cloud shows
+        the available recording time, and the recording counter starts once the recorder is ready.
+      </p>
+      <p>
+        Pressing stop takes the recording through stopping and processing before the app confirms it has been
+        saved. Leaving also asks for confirmation, so a coach who presses Leave by mistake can return to the
+        lesson with the recording still running.
+      </p>
+    </div>
+  </section>
+  <section class="demo-section" aria-labelledby="demo-title">
+    <h2 id="demo-title">Try the coach’s controls</h2>
+    <p>
+      Open the sample lesson, switch to Small preview, and try Camera control. Turn on Guest Control for the
+      rider, then hold an arrow to follow the horse. You can also try cloud recording. The demo uses a still
+      photograph and simulates the call and recording in your browser.
+    </p>
+    <CaseStudyDemo demo="meet" label="Open lesson demo" fallback="Enable JavaScript to try the lesson controls." />
+  </section>
+</CaseStudyLayout>

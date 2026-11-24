@@ -1,0 +1,133 @@
+---
+import PortfolioLayout from "./PortfolioLayout.astro"
+
+interface Props {
+  title: string
+  description: string
+  path: string
+  heading: string
+  image: string
+  imageAlt: string
+  imageWidth: number
+  imageHeight: number
+  srcset?: string
+  sizes?: string
+}
+const { heading, srcset, sizes, ...metadata } = Astro.props
+---
+
+<PortfolioLayout {...metadata} type="article">
+  <a class="skip" href="#main">Skip to case study</a>
+  <div class="study">
+    <header class="mast">
+      <a class="signature" href="/">Jérôme Schaeffer</a>
+      <a href="/#work/3i">Selected work <span aria-hidden="true">↗</span></a>
+    </header>
+    <main id="main" tabindex="-1">
+      <article>
+        <header class="opening">
+          <p class="eyebrow">3i · Frontend engineering</p>
+          <h1>{heading}</h1>
+          <p class="lead"><slot name="lead" /></p>
+          <p class="byline">Jérôme Schaeffer · Frontend Developer &amp; AX Engineer</p>
+        </header>
+        <figure>
+          <img class="scene" src={metadata.image} {srcset} {sizes} width={metadata.imageWidth}
+            height={metadata.imageHeight} fetchpriority="high" alt={metadata.imageAlt} />
+          <figcaption><slot name="caption" /></figcaption>
+        </figure>
+        <slot />
+      </article>
+    </main>
+    <footer><a class="text-link" href="/#work/3i">More of my work at 3i <span aria-hidden="true">→</span></a></footer>
+  </div>
+</PortfolioLayout>
+
+<style is:global>
+  .study {
+    width: min(calc(100% - 2 * var(--gutter)), 1080px);
+    margin: 0 auto;
+    .mast,
+    footer {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .mast {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: baseline;
+    }
+    .mast a {
+      font-size: var(--text-sm);
+    }
+    .mast .signature {
+      font: 600 var(--text-lg) var(--font-display);
+    }
+    .opening {
+      padding: clamp(40px, 7vw, 88px) 0 32px;
+    }
+    h1 {
+      max-width: 15ch;
+      font-size: clamp(42px, 7vw, 92px);
+      line-height: 1;
+      letter-spacing: -0.045em;
+      margin: 16px 0 24px;
+    }
+    .chapter > h2,
+    .demo-section > h2 {
+      font-size: clamp(24px, 3vw, 36px);
+      line-height: 1.15;
+    }
+    .lead {
+      max-width: 57ch;
+      font-size: clamp(18px, 2vw, 24px);
+      line-height: 1.5;
+    }
+    .byline,
+    figcaption {
+      color: var(--muted);
+      font-size: var(--text-sm);
+      margin-top: 14px;
+    }
+    .scene {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-m);
+    }
+    figure {
+      margin: 0 0 40px;
+    }
+    .chapter {
+      display: grid;
+      grid-template-columns: 1fr 1.8fr;
+      gap: 48px;
+    }
+    .chapter,
+    .demo-section {
+      border-top: 1px solid var(--border);
+      padding: clamp(28px, 5vw, 52px) 0;
+    }
+    .chapter p,
+    .demo-section > p {
+      max-width: 65ch;
+    }
+    .chapter p + p,
+    .demo-section > p,
+    .demo-mount {
+      margin-top: 16px;
+    }
+    footer {
+      border-bottom: 0;
+      border-top: 1px solid var(--border);
+    }
+    @media (max-width: 700px) {
+      .chapter {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+    }
+  }
+</style>

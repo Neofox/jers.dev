@@ -1083,8 +1083,8 @@ import { demoLoaders } from "./demo-loaders.js"
   // Case and chapter IDs remain the shareable route. Group only genuine sibling views.
   const workProducts = {
     "3i": [
-      { name: "Beamo", description: "Digital twin viewer", preview: "beamo", views: ["beamo"] },
-      { name: "Pivo Meet", description: "Remote video lessons", preview: "meet", views: ["live"] },
+      { name: "Beamo", description: "Digital twin viewer", preview: "beamo", caseStudy: "/work/beamo/", views: ["beamo"] },
+      { name: "Pivo Meet", description: "Remote video lessons", preview: "meet", caseStudy: "/work/pivo-meet/", views: ["live"] },
       { name: "Pivo Cloud", description: "Personal video library", preview: "cloud", views: ["library"] },
       { name: "Pivo Coaches", description: "Equestrian coach discovery", preview: "coaches", views: ["coaches"] },
       { name: "CS / QA app", description: "Internal support triage", preview: "cs", views: ["cs"] },
@@ -1191,8 +1191,8 @@ import { demoLoaders } from "./demo-loaders.js"
       }
     }
     $("visual-annotation").innerHTML = "<strong>" + chapter[2] + "</strong> " + chapter[3]
-    if (selected.preview === "beamo") {
-      $("visual-annotation").insertAdjacentHTML("beforeend", ' <a class="text-link" href="/work/beamo/">Read the Beamo case study</a>')
+    if (selected.caseStudy) {
+      $("visual-annotation").insertAdjacentHTML("beforeend", ` <a class="text-link" href="${selected.caseStudy}">Read the ${selected.name} case study</a>`)
     }
   }
   function renderWorkplaces() {

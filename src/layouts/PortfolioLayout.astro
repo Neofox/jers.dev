@@ -54,35 +54,44 @@ const socialImage = new URL(image, Astro.site)
         reduced.addEventListener("change", sync)
         window.addEventListener("pageshow", sync)
         function depth(url) {
-          if (url.pathname === "/") return /^#(about|work)/.test(url.hash) ? 2 : 0
+          if (url.pathname === "/") return url.hash.startsWith("#work") ? 2 : 0
           return url.pathname === "/work/" ? 1 : 2
         }
 
-        // Name only the clicked pair. Unrelated rows stay in the ordinary page snapshot.
-        function connect(transition, other) {
-          const here = location.pathname
-          const there = other.pathname
-          const onIndex = here === "/work/"
-          if (!onIndex && there !== "/work/") return
-          const detail = onIndex ? there : here
-          let element, name
-          if (detail === "/career/") {
-            element = document.querySelector("[data-career-title]")
-            name = "career-label"
-          } else if (detail.startsWith("/work/")) {
-            element = onIndex
-              ? [...document.querySelectorAll("a.entry")].find(link => link.pathname === detail)?.querySelector("img")
-              : document.querySelector("#study-preview")
-            name = "project-preview"
-          } else if (detail === "/" && !(onIndex ? other.hash : location.hash)) {
-            element = document.querySelector(onIndex ? "h1" : "[data-work-title]")
-            name = "work-label"
-          }
+        function share(transition, element, name) {
           if (!element) return
           const bounds = element.getBoundingClientRect()
           if (!bounds.width || bounds.bottom <= 0 || bounds.top >= innerHeight) return
           element.style.viewTransitionName = name
           transition.finished.finally(() => element.style.removeProperty("view-transition-name"))
+        }
+
+        function connect(transition, other) {
+          const here = location.pathname
+          const there = other.pathname
+          const onIndex = here === "/work/"
+          const detail = onIndex ? there : here
+          if (!onIndex && there !== "/work/") {
+            if ((here === "/" && there === "/career/") || (here === "/career/" && there === "/")) {
+              share(transition, document.querySelector(here === "/" ? "#portrait-home-face" : ".career-portrait"), "profile-photo")
+            }
+            return
+          }
+          if (detail.startsWith("/work/") && detail !== "/work/") {
+            const row = onIndex ? [...document.querySelectorAll("a.entry")].find(link => link.pathname === detail) : null
+            share(transition, onIndex ? row?.querySelector("img") : document.querySelector("#study-preview"), "project-preview")
+            share(transition, onIndex ? row?.querySelector("strong") : document.querySelector("[data-project-name]"), "project-name")
+          } else if (detail === "/career/") {
+            const group = (onIndex ? location.hash : other.hash).slice(1)
+            if (["3i", "enhans", "redspher"].includes(group)) {
+              const company = onIndex ? document.getElementById(group) : document.querySelector(`#career-${group} h2`)
+              share(transition, company, "company-name")
+            } else {
+              share(transition, document.querySelector("[data-career-title]"), "career-label")
+            }
+          } else if (detail === "/" && !(onIndex ? other.hash : location.hash)) {
+            share(transition, document.querySelector(onIndex ? "h1" : "[data-work-title]"), "work-label")
+          }
         }
 
         window.addEventListener("pagereveal", event => {
@@ -96,6 +105,9 @@ const socialImage = new URL(image, Astro.site)
           const direction = depth(location) - depth(previous)
           if (direction) transition.types?.add(direction > 0 ? "forward" : "backward")
           if (location.pathname === "/career/" && previous.pathname === "/work/") transition.types?.add("timeline-in")
+          if (location.pathname.startsWith("/work/") && location.pathname !== "/work/" && previous.pathname === "/work/") {
+            transition.types?.add("study-open")
+          }
           connect(transition, previous)
         })
         window.addEventListener("pageswap", event => {

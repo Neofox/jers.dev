@@ -23,8 +23,7 @@ Jérôme Schaeffer is a senior product engineer based in Seoul, South Korea with
 - [Kaltoe Timer](https://www.jers.dev/work/side-projects/kaltoe-timer/): Interactive menu bar countdown with lunch, family day, and overtime
 - [Translater](https://www.jers.dev/work/side-projects/translater/): Interactive Korean tone refinement and phrase breakdown
 - [Neoharness](https://www.jers.dev/work/side-projects/neoharness/): Interactive agent turn with memory updates, cancellation, and heartbeat checks
-- [Career history](https://www.jers.dev/career/): Roles, dates and responsibilities since 2015
-- [About](https://www.jers.dev/#about): Background and résumé
+- [Career history](https://www.jers.dev/career/): Background, résumé and roles since 2015
 - [Current Korean résumé](https://www.jers.dev/assets/resume-ko.pdf)
 - [Earlier English résumé](https://www.jers.dev/assets/resume-en.pdf)
 

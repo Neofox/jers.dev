@@ -433,6 +433,12 @@ function init() {
   })
 
   // ─── Dock visibility ─────────────────────────────────────────────────
+  const careerPortrait = dock.closest(".career-portrait")
+  if (careerPortrait && "IntersectionObserver" in window) {
+    new IntersectionObserver(([entry]) => {
+      careerPortrait.toggleAttribute("data-floating", !entry.isIntersecting)
+    }).observe(careerPortrait)
+  }
   function syncDock() {
     const stage = document.body.dataset.stage
     const show = Boolean(stage) && stage !== "home" && !document.querySelector("dialog[open]")

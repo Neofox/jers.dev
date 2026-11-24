@@ -3,6 +3,7 @@ import PortraitDock from "../components/PortraitDock.astro"
 import PortfolioLayout from "./PortfolioLayout.astro"
 
 interface Props {
+  projectName: string
   employer?: "3i" | "Enhans" | "Independent"
   title: string
   description: string
@@ -15,7 +16,8 @@ interface Props {
   srcset?: string
   sizes?: string
 }
-const { heading, srcset, sizes, employer = "3i", ...metadata } = Astro.props
+const { projectName, heading, srcset, sizes, employer = "3i", ...metadata } = Astro.props
+const projectAnchor = metadata.path.split("/").filter(Boolean).pop()
 const group = employer === "Independent" ? "side-projects" : employer.toLowerCase()
 ---
 
@@ -25,12 +27,12 @@ const group = employer === "Independent" ? "side-projects" : employer.toLowerCas
   <div class="study">
     <header class="mast">
       <a class="signature" href="/">Jérôme Schaeffer</a>
-      <a href="/work/">Work</a>
+      <a href={`/work/#${projectAnchor}`}>Work</a>
     </header>
     <main id="main" tabindex="-1">
       <article>
         <header class="opening" id="page-intro">
-          <p class="eyebrow">{employer === "Independent" ? "Independent project" : employer + " · Frontend engineering"}</p>
+          <p class="eyebrow">{employer === "Independent" ? "Independent" : employer} · <span data-project-name>{projectName}</span></p>
           <h1>{heading}</h1>
           <p class="lead"><slot name="lead" /></p>
           <p class="byline">Jérôme Schaeffer{employer !== "Independent" && ` · ${employer === "3i" ? "Frontend Developer & AX Engineer" : "Frontend Developer"}`}</p>

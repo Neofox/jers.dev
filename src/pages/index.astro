@@ -3,7 +3,6 @@ import PortfolioLayout from "../layouts/PortfolioLayout.astro"
 import PortraitDock from "../components/PortraitDock.astro"
 import Home from "../components/Home.astro"
 import Work from "../components/Work.astro"
-import About from "../components/About.astro"
 const title = "Jérôme Schaeffer — Senior Product Engineer"
 const description =
   "Senior product engineer in Seoul with 11+ years across frontend, full-stack, digital twins and AI/AX. Explore Beamo, Pivo, AI products and selected work."
@@ -11,9 +10,6 @@ const socialDescription = "I build the experience. And what makes it work."
 ---
 
 <PortfolioLayout path="/" {title} {description} {socialDescription}>
-    <script slot="head" is:inline>
-      if (location.hash === "#about/career") location.replace("/career/" + location.search)
-    </script>
     <div id="portfolio">
       <a class="skip" href="#main" data-focus-id="skip-navigation">Skip to content</a>
       <div class="shell">
@@ -26,11 +22,11 @@ const socialDescription = "I build the experience. And what makes it work."
             </a>
             <nav class="site-nav" aria-label="Portfolio sections">
               <a href="/work/" data-nav="work" data-focus-id="nav-work">Work</a><a
-                href="#about"
-                data-nav="about"
-                data-focus-id="nav-about"
+                href="/career/"
+                data-nav="career"
+                data-focus-id="nav-career"
               >
-                About
+                Career
               </a>
             </nav>
             <div class="header-actions">
@@ -59,7 +55,6 @@ const socialDescription = "I build the experience. And what makes it work."
         <main id="main" tabindex="-1" data-focus-id="portfolio-main">
           <Home />
           <Work />
-          <About />
         </main>
         <footer class="site-footer" data-focus-id="persistent-navigation">
           <div class="footer-inner">

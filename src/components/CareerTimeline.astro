@@ -1,8 +1,5 @@
 ---
 import { chapters } from "../data/career.js"
-
-interface Props { headingLevel: "h2" | "h4" }
-const Heading = Astro.props.headingLevel
 ---
 
 <ol class="career-list" id="chapter-list" aria-labelledby="career-title">
@@ -10,7 +7,7 @@ const Heading = Astro.props.headingLevel
     <li class="career-item" id={`career-${c.id}`} tabindex="-1" data-chapter-item={c.id} data-focus-id={`career-${c.id}`}>
       <p class="career-date">{c.date}</p>
       <div class="career-main">
-        <Heading>{c.company}</Heading>
+        <h2>{c.company}</h2>
         <p class="career-role">{c.role}</p>
         <p class="career-description">{c.description}</p>
         {c.project && <a href={`/work/#${c.project === "rubiwin" ? "redspher" : c.project}`} class="text-link" data-focus-id={`career-related-${c.id}`}>Explore related work <span aria-hidden="true">→</span></a>}

@@ -46,7 +46,7 @@ const groups = [
 <PortfolioLayout stage="work" path="/work/" title="Work — Jérôme Schaeffer" description="Explore Jérôme Schaeffer’s engineering case studies and interactive demos from 3i, Enhans, Redspher, and independent projects.">
   <a class="skip" href="#work">Skip to work</a>
   <div class="index">
-    <header><a href="/" aria-label="Jérôme Schaeffer, portfolio home">Jérôme Schaeffer</a><a href="/#about">About</a></header>
+    <header><a href="/" aria-label="Jérôme Schaeffer, portfolio home">Jérôme Schaeffer</a></header>
     <main>
       <div class="work-intro" id="page-intro">
         <h1 id="work" tabindex="-1">Work</h1>
@@ -58,7 +58,7 @@ const groups = [
           <ul>
             {group.studies.map(study => (
               <li>
-                <a class="entry" href={study.href} data-project={study.project}>
+                <a class="entry" id={study.href.split("/").filter(Boolean).pop()} href={study.href} data-project={study.project}>
                   <img src={study.image} alt="" width="96" height="60" loading="lazy" />
                   <span class="entry-text"><strong>{study.name}</strong><span>{study.topic}</span></span>
                   <span class="arrow" aria-hidden="true">→</span>
@@ -83,22 +83,23 @@ const groups = [
 <style>
   .index { width: min(calc(100% - 2 * var(--gutter)), 1080px); margin: 0 auto var(--space-8); }
   header { display: flex; align-items: baseline; justify-content: space-between; padding: var(--space-5) 0; border-bottom: 1px solid var(--border); }
-  header a:first-child { font: 600 var(--text-lg) var(--font-display); }
-  header a:last-child { font-size: var(--text-sm); }
+  header a { font: 600 var(--text-lg) var(--font-display); }
   .work-intro { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-4); margin: clamp(40px, 7vw, 80px) 0; }
   [data-career-title] { display: inline-block; }
   .career-link { color: var(--accent); }
   h1 { margin: 0; font-size: clamp(46px, 8vw, 96px); line-height: 1; letter-spacing: -0.05em; }
   section { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.3fr); gap: var(--space-6); padding: var(--space-5) 0 var(--space-7); border-top: 1px solid var(--border-strong); }
-  h2 { padding-top: var(--space-2); font-size: clamp(24px, 3vw, 36px); }
+  h2 { width: fit-content; padding-top: var(--space-2); font-size: clamp(24px, 3vw, 36px); }
   .role, details p { color: var(--muted); font-size: var(--text-sm); max-width: 42ch; margin: var(--space-2) 0; }
   details[open] { padding-bottom: var(--space-3); }
   summary { padding: var(--space-3) 0; cursor: pointer; font: 600 var(--text-lg) var(--font-display); }
   li + li { border-top: 1px solid var(--border); }
   .entry { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-4); padding: var(--space-3) 0; }
   .entry img { width: clamp(64px, 9vw, 96px); height: auto; aspect-ratio: 8 / 5; object-fit: cover; border-radius: 4px; }
+  .entry { scroll-margin-block: min(24vh, 160px); }
+  .entry:target strong { text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: .24em; }
   .entry-text { display: grid; gap: var(--space-1); }
-  .entry-text strong { font: 600 var(--text-lg) var(--font-display); }
+  .entry-text strong { width: fit-content; font: 600 var(--text-lg) var(--font-display); }
   .entry-text > span { color: var(--muted); font-size: var(--text-sm); }
   .arrow { color: var(--accent); }
   .entry:hover strong, .entry:focus-visible strong { text-decoration: underline; text-underline-offset: 0.2em; }

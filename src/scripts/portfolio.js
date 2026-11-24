@@ -1,4 +1,3 @@
-import { chapters } from "../data/career.js"
 import { visuals } from "../data/project-visuals.js"
 import { icon } from "./icons.js"
 
@@ -537,7 +536,6 @@ import { icon } from "./icons.js"
   const motionEnabled = () => motionPreference && !reducedMotion.matches
   let activeStage = "",
     currentProject = "3i",
-    currentChapter = "3i",
     currentVisual = "live",
     currentInspector = "overview",
     currentFilter = "professional",
@@ -624,7 +622,7 @@ import { icon } from "./icons.js"
     const [path, search = ""] = hash.replace(/^#/, "").split("?"),
       parts = path.split("/")
     const name = parts[0] === "studio" ? "home" : parts[0],
-      stage = ["home", "work", "about"].includes(name) ? name : "home"
+      stage = ["home", "work"].includes(name) ? name : "home"
     let filter = new URLSearchParams(search).get("filter")
     let project = Object.hasOwn(projects, parts[1]) ? parts[1] : "3i"
     if (!["professional", "independent"].includes(filter)) filter = projects[project].category
@@ -641,9 +639,6 @@ import { icon } from "./icons.js"
       page: Math.max(0, Math.min(999, parseInt(new URLSearchParams(search).get("page"), 10) || 0)),
       inspector: ["overview", "role", "decisions", "sources"].includes(parts[3]) ? parts[3] : "overview",
       filter,
-      chapter: chapters.some((c) => c.id === parts[1]) ? parts[1] : "3i",
-      chapterExplicit: chapters.some((c) => c.id === parts[1]),
-      fullCareer: stage === "about" && parts[1] === "career",
     }
   }
   function workPath(id = currentProject, visual, inspector = currentInspector, filter = currentFilter, page = 0) {
@@ -687,8 +682,7 @@ import { icon } from "./icons.js"
       stageChanged = r.stage !== activeStage,
       caseChanged = !caseRendered || r.project !== currentProject || r.filter !== currentFilter,
       visualChanged = r.visual !== currentVisual,
-      inspectorChanged = r.inspector !== currentInspector,
-      chapterChanged = r.chapter !== currentChapter
+      inspectorChanged = r.inspector !== currentInspector
     if (r.stage === "work") {
       const destination = workDestination(r)
       if (destination) {
@@ -714,7 +708,7 @@ import { icon } from "./icons.js"
     activeStage = r.stage
     document.body.dataset.stage = r.stage
     if (stageChanged) resetPortrait()
-    // Legacy links (#work/<id>/<chapter>/<section>, #about/<id>) land on the matching part of a scrolling page.
+    // Legacy links (#work/<id>/<chapter>/<section>) land on the matching part of a scrolling page.
     let scrollTarget = null
     if (r.stage === "work") {
       currentFilter = r.filter
@@ -735,11 +729,6 @@ import { icon } from "./icons.js"
         $("case-more").open = true
         scrollTarget = $("case-" + r.inspector)
       } else if (caseChanged && !stageChanged) scrollTarget = "top"
-    }
-    if (r.stage === "about") {
-      renderChapter(r.chapter, r.chapterExplicit)
-      if (r.fullCareer) scrollTarget = $("about/career")
-      else if (r.chapterExplicit && (stageChanged || chapterChanged)) scrollTarget = $("career-" + r.chapter)
     }
     routeTriggers(r)
     if (stageChanged) {
@@ -762,7 +751,6 @@ import { icon } from "./icons.js"
     const label = {
       home: "Home",
       work: $("view-title").textContent || projects[r.project].name,
-      about: "Career and background",
     }[r.stage]
     $("stage-announcement").textContent = label
     document.title = label + " — Jérôme Schaeffer"
@@ -1342,16 +1330,6 @@ import { icon } from "./icons.js"
     stage.innerHTML = html
     syncIllustration()
   }
-  // The whole career is visible as a timeline; #about/<id> highlights and scrolls to one entry.
-  function renderChapter(id, explicit) {
-    currentChapter = id
-    document.querySelectorAll(".career-item").forEach((item) => {
-      const current = Boolean(explicit) && item.dataset.chapterItem === id
-      item.dataset.current = String(current)
-      if (current) item.setAttribute("aria-current", "true")
-      else item.removeAttribute("aria-current")
-    })
-  }
   function openImage(key) {
     const im = imageAssets[key]
     if (activeStage === "work") emitRepeatable("open_demo", demoItem(currentProject, currentVisual))
@@ -1436,10 +1414,6 @@ import { icon } from "./icons.js"
     if (b.dataset.visual) go(workPath(currentProject, b.dataset.visual, "overview"))
     else if (b.dataset.image) openImage(b.dataset.image)
     else if (b.dataset.dialog) showDialog(b.dataset.dialog)
-    else if (b.id === "dialog-career") {
-      $("detail-dialog").close()
-      go("about/" + currentChapter)
-    }
     // Route fragments explicitly: embedded previews may inject a different base URL.
     else if (
       b.tagName === "A" &&
@@ -1448,7 +1422,7 @@ import { icon } from "./icons.js"
       !e.shiftKey &&
       !e.altKey &&
       (!b.target || b.target === "_self") &&
-      /^#(?:home|work|about|studio)(?:[/?]|$)/.test(b.getAttribute("href") || "")
+      /^#(?:home|work|studio)(?:[/?]|$)/.test(b.getAttribute("href") || "")
     ) {
       e.preventDefault()
       go(b.getAttribute("href").slice(1))

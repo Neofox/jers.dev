@@ -23,7 +23,6 @@ const previews = await Promise.all([480, 800].map(width => getImage({ src: study
 
 <CaseStudyLayout
   {employer}
-  workLink={"view" in study ? { href: `/#work/${study.slug}/${study.view}`, label: `More about ${study.name}` } : undefined}
   path={Astro.url.pathname}
   title={`${study.heading} — ${employer === "Enhans" ? "Enhans case study" : study.name} — Jérôme Schaeffer`}
   description={study.description}

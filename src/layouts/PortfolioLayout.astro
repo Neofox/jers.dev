@@ -4,6 +4,7 @@ import SpeedInsights from "@vercel/speed-insights/astro"
 import "../styles/globals.css"
 
 interface Props {
+  stage?: "work"
   title: string
   description: string
   socialDescription?: string
@@ -15,6 +16,7 @@ interface Props {
   type?: "article" | "website"
 }
 const {
+  stage,
   title,
   description,
   socialDescription = description,
@@ -54,7 +56,7 @@ const socialImage = new URL(image, Astro.site)
     <meta name="twitter:image:height" content={imageHeight} />
     <meta name="twitter:image:alt" content={imageAlt} />
   </head>
-  <body>
+  <body data-stage={stage}>
     <slot />
     <script is:inline defer src="https://app.rybbit.io/api/script.js" data-site-id="1712"></script>
     <Analytics />

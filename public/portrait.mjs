@@ -86,14 +86,14 @@ const count = () => Number(store("sessionStorage", KEY.count) ?? 0) || 0
 
 const dock = $("portrait-dock")
 const drawer = $("portrait-dialog")
-if (dock && drawer && $("portrait-home")) init()
+if (dock && drawer) init()
 
 function init() {
   // The intensity pop runs on the bordered face at home and on the whole bubble in the dock.
   const surfaces = [
     { home: true, button: $("portrait-home"), face: $("portrait-home-face"), aside: $("portrait-home-aside") },
     { home: false, button: $("portrait-dock-button"), face: $("portrait-dock-face"), aside: $("portrait-dock-aside") },
-  ].map((surface) => ({ ...surface, token: 0, pop: surface.home ? surface.face : surface.button }))
+  ].filter(surface => surface.button).map((surface) => ({ ...surface, token: 0, pop: surface.home ? surface.face : surface.button }))
   const muteButtons = [$("portrait-dock-mute"), $("pd-mute")]
   let catalog = null
   let latest = null
@@ -107,7 +107,7 @@ function init() {
 
   const known = (expression) => Boolean(catalog?.expressions.includes(expression))
   const defaultFor = (itemId) => catalog?.items[itemId]?.defaultExpression ?? "neutral"
-  const active = () => surfaces[document.body.dataset.stage === "home" ? 0 : 1]
+  const active = () => surfaces.find(surface => surface.home === (document.body.dataset.stage === "home")) ?? surfaces[0]
 
   // ─── Faces ───────────────────────────────────────────────────────────
   // Decode off-screen first; a failed or superseded load never touches the visible face.
@@ -157,9 +157,9 @@ function init() {
     for (const surface of surfaces) {
       swap(surface, expression).then((ok) => {
         if (!ok) return
-        if (surface.home) {
+        if (surface === surfaces[0]) {
           face = expression
-          $("portrait-home-tag").textContent = expression
+          if (surface.home) $("portrait-home-tag").textContent = expression
           syncNames()
           if (drawer.open) render()
         }
@@ -274,6 +274,54 @@ function init() {
   document.addEventListener("portrait:trigger", (event) => {
     const { action, itemId } = event.detail ?? {}
     request(action, itemId)
+  })
+
+  // Dwell: hover or keyboard focus resting on a home selection, workplace or career entry for 700 ms.
+  const dwellSelector = "a[data-project], .career-item"
+  let lastDwell = null,
+    dwellTarget = null,
+    dwellTimer = 0
+  function dwellItem(el) {
+    if (el.matches(".career-item")) return "career:" + el.dataset.chapterItem
+    return "project:" + el.dataset.project
+  }
+  function startDwell(el) {
+    if (el === dwellTarget) return
+    clearTimeout(dwellTimer)
+    dwellTarget = el
+    dwellTimer = setTimeout(() => {
+      dwellTarget = null
+      const item = dwellItem(el)
+      if (!el.isConnected || el.closest("[hidden]") || item === lastDwell) return
+      lastDwell = item
+      request("dwell", item)
+    }, 700)
+  }
+  function stopDwell(el) {
+    if (el !== dwellTarget) return
+    clearTimeout(dwellTimer)
+    dwellTarget = null
+  }
+  // pointerenter/pointerleave do not bubble: listen in the capture phase and match the target itself.
+  document.addEventListener(
+    "pointerenter",
+    (e) => {
+      if (e.pointerType !== "touch" && e.target.matches?.(dwellSelector)) startDwell(e.target)
+    },
+    true,
+  )
+  document.addEventListener("pointerleave", (e) => stopDwell(e.target), true)
+  // Keyboard focus only: programmatic focus (route changes, dialogs closing) is not a dwell.
+  document.addEventListener("focusin", (e) => {
+    const el = e.target.closest?.(dwellSelector)
+    if (el && e.target.matches(":focus-visible")) startDwell(el)
+  })
+  document.addEventListener("focusout", (e) => {
+    const el = e.target.closest?.(dwellSelector)
+    if (el && !el.contains(e.relatedTarget)) stopDwell(el)
+  })
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stopDwell(dwellTarget)
   })
 
   fetch("/api/portrait")
@@ -466,7 +514,7 @@ function init() {
     if (motionEnabled() && drawer.animate) drawer.animate(DRAWER_IN, { duration: 240, easing: EASE_OUT })
   }
   for (const id of ["portrait-home", "portrait-dock-button", "portrait-hint"])
-    $(id).addEventListener("click", openDrawer)
+    $(id)?.addEventListener("click", openDrawer)
   $("pd-close").addEventListener("click", () => drawer.close())
   drawer.addEventListener("click", (event) => {
     if (event.target !== drawer) return

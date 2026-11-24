@@ -3,7 +3,6 @@ import PortfolioLayout from "./PortfolioLayout.astro"
 
 interface Props {
   employer?: "3i" | "Enhans" | "Independent"
-  workLink?: { href: string; label: string }
   title: string
   description: string
   path: string
@@ -15,8 +14,8 @@ interface Props {
   srcset?: string
   sizes?: string
 }
-const { heading, srcset, sizes, employer = "3i", workLink, ...metadata } = Astro.props
-const workUrl = workLink?.href ?? "/#work/" + employer.toLowerCase()
+const { heading, srcset, sizes, employer = "3i", ...metadata } = Astro.props
+const group = employer === "Independent" ? "side-projects" : employer.toLowerCase()
 ---
 
 <PortfolioLayout {...metadata} type="article">
@@ -24,7 +23,7 @@ const workUrl = workLink?.href ?? "/#work/" + employer.toLowerCase()
   <div class="study">
     <header class="mast">
       <a class="signature" href="/">Jérôme Schaeffer</a>
-      <a href="/case-studies/">All case studies</a>
+      <a href="/work/">Work</a>
     </header>
     <main id="main" tabindex="-1">
       <article>
@@ -42,7 +41,7 @@ const workUrl = workLink?.href ?? "/#work/" + employer.toLowerCase()
         <slot />
       </article>
     </main>
-    <footer><a class="text-link" href={workUrl}>{workLink?.label ?? `More of my work at ${employer}`} <span aria-hidden="true">→</span></a></footer>
+    <footer><a class="text-link" href={`/work/#${group}`}>{employer === "Independent" ? "More side projects" : `More of my work at ${employer}`} <span aria-hidden="true">→</span></a></footer>
   </div>
 </PortfolioLayout>
 

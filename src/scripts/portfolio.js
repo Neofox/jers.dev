@@ -1,5 +1,4 @@
 import { icon } from "./icons.js"
-import { demoLoaders } from "./demo-loaders.js"
 
 ;(function () {
   "use strict"
@@ -678,8 +677,7 @@ import { demoLoaders } from "./demo-loaders.js"
   // (résumé, dwell, end of timeline) are near the end of this file.
   const REPEAT_MS = 30000
   const lastEmitAt = {}
-  let lastDwell = null,
-    routeProject = null,
+  let routeProject = null,
     routeDemo = null
   function emitTrigger(action, itemId) {
     if (!itemId || (window.portraitKnows && !window.portraitKnows(itemId))) return
@@ -750,11 +748,21 @@ import { demoLoaders } from "./demo-loaders.js"
     }
     location.hash = path
   }
-  function shareProject(id) {
-    document
-      .querySelectorAll(".home-preview")
-      .forEach((el) => (el.style.viewTransitionName = el.dataset.project === id ? "project-visual" : "none"))
+  // Fragment routes predate the standalone pages. Keep specific captures and illustrations
+  // available here, and send directory and demo bookmarks to their canonical destinations.
+  function workDestination(route) {
+    const [, requestedProject, view] = location.hash.slice(1).split("?")[0].split("/")
+    const project = route.project
+    if (!requestedProject || !Object.hasOwn(projects, requestedProject)) return "/work/"
+    const product = productsAt(projects[project].category === "independent" ? "independent" : project)
+      .find(item => item.caseId === project && item.views.includes(route.visual))
+    if (!view) {
+      if (projects[project].category === "independent") return product.caseStudy
+      return "/work/#" + (project === "rubiwin" ? "redspher" : project)
+    }
+    if (visuals[project]?.[route.visual]?.demo) return product?.caseStudy
   }
+
   function renderRoute() {
     const r = parseRoute(location.hash),
       stageChanged = r.stage !== activeStage,
@@ -762,19 +770,25 @@ import { demoLoaders } from "./demo-loaders.js"
       visualChanged = r.visual !== currentVisual,
       inspectorChanged = r.inspector !== currentInspector,
       chapterChanged = r.chapter !== currentChapter
+    if (r.stage === "work") {
+      const destination = workDestination(r)
+      if (destination) {
+        location.replace(destination)
+        return
+      }
+    }
     const focused = document.activeElement,
       focusId = focused?.dataset.focusId,
       contentFocus = $("main").contains(focused)
-    if ($("work-directory").open) $("work-directory").close()
     if ($("detail-dialog").open) $("detail-dialog").close()
     if ($("image-dialog").open) $("image-dialog").close()
     document.querySelectorAll(".stage").forEach((el) => (el.hidden = el.id !== "stage-" + r.stage))
     document.querySelectorAll(".site-nav a").forEach((a) => {
-      if (a.dataset.nav === r.stage) a.setAttribute("aria-current", "page")
+      if (a.dataset.nav === r.stage && r.stage !== "work") a.setAttribute("aria-current", "page")
       else a.removeAttribute("aria-current")
     })
     if (activeStage === "work" && stageChanged) {
-      disposeVisual()
+      illoObserver?.disconnect()
       $("visual-stage").replaceChildren()
       caseRendered = false
     }
@@ -788,7 +802,6 @@ import { demoLoaders } from "./demo-loaders.js"
       currentProject = r.project
       currentVisual = r.visual
       currentInspector = r.inspector
-      shareProject(r.project)
       if (caseChanged) {
         renderCase()
         if (!stageChanged) animateIn($("project-story"), true)
@@ -802,10 +815,7 @@ import { demoLoaders } from "./demo-loaders.js"
         // Section links open the full case first, then land on the requested part.
         $("case-more").open = true
         scrollTarget = $("case-" + r.inspector)
-      } else if (directoryNavigation) {
-        directoryNavigation = false
-        scrollTarget = $("view-title")
-      } else if (caseChanged && !stageChanged && !focused?.closest(".product-picker, .workplaces")) scrollTarget = "top"
+      } else if (caseChanged && !stageChanged) scrollTarget = "top"
     }
     if (r.stage === "about") {
       renderChapter(r.chapter, r.chapterExplicit)
@@ -823,17 +833,17 @@ import { demoLoaders } from "./demo-loaders.js"
     if (contentFocus && scrollTarget && scrollTarget !== "top") {
       scrollTarget.focus({ preventScroll: true })
     } else if (contentFocus && stageChanged) {
-      const title = $("stage-" + r.stage).querySelector("h1,h2")
+      const title = r.stage === "work" ? $("view-title") : $("stage-" + r.stage).querySelector("h1,h2")
       title.setAttribute("tabindex", "-1")
       title.focus({ preventScroll: true })
     } else if (focusId && (!focused.isConnected || focused.closest("[hidden]"))) {
       const replacement = document.querySelector('[data-focus-id="' + focusId + '"]')
       if (replacement && !replacement.closest("[hidden]")) replacement.focus({ preventScroll: true })
-      else $("work-title").focus({ preventScroll: true })
+      else $("view-title").focus({ preventScroll: true })
     }
     const label = {
       home: "Home",
-      work: $("work-context-path").textContent || projects[r.project].name,
+      work: $("view-title").textContent || projects[r.project].name,
       about: "Career and background",
     }[r.stage]
     $("stage-announcement").textContent = label
@@ -856,9 +866,6 @@ import { demoLoaders } from "./demo-loaders.js"
   window.addEventListener("hashchange", routeChange)
   function ext(label, url) {
     return `<a href="${url}" target="_blank" rel="noopener noreferrer" data-focus-id="external-${currentProject}-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}">${label} <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>`
-  }
-  function visibleProjects() {
-    return projectOrder.filter((id) => currentFilter === "all" || projects[id].category === currentFilter)
   }
   // ── Work: scannable summary first, visuals second, full case behind one disclosure ──
   // Short lines are condensed from the vetted story copy above; no new claims.
@@ -1046,18 +1053,6 @@ import { demoLoaders } from "./demo-loaders.js"
     },
     gleamstral: { request: { demo: "gleamstral" }, interface: { illo: "gleamstral" } },
   }
-  const illoGlyph = {
-    beamo: "cube",
-    ax: "spark",
-    enhans: "flow",
-    logistics: "truck",
-    neoharness: "memory",
-    gleamstral: "swap",
-    kaltoe: "ring",
-    translater: "chips",
-  }
-
-
   function storyParagraphs(lines) {
     return lines
       .slice(1)
@@ -1129,23 +1124,11 @@ import { demoLoaders } from "./demo-loaders.js"
   function activePlace() {
     return currentFilter === "independent" ? "independent" : currentProject
   }
-  function productPath(p, view = p.views[0]) {
-    return "#" + workPath(p.caseId, view, "overview", projects[p.caseId].category)
-  }
   function viewType(v) {
     return v.demo ? "Demo" : v.illo ? "Overview" : "Capture"
   }
   function chapterLabel(id, view) {
     return projects[id].chapters.find(([key]) => key === view)[1]
-  }
-  function productCard(p, active) {
-    const view = visuals[p.caseId][p.views[0]]
-    const kind = p.views.length > 1 ? p.views.length + " views" : viewType(view) + (view.capture ? " · Capture" : "")
-    const demoPreview = view.demo && !view.capture && !["kaltoe", "translater"].includes(p.preview)
-    const media = p.preview
-      ? `<span class="product-image"><img src="/assets/work-previews/${p.preview}.webp" width="384" height="240" alt="">${demoPreview ? "<small>Demo preview</small>" : ""}</span>`
-      : `<span class="product-image is-illustration">${icon(illoGlyph[view.illo])}</span>`
-    return `<li><a class="product-card" href="${productPath(p, active ? currentVisual : undefined)}" data-focus-id="product-${p.caseId}-${p.views[0]}" ${active ? 'aria-current="true"' : ""}>${media}<span class="product-copy"><strong>${p.name}</strong><span class="product-description">${p.description}</span><small class="product-kind">${kind}</small></span></a></li>`
   }
   function renderChapters() {
     const place = workplaces.find((w) => w.id === activePlace())
@@ -1153,12 +1136,8 @@ import { demoLoaders } from "./demo-loaders.js"
     const selected = productsHere.find((p) => p.caseId === currentProject && p.views.includes(currentVisual))
     const chapter = projects[currentProject].chapters.find(([key]) => key === currentVisual)
     const multiple = selected.views.length > 1
-    $("product-list-title").textContent =
-      place.id === "independent" ? "Independent projects" : "Projects at " + place.name
-    $("project-list").innerHTML = productsHere.map((p) => productCard(p, p === selected)).join("")
     $("view-owner").textContent = place.name + " / " + viewType(visuals[currentProject][currentVisual])
     $("view-title").textContent = selected.name
-    $("work-context-path").textContent = [place.name, selected.name, ...(multiple ? [chapter[1]] : [])].join(" › ")
     const tabs = $("visual-chapters"),
       panel = $("visual-stage")
     const priorTab = tabs.querySelector('[aria-selected="true"]')
@@ -1197,48 +1176,6 @@ import { demoLoaders } from "./demo-loaders.js"
       $("visual-annotation").insertAdjacentHTML("beforeend", ` <a class="text-link" href="${selected.caseStudy}">Read the ${selected.name} case study</a>`)
     }
   }
-  function renderWorkplaces() {
-    $("workplaces").innerHTML = workplaces
-      .map((w) => {
-        const first = productsAt(w.id)[0]
-        return `<a href="${productPath(first)}" data-focus-id="workplace-${w.id}" ${w.id === activePlace() ? 'aria-current="page"' : ""}><strong>${w.id === "independent" ? '<span class="side-long">Side projects</span><span class="side-short">Side</span>' : w.name}</strong><small>${w.dates}</small></a>`
-      })
-      .join("")
-  }
-  function openWorkDirectory() {
-    $("directory-links").innerHTML = workplaces
-      .map((w) => {
-        const links = productsAt(w.id)
-          .map((p) => {
-            const selected = p.caseId === currentProject && p.views.includes(currentVisual)
-            const link = (view, name) =>
-              `<a href="${productPath(p, view)}" ${selected && currentVisual === view ? 'aria-current="page"' : ""}>${name}</a>`
-            return p.views.length === 1
-              ? link(p.views[0], p.name)
-              : `<details class="directory-product" ${selected ? "open" : ""}><summary>${p.name}</summary>${p.views.map((v) => link(v, chapterLabel(p.caseId, v))).join("")}</details>`
-          })
-          .join("")
-        return `<details ${w.id === activePlace() ? "open" : ""}><summary>${w.name}</summary><div>${links}</div></details>`
-      })
-      .join("")
-    $("work-directory").showModal()
-  }
-  $("work-context").addEventListener("click", openWorkDirectory)
-  $("directory-close").addEventListener("click", () => $("work-directory").close())
-  let directoryNavigation = false
-  $("directory-links").addEventListener("click", (e) => {
-    if (!e.target.closest("a") || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
-    directoryNavigation = true
-    $("work-directory").close()
-  })
-  if ("IntersectionObserver" in window) {
-    new IntersectionObserver(
-      ([entry]) => {
-        $("work-context").hidden = entry.isIntersecting || entry.boundingClientRect.bottom > (entry.rootBounds?.top ?? 0)
-      },
-      { rootMargin: "-64px 0px 0px" },
-    ).observe($("project-list"))
-  }
   $("visual-chapters").addEventListener("keydown", (e) => {
     const tabs = [...e.currentTarget.children],
       i = tabs.indexOf(e.target)
@@ -1272,13 +1209,10 @@ import { demoLoaders } from "./demo-loaders.js"
   // One scrolling case: short header, a large visual, a few lines, and the full write-up on request.
   function renderCase() {
     const p = projects[currentProject],
-      x = extras[currentProject],
-      list = visibleProjects(),
-      index = list.indexOf(currentProject)
+      x = extras[currentProject]
     caseRendered = true
     const workplace = workplaces.find((w) => w.id === activePlace())
     const side = currentFilter === "independent"
-    renderWorkplaces()
     $("inspector-meta").textContent = side ? p.meta : "Workplace · " + (currentProject === "rubiwin" ? p.meta : p.meta.split(" · ").at(-1))
     $("inspector-title").textContent = side ? p.name : workplace.name
     $("inspector-title").closest(".case-head").hidden = side
@@ -1305,14 +1239,6 @@ import { demoLoaders } from "./demo-loaders.js"
       linkGroup("Explore the product", p.links) +
       linkGroup("Source & context", p.sources)
     $("case-more").open = false
-    const previous = list[(index - 1 + list.length) % list.length],
-      next = list[(index + 1) % list.length]
-    const nameOf = (id) => side ? projects[id].name : workplaces.find((w) => w.id === id).name
-    const unit = side ? "project" : "workplace"
-    $("project-position").textContent = (side ? "Project " : "Workplace ") + (index + 1) + " of " + list.length
-    $("previous-project").parentElement.setAttribute("aria-label", "More " + unit + "s")
-    $("previous-project").innerHTML = '<span aria-hidden="true">←</span> <span class="sr-only">Previous ' + unit + ' </span>' + nameOf(previous)
-    $("next-project").innerHTML = '<span class="sr-only">Next ' + unit + ' </span>' + nameOf(next) + ' <span aria-hidden="true">→</span>'
     renderChapters()
     renderVisual()
     staggerIn([...document.querySelectorAll("#case-highlights li, #case-did li")])
@@ -1518,53 +1444,15 @@ import { demoLoaders } from "./demo-loaders.js"
     else syncIllustration()
   })
 
-  let visualVersion = 0
-  let demoCleanup = null
-
-  function disposeVisual() {
-    visualVersion++
-    demoCleanup?.()
-    demoCleanup = null
+  function renderVisual() {
     illoObserver?.disconnect()
-  }
-
-  async function showDemo(view, stage, version, focusReset) {
-    stage.innerHTML = '<p role="status">Loading demo…</p>'
-    try {
-      const demo = await demoLoaders[view.demo]()
-      if (version !== visualVersion) return
-      demoCleanup = demo.mount(stage)
-      const reset = stage.querySelector("[data-demo-reset]")
-      if (view.capture) {
-        const image = imageAssets[view.capture]
-        reset.insertAdjacentHTML("beforebegin",
-          `<button type="button" class="demo-reset demo-capture" data-image="${view.capture}" aria-haspopup="dialog" aria-controls="image-dialog" data-focus-id="demo-capture">View real capture<span class="sr-only">: ${image.title}</span></button>`,
-        )
-      }
-      reset.addEventListener("click", () => renderVisual(true))
-      if (focusReset) reset.focus()
-    } catch (error) {
-      if (version !== visualVersion) return
-      console.error("Could not open demo", error)
-      stage.innerHTML = '<p role="status">This demo could not load.</p><button type="button" class="button button-outline">Reload demo</button>'
-      const retry = stage.querySelector("button")
-      retry.addEventListener("click", () => location.reload())
-      if (focusReset) retry.focus()
-    }
-  }
-  function renderVisual(focusReset = false) {
-    disposeVisual()
     const stage = $("visual-stage")
     const v = visuals[currentProject][currentVisual]
     stage.dataset.project = currentProject
     stage.dataset.view = currentVisual
-    stage.dataset.kind = v.demo ? "demo" : v.illo ? "illustration" : "capture"
+    stage.dataset.kind = v.illo ? "illustration" : "capture"
     $("visual-caption").textContent = v.source || ""
     $("visual-caption").hidden = !v.source
-    if (v.demo) {
-      void showDemo(v, stage, visualVersion, focusReset)
-      return
-    }
     let html
     if (v.illo) html = illustration(v.illo, currentVisual)
     else if (v.custom === "label")
@@ -1597,7 +1485,7 @@ import { demoLoaders } from "./demo-loaders.js"
       (c) =>
         `<li class="career-item" id="career-${c.id}" tabindex="-1" data-chapter-item="${c.id}" data-focus-id="career-${c.id}"><p class="career-date">${c.date}</p><div class="career-main"><h3>${c.company}</h3><p class="career-role">${c.role}</p><p class="career-description">${c.description}</p>${
           c.project
-            ? `<button type="button" class="text-link" data-related="${c.project}" data-focus-id="career-related-${c.id}">Explore related work <span aria-hidden="true">→</span></button>`
+            ? `<a href="/work/#${c.project === "rubiwin" ? "redspher" : c.project}" class="text-link" data-focus-id="career-related-${c.id}">Explore related work <span aria-hidden="true">→</span></a>`
             : ""
         }</div></li>`,
     )
@@ -1683,25 +1571,10 @@ import { demoLoaders } from "./demo-loaders.js"
   document.addEventListener("click", (e) => {
     const b = e.target.closest("button,a")
     if (!b) return
-    if (b.dataset.project) {
-      e.preventDefault()
-      shareProject(b.dataset.project)
-      const filter = projects[b.dataset.project].category
-      go(workPath(b.dataset.project, undefined, "overview", filter))
-    } else if (b.dataset.visual) go(workPath(currentProject, b.dataset.visual, "overview"))
+    if (b.dataset.visual) go(workPath(currentProject, b.dataset.visual, "overview"))
     else if (b.dataset.image) openImage(b.dataset.image)
-    else if (b.dataset.related)
-      go(workPath(b.dataset.related, undefined, "role", projects[b.dataset.related].category))
     else if (b.dataset.dialog) showDialog(b.dataset.dialog)
-    else if (b.id === "previous-project" || b.id === "next-project") {
-      const ids = visibleProjects(),
-        direction = b.id === "next-project" ? 1 : -1
-      go(workPath(ids[(ids.indexOf(currentProject) + direction + ids.length) % ids.length], undefined, "overview"))
-    } else if (b.id === "surprise") {
-      const id = projectOrder[Math.floor(Math.random() * projectOrder.length)]
-      shareProject(id)
-      go(workPath(id, undefined, "overview", projects[id].category))
-    } else if (b.id === "dialog-career") {
+    else if (b.id === "dialog-career") {
       $("detail-dialog").close()
       go("about/" + currentChapter)
     }
@@ -1727,53 +1600,6 @@ import { demoLoaders } from "./demo-loaders.js"
   // Portrait triggers (continued; emitTrigger and the route triggers sit above parseRoute).
   document.addEventListener("click", (e) => {
     if (e.target.closest?.('a[href$=".pdf"]')) emitRepeatable("download_resume", "event:resume")
-  })
-  // Dwell: hover or keyboard focus resting on a home selection, workplace or career entry for 700 ms.
-  const dwellSelector = ".home-selection a[data-project], .workplaces a, .career-item"
-  let dwellTarget = null,
-    dwellTimer = 0
-  function dwellItem(el) {
-    if (el.matches(".career-item")) return "career:" + el.dataset.chapterItem
-    if (el.dataset.project) return "project:" + el.dataset.project
-    return "project:" + parseRoute(el.getAttribute("href") || "").project
-  }
-  function startDwell(el) {
-    if (el === dwellTarget) return
-    clearTimeout(dwellTimer)
-    dwellTarget = el
-    dwellTimer = setTimeout(() => {
-      dwellTarget = null
-      const item = dwellItem(el)
-      if (!el.isConnected || el.closest("[hidden]") || item === lastDwell) return
-      lastDwell = item
-      emitTrigger("dwell", item)
-    }, 700)
-  }
-  function stopDwell(el) {
-    if (el !== dwellTarget) return
-    clearTimeout(dwellTimer)
-    dwellTarget = null
-  }
-  // pointerenter/pointerleave do not bubble: listen in the capture phase and match the target itself.
-  document.addEventListener(
-    "pointerenter",
-    (e) => {
-      if (e.pointerType !== "touch" && e.target.matches?.(dwellSelector)) startDwell(e.target)
-    },
-    true,
-  )
-  document.addEventListener("pointerleave", (e) => stopDwell(e.target), true)
-  // Keyboard focus only: programmatic focus (route changes, dialogs closing) is not a dwell.
-  document.addEventListener("focusin", (e) => {
-    const el = e.target.closest?.(dwellSelector)
-    if (el && e.target.matches(":focus-visible")) startDwell(el)
-  })
-  document.addEventListener("focusout", (e) => {
-    const el = e.target.closest?.(dwellSelector)
-    if (el && !el.contains(e.relatedTarget)) stopDwell(el)
-  })
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) stopDwell(dwellTarget)
   })
   // Reaching the end of the career timeline, once per visit (sessionStorage).
   const endKey = "jerome-portrait-end"

@@ -1,46 +1,13 @@
-<section class="stage" id="stage-work" aria-labelledby="work-title" data-focus-id="selected-work" hidden>
+<section class="stage" id="stage-work" aria-labelledby="view-title" data-focus-id="selected-work" hidden>
   <header class="page-head work-head" data-reveal>
-    <h2 id="work-title" tabindex="-1" data-focus-id="work-heading">Work</h2>
+    <a class="text-link" href="/work/">← All work</a>
   </header>
-  <div class="work-rail">
-    <nav
-      class="workplaces"
-      aria-label="Featured workplaces and side projects"
-      id="workplaces"
-      data-focus-id="project-index"
-    >
-    </nav><a class="full-career-link" href="#about/career">
-      Full career · 7 companies since 2015 <span aria-hidden="true">→</span>
-    </a>
-  </div>
-  <button
-    type="button"
-    class="work-context"
-    id="work-context"
-    aria-haspopup="dialog"
-    aria-controls="work-directory"
-    hidden
-  >
-    <span id="work-context-path"></span><strong>Switch ▾</strong>
-  </button>
-  <dialog class="work-directory" id="work-directory" aria-labelledby="directory-title">
-    <header>
-      <h3 id="directory-title">Switch project</h3><button type="button" id="directory-close" autofocus>Close</button>
-    </header>
-    <nav aria-label="Work directory" id="directory-links"></nav><a class="full-career-link" href="#about/career">
-      Full career · 7 companies since 2015 <span aria-hidden="true">→</span>
-    </a>
-  </dialog>
   <article class="case" id="project-story" aria-labelledby="inspector-title" data-focus-id="project-inspector">
     <header class="case-head">
       <p class="eyebrow" id="inspector-meta"></p>
       <h3 id="inspector-title" tabindex="-1" data-focus-id="project-heading"></h3>
       <p class="case-role-line"><span id="inspector-role"></span><span id="case-stack"></span></p>
     </header>
-    <nav class="product-picker" aria-labelledby="product-list-title">
-      <h4 id="product-list-title"></h4>
-      <ul class="project-list" id="project-list"></ul>
-    </nav>
     <figure class="case-figure" data-focus-id="project-visual-column">
       <header class="view-head">
         <p class="eyebrow" id="view-owner"></p>
@@ -101,15 +68,5 @@
         </section>
       </div>
     </details>
-    <nav class="case-pager" aria-label="More projects">
-      <button type="button" class="button button-outline" id="previous-project" data-focus-id="previous-project">
-      </button><span class="pager-position" id="project-position"></span><button
-        type="button"
-        class="button button-outline"
-        id="next-project"
-        data-focus-id="next-project"
-      >
-      </button>
-    </nav>
   </article>
 </section>

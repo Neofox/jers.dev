@@ -7,6 +7,7 @@ export const enhansStudies = [
   {
     slug: "act-1",
     name: "ACT-1",
+    topic: "Web agent progress and action logs",
     demo: "enhansAct",
     heading: "Following a web agent’s work in ACT-1",
     description: "How Jérôme Schaeffer built the ACT-1 web agent interface at Enhans. Step through a sample shopping task, inspect its action log, and check the final recommendation.",
@@ -25,6 +26,7 @@ export const enhansStudies = [
   {
     slug: "aiap",
     name: "AIAP",
+    topic: "Visual translation workflows",
     demo: "enhansWorkflow",
     heading: "Tracing a translation through AIAP",
     description: "Explore Jérôme Schaeffer’s visual workflow work at Enhans. Inspect connected AIAP blocks, change a translation setting, and follow a successful or failed sample run.",
@@ -43,6 +45,7 @@ export const enhansStudies = [
   {
     slug: "select-llm",
     name: "Select LLM",
+    topic: "Side-by-side model evaluation",
     demo: "enhansCompare",
     heading: "Comparing model responses in Select LLM",
     description: "A frontend case study of Select LLM at Enhans. Compare sample responses as they arrive, inspect output variants, and see how an evaluation explains its ranking.",
@@ -61,6 +64,7 @@ export const enhansStudies = [
   {
     slug: "action-recorder",
     name: "Action Recorder",
+    topic: "Annotated browser interactions",
     demo: "enhansRecorder",
     heading: "Recording browser actions at Enhans",
     description: "Explore Jérôme Schaeffer’s work on browser action tracking at Enhans. Record sample interactions, annotate an event, and inspect its JSON Lines export in the demo.",

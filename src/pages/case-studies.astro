@@ -1,0 +1,77 @@
+---
+import { getImage } from "astro:assets"
+import PortfolioLayout from "../layouts/PortfolioLayout.astro"
+import { enhansStudies } from "../data/enhans-studies"
+import { sideStudies } from "../data/side-studies"
+
+async function studyLinks(studies: typeof enhansStudies | typeof sideStudies, collection: string) {
+  return Promise.all(studies.map(async study => ({
+    name: study.name,
+    topic: study.topic,
+    href: `/work/${collection}/${study.slug}/`,
+    image: (await getImage({ src: study.image, width: 192, format: "webp" })).src,
+  })))
+}
+
+const groups = [
+  {
+    title: "3i",
+    studies: [
+      { name: "Beamo", topic: "Measuring captured spaces in a 3D viewer", href: "/work/beamo/", image: "/assets/work-previews/beamo.webp" },
+      { name: "Pivo Meet", topic: "Remote coaching and camera control", href: "/work/pivo-meet/", image: "/assets/work-previews/meet.webp" },
+      { name: "Pivo Cloud", topic: "A video library for practice and lessons", href: "/work/pivo-cloud/", image: "/assets/work-previews/cloud.webp" },
+      { name: "Pivo Coaches", topic: "Finding an equestrian coach", href: "/work/pivo-coaches/", image: "/assets/work-previews/coaches.webp" },
+      { name: "Pivo CS / QA", topic: "Support report triage", href: "/work/pivo-cs-qa/", image: "/assets/work-previews/cs.webp" },
+    ],
+  },
+  { title: "Enhans", studies: await studyLinks(enhansStudies, "enhans") },
+  { title: "Side projects", studies: await studyLinks(sideStudies, "side-projects") },
+]
+---
+
+<PortfolioLayout path="/case-studies/" title="Case studies — Jérôme Schaeffer" description="Explore Jérôme Schaeffer’s engineering case studies and interactive demos from 3i, Enhans, and independent projects.">
+  <a class="skip" href="#studies">Skip to case studies</a>
+  <div class="index">
+    <header><a href="/" aria-label="Jérôme Schaeffer, portfolio home">Jérôme Schaeffer</a></header>
+    <main>
+      <h1 id="studies" tabindex="-1">Case studies</h1>
+      {groups.map(group => (
+        <section>
+          <h2>{group.title}</h2>
+          <ul>
+            {group.studies.map(study => (
+              <li>
+                <a class="entry" href={study.href}>
+                  <img src={study.image} alt="" width="96" height="60" loading="lazy" />
+                  <span class="entry-text"><strong>{study.name}</strong><span>{study.topic}</span></span>
+                  <span class="arrow" aria-hidden="true">→</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </main>
+  </div>
+</PortfolioLayout>
+
+<style>
+  .index { width: min(calc(100% - 2 * var(--gutter)), 1080px); margin: 0 auto var(--space-8); }
+  header { padding: var(--space-5) 0; border-bottom: 1px solid var(--border); }
+  header a { font: 600 var(--text-lg) var(--font-display); }
+  h1 { margin: clamp(40px, 7vw, 80px) 0; font-size: clamp(46px, 8vw, 96px); line-height: 1; letter-spacing: -0.05em; }
+  section { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.3fr); gap: var(--space-6); padding: var(--space-5) 0 var(--space-7); border-top: 1px solid var(--border-strong); }
+  h2 { padding-top: var(--space-2); font-size: clamp(24px, 3vw, 36px); }
+  li + li { border-top: 1px solid var(--border); }
+  .entry { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-4); padding: var(--space-3) 0; }
+  .entry img { width: clamp(64px, 9vw, 96px); height: auto; aspect-ratio: 8 / 5; object-fit: cover; border-radius: 4px; }
+  .entry-text { display: grid; gap: var(--space-1); }
+  .entry-text strong { font: 600 var(--text-lg) var(--font-display); }
+  .entry-text > span { color: var(--muted); font-size: var(--text-sm); }
+  .arrow { color: var(--accent); }
+  .entry:hover strong, .entry:focus-visible strong { text-decoration: underline; text-underline-offset: 0.2em; }
+  @media (max-width: 680px) {
+    section { grid-template-columns: 1fr; gap: var(--space-2); padding: var(--space-4) 0 var(--space-6); }
+    .entry { gap: var(--space-3); }
+  }
+</style>

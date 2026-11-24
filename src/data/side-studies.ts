@@ -7,6 +7,7 @@ export const sideStudies = [
   {
     slug: "gleamstral",
     name: "Gleamstral",
+    topic: "A typed Mistral client for Gleam",
     demo: "gleamstral",
     view: "request",
     heading: "Building a typed Mistral request in Gleam",
@@ -28,6 +29,7 @@ export const sideStudies = [
   {
     slug: "kaltoe-timer",
     name: "Kaltoe Timer",
+    topic: "A workday countdown for macOS and Linux",
     demo: "kaltoe",
     view: "phases",
     heading: "Reading a workday at a glance with Kaltoe Timer",
@@ -49,6 +51,7 @@ export const sideStudies = [
   {
     slug: "translater",
     name: "Translater",
+    topic: "Tone and context in Korean translation",
     demo: "translater",
     view: "refine",
     heading: "Finding the right tone with Translater",
@@ -70,6 +73,7 @@ export const sideStudies = [
   {
     slug: "neoharness",
     name: "Neoharness",
+    topic: "Memory and tools in an agent runtime",
     demo: "neoharness",
     view: "turn",
     heading: "Following a memory update in Neoharness",

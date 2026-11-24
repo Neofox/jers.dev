@@ -1,6 +1,4 @@
 ---
-import { enhansStudies } from "../data/enhans-studies"
-import { sideStudies } from "../data/side-studies"
 import PortraitImage from "./PortraitImage.astro"
 ---
 <section class="stage" id="stage-home" aria-labelledby="home-title" data-focus-id="home">
@@ -18,34 +16,10 @@ import PortraitImage from "./PortraitImage.astro"
         tools teams use. I connect the work people see with the systems and collaboration behind it.
       </p>
       <div class="home-actions">
-        <a
-          class="button button-primary"
-          href="/work/beamo/"
-          data-focus-id="home-selected-work"
-        >
-          Explore the Beamo viewer <span aria-hidden="true">→</span>
+        <a class="button button-primary" href="/case-studies/" data-focus-id="home-selected-work">
+          View case studies <span aria-hidden="true">→</span>
         </a>
-        <a class="text-link" href="/work/pivo-meet/">Explore Pivo Meet <span aria-hidden="true">→</span></a>
-        <a class="text-link" href="/work/pivo-cloud/">Explore Pivo Cloud <span aria-hidden="true">→</span></a>
-        <a class="text-link" href="/work/pivo-coaches/">Explore Pivo Coaches <span aria-hidden="true">→</span></a>
-        <a class="text-link" href="/work/pivo-cs-qa/">Explore Pivo CS / QA <span aria-hidden="true">→</span></a>
       </div>
-      <details class="home-case-studies">
-        <summary>Enhans case studies</summary>
-        <ul>
-          {enhansStudies.map(study => (
-            <li><a class="text-link" href={`/work/enhans/${study.slug}/`}>{study.name}</a></li>
-          ))}
-        </ul>
-      </details>
-      <details class="home-case-studies">
-        <summary>Side project case studies</summary>
-        <ul>
-          {sideStudies.map(study => (
-            <li><a class="text-link" href={`/work/side-projects/${study.slug}/`}>{study.name}</a></li>
-          ))}
-        </ul>
-      </details>
     </div>
     <figure class="home-person" data-reveal data-focus-id="home-portrait">
       <div class="portrait-composition" id="portrait-composition">
@@ -126,9 +100,3 @@ import PortraitImage from "./PortraitImage.astro"
     </nav>
   </div>
 </section>
-
-<style>
-  .home-case-studies { margin-top: var(--space-4); font-size: var(--text-sm); }
-  summary { cursor: pointer; width: fit-content; }
-  .home-case-studies ul { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); margin-top: var(--space-2); }
-</style>

@@ -435,9 +435,29 @@ function init() {
   // ─── Dock visibility ─────────────────────────────────────────────────
   const careerPortrait = dock.closest(".career-portrait")
   if (careerPortrait && "IntersectionObserver" in window) {
+    // Hand off while most of the face is still visible. Observe the reserved space,
+    // so moving the button into the corner cannot trigger the opposite transition.
+    const threshold = 0.85
+    let initialized = false
+    let flight
     new IntersectionObserver(([entry]) => {
-      careerPortrait.toggleAttribute("data-floating", !entry.isIntersecting)
-    }).observe(careerPortrait)
+      const floating = entry.boundingClientRect.top < 0 && entry.intersectionRatio < threshold
+      const animate = initialized && motionEnabled() && !dock.hidden && dock.animate
+      initialized = true
+      if (careerPortrait.hasAttribute("data-floating") === floating) return
+      const from = dock.getBoundingClientRect()
+      flight?.cancel()
+      careerPortrait.toggleAttribute("data-floating", floating)
+      if (!animate) return
+      const to = dock.getBoundingClientRect()
+      // A jump to a deep section starts at the viewport edge, not far above it.
+      const x = from.left - to.left
+      const y = Math.max(0, from.top) - to.top
+      flight = dock.animate([
+        { transform: `translate(${x}px, ${y}px) scale(${from.width / to.width})` },
+        { transform: "none" },
+      ], { duration: 420, easing: "cubic-bezier(.32, 0, .16, 1)" })
+    }, { threshold: [0, threshold, 1] }).observe(careerPortrait)
   }
   function syncDock() {
     const stage = document.body.dataset.stage

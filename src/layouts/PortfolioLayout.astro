@@ -41,6 +41,7 @@ const socialImage = new URL(image, Astro.site)
     </style>
     <slot name="head" />
     <link rel="expect" href={stage === "study" ? "#study-preview" : "#page-intro"} blocking="render" media="(prefers-reduced-motion: no-preference)" />
+    <link rel="expect" href={stage ? "#portrait-dialog" : "#portrait-home-face"} blocking="render" media="(prefers-reduced-motion: no-preference)" />
     <script is:inline>
       (() => {
         const root = document.documentElement
@@ -71,12 +72,7 @@ const socialImage = new URL(image, Astro.site)
           const there = other.pathname
           const onIndex = here === "/work/"
           const detail = onIndex ? there : here
-          if (!onIndex && there !== "/work/") {
-            if ((here === "/" && there === "/career/") || (here === "/career/" && there === "/")) {
-              share(transition, document.querySelector(here === "/" ? "#portrait-home-face" : ".career-portrait"), "profile-photo")
-            }
-            return
-          }
+          if (!onIndex && there !== "/work/") return
           if (detail.startsWith("/work/") && detail !== "/work/") {
             const row = onIndex ? [...document.querySelectorAll("a.entry")].find(link => link.pathname === detail) : null
             share(transition, onIndex ? row?.querySelector("img") : document.querySelector("#study-preview"), "project-preview")

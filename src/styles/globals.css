@@ -5214,13 +5214,12 @@ html[data-motion="off"] .portrait-aside:not(.is-shown) {
 /* ─── Motion ─────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: no-preference) {
   .index > header, .study > .mast, .career-page > .mast { view-transition-name: work-masthead; }
-  .portrait-dock:not([hidden]) { view-transition-name: portrait-dock; }
+  #portrait-home-face, .dock-face { view-transition-name: profile-photo; }
 
   ::view-transition-group(*) { animation-duration: 200ms; animation-timing-function: ease-out; }
   ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 200ms; }
   [data-work-title] { display: inline-block; }
   [data-project-name] { display: inline-block; }
-  ::view-transition-group(profile-photo),
   ::view-transition-group(company-name),
   ::view-transition-group(project-name),
   ::view-transition-group(project-preview),
@@ -5230,7 +5229,12 @@ html[data-motion="off"] .portrait-aside:not(.is-shown) {
     animation-timing-function: cubic-bezier(.22,.78,.2,1);
   }
   ::view-transition-group(project-name), ::view-transition-group(company-name) { z-index: 2; }
-  ::view-transition-image-pair(profile-photo), ::view-transition-image-pair(project-preview) { overflow: clip; border-radius: 7px; }
+  ::view-transition-group(profile-photo) {
+    z-index: 3;
+    animation-duration: 460ms;
+    animation-timing-function: cubic-bezier(.32, 0, .16, 1);
+  }
+  ::view-transition-image-pair(project-preview) { overflow: clip; border-radius: 7px; }
   ::view-transition-old(profile-photo), ::view-transition-new(profile-photo),
   ::view-transition-old(project-preview), ::view-transition-new(project-preview) {
     width: 100%; height: 100%; object-fit: cover;

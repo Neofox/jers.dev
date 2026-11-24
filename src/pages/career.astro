@@ -40,9 +40,14 @@ import PortfolioLayout from "../layouts/PortfolioLayout.astro"
   .career-portrait { position: relative; width: 120px; aspect-ratio: 1; }
   .career-fallback { display: block; width: 100%; height: 100%; border-radius: var(--radius-m); }
   .career-portrait:has(:global(.portrait-dock:not([hidden]))) .career-fallback { visibility: hidden; }
-  .career-portrait:not([data-floating]) :global(.portrait-dock) { position: absolute; inset: 0; view-transition-name: none; }
+  .career-portrait:not([data-floating]) :global(.portrait-dock) { position: absolute; inset: 0; }
   .career-portrait:not([data-floating]) :global(.dock-face) { width: 100%; height: 100%; border-radius: var(--radius-m); box-shadow: none; }
   .career-portrait:not([data-floating]) :global(.pf-face img) { scale: 1; }
+  .career-portrait :global(.portrait-dock) { transform-origin: top left; }
+  @media (prefers-reduced-motion: no-preference) {
+    .career-portrait :global(.dock-face) { transition-property: border-color, border-radius, box-shadow; transition-duration: 420ms; }
+    .career-portrait :global(.pf-face img) { transition: scale 420ms var(--ease-out), opacity 250ms var(--ease-out); }
+  }
   @media (max-width: 600px) {
     #page-intro { grid-template-columns: 1fr 64px; row-gap: var(--space-3); }
     .career-bio { display: contents; }

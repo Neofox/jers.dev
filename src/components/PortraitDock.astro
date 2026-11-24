@@ -40,6 +40,12 @@ import PortraitImage from "./PortraitImage.astro"
     </svg>
   </button>
 </div>
+<script is:inline>
+  // Give incoming page transitions a visible face before the interactive module starts.
+  if (["work", "study", "career"].includes(document.body.dataset.stage)) {
+    document.getElementById("portrait-dock").hidden = false
+  }
+</script>
 <dialog id="portrait-dialog" class="portrait-drawer" aria-labelledby="pd-title">
   <div class="dialog-top">
     <span class="eyebrow">Living portrait<span id="pd-model"></span></span><button

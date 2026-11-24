@@ -2521,6 +2521,21 @@ html[data-motion="on"] .illo.is-live .tr-arrow .ui-icon {
   display: grid;
   gap: var(--space-4);
 }
+.cf-search {
+  display: grid;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+}
+.cf-search input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-m);
+  background: var(--surface);
+  color: var(--fg);
+  font: inherit;
+}
 .cf-pills {
   display: flex;
   flex-wrap: wrap;

@@ -20,6 +20,9 @@ function markup() {
     "coaches",
     "Pivo Coaches filters and results",
     `<div class="cf">
+      <label class="cf-search">Search sample coaches
+        <input type="search" data-cf="search" placeholder="Name, location, discipline or language">
+      </label>
       <div class="cf-pills" role="group" aria-label="Filters">
         <label class="cf-select">${icon("compass")}<span class="sr-only">Discipline</span><select data-cf="discipline">${disciplines.map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}</select></label>
         <div class="cf-combo"><button type="button" class="cf-pill" data-cf="lang-toggle" aria-expanded="false" aria-controls="cf-lang">${icon("globe")}<span data-cf="lang-label">Language</span></button>
@@ -28,7 +31,7 @@ function markup() {
         <button type="button" class="cf-pill" data-cf="accept" aria-pressed="true">Accept New Students</button>
       </div>
       <div class="cf-head"><p class="cf-count" data-cf="count" aria-live="polite"></p><label class="cf-sort"><span>Sort by:</span><select data-cf="sort"><option value="random">Relevance</option><option value="popular">Popularity</option><option value="asc">Oldest first</option><option value="desc">Newest first</option></select></label></div>
-      <section class="cf-profile" data-cf="profile" tabindex="-1" aria-label="Coach profile" hidden></section>
+      <section class="cf-profile" data-cf="profile" id="cf-profile-panel" tabindex="-1" aria-label="Coach profile" hidden></section>
       <ul class="cf-grid" data-cf="grid"></ul>
       <p class="cf-empty" data-cf="empty" hidden>No coaches found matching your criteria.</p>
       <div class="cf-more-row"><button type="button" class="button button-outline" data-cf="more" hidden>Load more coaches</button><p class="cf-loading" data-cf="loading" aria-live="polite"></p></div>
@@ -57,12 +60,18 @@ export function mount(stage) {
   const relevance = [4, 1, 7, 2, 9, 5, 3, 8, 6] // stable "seeded" order, like the product's random sort with a seed
   const q = (k) => root.querySelector(`[data-cf="${k}"]`)
   const PAGE = 6 // the product loads 6 per page (infinite scroll); here a button loads the next page
-  const state = { discipline: "", langs: [], certified: false, accept: true, sort: "random", pages: 1, open: null }
+  const state = { terms: [], discipline: "", langs: [], certified: false, accept: true, sort: "random", pages: 1, open: null }
   let loadTimer = null
   const pop = q("lang-toggle").nextElementSibling
+  const normalize = (value) => value.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase()
+  function matchesSearch(coach) {
+    const text = normalize([coach.name, coach.city, coach.country, labels[coach.discipline], ...coach.langs].join(" "))
+    return state.terms.every((term) => text.includes(term))
+  }
   function draw() {
     let list = coaches.filter(
       (c) =>
+        matchesSearch(c) &&
         (!state.discipline || c.discipline === state.discipline) &&
         (!state.langs.length || state.langs.some((l) => c.langs.includes(l))) &&
         (!state.certified || c.pivoCertified) &&
@@ -94,10 +103,14 @@ export function mount(stage) {
   }
   const refilter = (fn) => {
     fn()
+    clearTimeout(loadTimer)
     state.pages = 1
     closeProfile(false)
     draw()
   }
+  q("search").addEventListener("input", (e) => refilter(() => {
+    state.terms = normalize(e.target.value).split(/\s+/).filter(Boolean)
+  }))
   q("discipline").addEventListener("change", (e) => refilter(() => (state.discipline = e.target.value)))
   q("sort").addEventListener("change", (e) => refilter(() => (state.sort = e.target.value)))
   q("certified").addEventListener("click", () => refilter(() => (state.certified = !state.certified)))
@@ -122,7 +135,6 @@ export function mount(stage) {
     if (!c) return
     state.open = order
     const p = q("profile")
-    p.id = "cf-profile-panel"
     p.innerHTML = `<div class="cf-profile-head"><div class="cf-photo small" aria-hidden="true"><span>${c.name[0]}</span></div><div><p class="illo-kicker">Sample profile</p><h4>${c.name}</h4><p class="cf-loc">${c.city}, ${c.country}</p></div><button type="button" class="demo-reset" data-cf="close">Close</button></div>
       <dl class="cf-facts"><div><dt>Discipline</dt><dd>${labels[c.discipline]}</dd></div><div><dt>Languages</dt><dd>${c.langs.join(", ")}</dd></div><div><dt>Pivo Certified</dt><dd>${c.pivoCertified ? "Yes" : "No"}</dd></div><div><dt>New students</dt><dd>${c.acceptStudents ? "Accepting" : "Not accepting"}</dd></div></dl>
       <p class="cf-note">In the product, See More opens this coach's page. Fictional coach · no request is made.</p>`
@@ -151,10 +163,9 @@ export function mount(stage) {
   }
   q("lang-toggle").addEventListener("click", () => setPop(pop.hidden))
   root.querySelectorAll('[data-cf="lang"]').forEach((box) =>
-    box.addEventListener("change", () => {
+    box.addEventListener("change", () => refilter(() => {
       state.langs = [...root.querySelectorAll('[data-cf="lang"]:checked')].map((b) => b.value)
-      draw()
-    }),
+    })),
   )
   const outside = (e) => {
     if (!pop.hidden && !e.target.closest(".cf-combo")) setPop(false)

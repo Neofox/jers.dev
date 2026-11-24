@@ -67,7 +67,7 @@ Coaches is one presentation. The working demo is primary, and "View real capture
 **Simplified or synthetic**
 - The coaches are fictional, and filtering runs locally; the product filters on the server.
 - AND across categories and OR within languages is an assumption, because the matching logic is in the backend.
-- AI search is left out because it calls a live endpoint.
+- The demo searches fictional profiles by name, location, discipline and language locally. The product’s AI search calls a live endpoint.
 - The header says "1 Coach" in the singular; the product shows "1 Coaches".
 - "See More" opens an in-demo sample profile built from the same fictional record (discipline, languages, certification, new students); the product navigates to the coach's page. There are no profile images.
 

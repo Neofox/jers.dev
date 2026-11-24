@@ -324,6 +324,50 @@ function init() {
     if (document.hidden) stopDwell(dwellTarget)
   })
 
+  function watchStudy() {
+    const demo = document.querySelector("[data-portrait-study]")
+    if (!demo) return
+    const item = demo.dataset.portraitStudy
+    let readTimer, observer
+    function stopReading() {
+      clearTimeout(readTimer)
+      observer?.disconnect()
+      document.removeEventListener("visibilitychange", cancelHiddenRead)
+    }
+    function cancelHiddenRead() {
+      if (document.hidden) clearTimeout(readTimer)
+      else if (observer) {
+        observer.unobserve(chapter)
+        observer.observe(chapter)
+      }
+    }
+    function opened() {
+      stopReading()
+      request("open_demo", item)
+    }
+    const chapter = document.querySelector(".study .chapter h2")
+    if (demo.dataset.demoStarted) return opened()
+    demo.addEventListener("portrait:demo-open", opened, { once: true })
+    if (!chapter || !("IntersectionObserver" in window)) return
+    observer = new IntersectionObserver(([entry]) => {
+      clearTimeout(readTimer)
+      if (!entry.isIntersecting || document.hidden) return
+      readTimer = setTimeout(() => {
+        stopReading()
+        request("dwell", item)
+      }, 1200)
+    })
+    observer.observe(chapter)
+    document.addEventListener("visibilitychange", cancelHiddenRead)
+  }
+
+  document.addEventListener("toggle", event => {
+    const note = event.target
+    if (!note.matches?.("details[open][data-portrait-project]") || note.dataset.portraitSeen || !catalog || muted) return
+    note.dataset.portraitSeen = "true"
+    request("open_project", "project:" + note.dataset.portraitProject)
+  }, true)
+
   fetch("/api/portrait")
     .then((response) => (response.ok ? response.json() : null))
     .then((data) => {
@@ -338,6 +382,7 @@ function init() {
         $(`pd-q-${name}`).textContent = question.instructions
         $(`pd-t-${name}`).textContent = String(question.type ?? "")
       }
+      watchStudy()
       setTimeout(checkIdle, IDLE_MS)
     })
     .catch(() => {})

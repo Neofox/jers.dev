@@ -408,6 +408,11 @@ button:disabled {
 main {
   outline: none;
 }
+/* Native fragment navigation also reveals the timeline before the home router initializes. */
+body:has(.career-history:target) #stage-home { display: none; }
+body:has(.career-history:target) #stage-about { display: block !important; }
+.career-history { scroll-margin-top: calc(var(--header-h) + var(--space-4)); }
+.career-history > h3 { font-size: var(--text-xl); margin-bottom: var(--space-3); }
 .stage {
   max-width: calc(var(--content) + 2 * var(--gutter));
   margin: 0 auto;
@@ -4460,7 +4465,7 @@ html[data-motion="on"] .illo.is-live .tr-arrow .ui-icon {
   color: var(--accent);
   font-weight: 600;
 }
-.career-main h3 {
+.career-main h4 {
   font-size: var(--text-xl);
   line-height: 1.25;
 }
@@ -5261,9 +5266,28 @@ html[data-motion="off"] .portrait-aside:not(.is-shown) {
 }
 
 /* ─── Motion ─────────────────────────────────────────────────────────── */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 200ms;
+@media (prefers-reduced-motion: no-preference) {
+  .index > header, .study > .mast { view-transition-name: work-masthead; }
+  .portrait-dock:not([hidden]) { view-transition-name: portrait-dock; }
+
+  ::view-transition-group(*) { animation-duration: 200ms; animation-timing-function: ease-out; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 200ms; }
+  html:active-view-transition-type(forward) { --page-arrival: 12px; }
+  html:active-view-transition-type(backward) { --page-arrival: -12px; }
+  html:is(:active-view-transition-type(forward), :active-view-transition-type(backward))::view-transition-old(root) {
+    animation: page-leave 150ms ease-out both;
+  }
+  html:is(:active-view-transition-type(forward), :active-view-transition-type(backward))::view-transition-new(root) {
+    animation: page-enter 210ms cubic-bezier(.2,.7,.2,1) both;
+  }
+}
+@keyframes page-leave { to { opacity: 0; transform: translateX(calc(-1 * var(--page-arrival))); } }
+@keyframes page-enter { from { opacity: 0; transform: translateX(var(--page-arrival)); } }
+@media (max-width: 767px) {
+  body[data-stage="study"] .portrait-dock { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+  body[data-stage="study"]:has(.demo-enhans .eh-controls) .portrait-dock {
+    bottom: calc(var(--mobile-nav-h) + env(safe-area-inset-bottom, 0px) + 116px);
+  }
 }
 html[data-motion="off"] *,
 html[data-motion="off"] *::before,

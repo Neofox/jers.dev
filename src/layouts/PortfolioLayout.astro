@@ -4,7 +4,7 @@ import SpeedInsights from "@vercel/speed-insights/astro"
 import "../styles/globals.css"
 
 interface Props {
-  stage?: "work"
+  stage?: "work" | "study"
   title: string
   description: string
   socialDescription?: string
@@ -36,6 +36,41 @@ const socialImage = new URL(image, Astro.site)
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style is:inline>
+      @media (prefers-reduced-motion: no-preference) { @view-transition { navigation: auto; } }
+    </style>
+    <link rel="expect" href="#page-intro" blocking="render" media="(prefers-reduced-motion: no-preference)" />
+    <script is:inline>
+      (() => {
+        const root = document.documentElement
+        const reduced = matchMedia("(prefers-reduced-motion: reduce)")
+        function sync() {
+          let enabled = !reduced.matches
+          try { enabled &&= localStorage.getItem("jerome-studio-motion") !== "off" } catch {}
+          root.dataset.motion = enabled ? "on" : "off"
+        }
+        sync()
+        reduced.addEventListener("change", sync)
+        window.addEventListener("pageshow", sync)
+        window.addEventListener("pagereveal", event => {
+          const transition = event.viewTransition
+          if (!transition) return
+          sync()
+          if (root.dataset.motion === "off") return transition.skipTransition()
+          const from = window.navigation?.activation?.from
+          if (!from?.url) return
+          function depth(url) {
+            if (url.pathname === "/") return url.hash.startsWith("#about") || url.hash.startsWith("#work") ? 2 : 0
+            return url.pathname.replace(/\/$/, "") === "/work" ? 1 : 2
+          }
+          const direction = depth(location) - depth(new URL(from.url))
+          if (direction) transition.types?.add(direction > 0 ? "forward" : "backward")
+        })
+        window.addEventListener("pageswap", event => {
+          if (root.dataset.motion === "off") event.viewTransition?.skipTransition()
+        })
+      })()
+    </script>
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />

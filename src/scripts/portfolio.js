@@ -1,3 +1,5 @@
+import { chapters } from "../data/career.js"
+import { visuals } from "../data/project-visuals.js"
 import { icon } from "./icons.js"
 
 ;(function () {
@@ -526,69 +528,6 @@ import { icon } from "./icons.js"
       alt: "KDE tray countdown examples with phase progress around each icon, from morning through overtime.",
     },
   }
-  const chapters = [
-    {
-      id: "3i",
-      date: "Sep 2025 — present",
-      company: "3i",
-      role: "Frontend Developer & AX Engineer",
-      description:
-        "I develop the Beamo digital-twin viewer, maintain and extend four core Vue 3 web apps as the sole frontend developer, built the CS/QA intranet and public coach catalog, and run company-wide Claude adoption with MCP integrations.",
-      project: "3i",
-    },
-    {
-      id: "enhans",
-      date: "Mar 2024 — Sep 2025",
-      company: "Enhans",
-      role: "Frontend Developer",
-      description:
-        "I built React/Next.js AI products and SaaS prototypes from architecture to deployment, including AIAP, Enhans Model, Select LLM, ACT-1, Synergy and Chrome extensions.",
-      project: "enhans",
-    },
-    {
-      id: "wcoding",
-      date: "Mar — Nov 2023",
-      company: "WCODING",
-      role: "Full-stack Web Development Instructor",
-      description:
-        "I designed curriculum and projects, reviewed learners’ work and mentored them, teaching HTML, CSS, JavaScript, PHP and MySQL.",
-    },
-    {
-      id: "redspher",
-      date: "Feb 2021 — Mar 2023",
-      company: "Redspher",
-      role: "Full-stack Developer & Team Lead",
-      description:
-        "I led a development team and built a React/TypeScript/Node logistics portal for transport orders, supplier bidding and real-time chat, coordinating with PMs and POs and mentoring developers. My work included development and leadership on Supplier Portal.",
-      project: "rubiwin",
-    },
-    {
-      id: "flash",
-      date: "Feb 2017 — Feb 2021",
-      company: "Flash Europe International",
-      role: "Full-stack Developer",
-      description:
-        "I refactored, deployed and tested legacy PHP, built Node microservices and worked on a gradual migration to React. My Flash Europe International and Redspher work included Rubiwin and Supplier Portal.",
-      project: "rubiwin",
-    },
-    {
-      id: "opcoding",
-      date: "Nov 2015 — Feb 2017",
-      company: "OpCoding",
-      role: "Full-stack Web Developer",
-      description:
-        "I built a Laravel REST API for the Luxembourg tennis federation’s event workflows, and Symfony/PostgreSQL logistics microservices for authentication, location and files.",
-    },
-    {
-      id: "olkypay",
-      date: "Mar — Nov 2015",
-      company: "Olkypay",
-      role: "Web Developer",
-      description:
-        "I worked on the frontend and backend of an online banking and payment application with Symfony and MariaDB.",
-    },
-  ]
-
   const $ = (id) => document.getElementById(id)
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
   let motionPreference = true
@@ -622,26 +561,6 @@ import { icon } from "./icons.js"
       ],
       { duration: subtle ? 240 : 400, easing: "linear(0,.3 10%,.7 25%,.94 45%,1.025 65%,1.012 82%,1)" },
     )
-  }
-  function revealStage(stage) {
-    if (!motionEnabled()) return
-    stage.querySelectorAll("[data-reveal]").forEach((el, i) => {
-      if (!el.animate) return
-      el.getAnimations().forEach((a) => a.cancel())
-      playAnimation(
-        el,
-        [
-          { opacity: 0, transform: "translateY(21px)" },
-          { opacity: 1, transform: "translateY(0)" },
-        ],
-        {
-          duration: 420,
-          delay: Math.min(i, 3) * 45,
-          easing: "linear(0,.3 10%,.7 25%,.94 45%,1.025 65%,1.012 82%,1)",
-          fill: "backwards",
-        },
-      )
-    })
   }
   function syncMotion() {
     const on = motionEnabled()
@@ -819,12 +738,11 @@ import { icon } from "./icons.js"
     }
     if (r.stage === "about") {
       renderChapter(r.chapter, r.chapterExplicit)
-      if (r.fullCareer) scrollTarget = $("chapter-list")
+      if (r.fullCareer) scrollTarget = $("about/career")
       else if (r.chapterExplicit && (stageChanged || chapterChanged)) scrollTarget = $("career-" + r.chapter)
     }
     routeTriggers(r)
     if (stageChanged) {
-      revealStage($("stage-" + r.stage))
       window.scrollTo({ top: 0, behavior: "instant" })
     }
     if (scrollTarget === "top") window.scrollTo({ top: 0, behavior: "instant" })
@@ -1007,52 +925,6 @@ import { icon } from "./icons.js"
     ["recorder", "Action recorder", "Make browser actions inspectable.", "Track interactions inside a sample page, inspect the event log and annotate actions, based on the imitation-learning Chrome extension."],
   )
 
-  // What each chapter shows: an authentic capture, the small renderer images, or an illustration.
-  const visuals = {
-    translater: {
-      entry: { image: "translater", source: "Translater · language, tone and reply context." },
-      refine: { demo: "translater" },
-    },
-    "kaltoe-timer": {
-      popover: { image: "kaltoe", source: "Kaltoe Timer · macOS popover · sample data." },
-      phases: { demo: "kaltoe" },
-      label: {
-        custom: "label",
-        source: "Official ring and track label images, shown at their natural proportions.",
-      },
-      linux: {
-        custom: "linux",
-        source: "KDE tray renderer examples from the public repository · synthetic data.",
-      },
-    },
-    "3i": {
-      beamo: { demo: "beamo" },
-      live: { demo: "meet", capture: "pivo-recording" },
-      library: { demo: "cloud", capture: "pivo-cloud-current" },
-      coaches: { demo: "coaches", capture: "pivo-coaches-current" },
-      cs: { demo: "cs", capture: "pivo-cs-current" },
-      ax: { illo: "ax" },
-    },
-    enhans: {
-      act: { demo: "enhansAct" },
-      workflow: { demo: "enhansWorkflow" },
-      compare: { demo: "enhansCompare" },
-      recorder: { demo: "enhansRecorder" },
-    },
-    rubiwin: {
-      rubiwin: { image: "rubiwin-auction", source: "Rubiwin support · product reference" },
-      pricing: { image: "rubiwin-pricing", source: "Rubiwin support · product reference · CSV upload detail" },
-      supplier: { illo: "logistics" },
-    },
-    neoharness: {
-      turn: { demo: "neoharness" },
-      memory: { illo: "neoharness", glyph: "memory" },
-      tools: { illo: "neoharness", glyph: "build" },
-      schedules: { illo: "neoharness", glyph: "clock" },
-      reliability: { illo: "neoharness", glyph: "shield" },
-    },
-    gleamstral: { request: { demo: "gleamstral" }, interface: { illo: "gleamstral" } },
-  }
   function storyParagraphs(lines) {
     return lines
       .slice(1)
@@ -1480,16 +1352,6 @@ import { icon } from "./icons.js"
       else item.removeAttribute("aria-current")
     })
   }
-  $("chapter-list").innerHTML = chapters
-    .map(
-      (c) =>
-        `<li class="career-item" id="career-${c.id}" tabindex="-1" data-chapter-item="${c.id}" data-focus-id="career-${c.id}"><p class="career-date">${c.date}</p><div class="career-main"><h3>${c.company}</h3><p class="career-role">${c.role}</p><p class="career-description">${c.description}</p>${
-          c.project
-            ? `<a href="/work/#${c.project === "rubiwin" ? "redspher" : c.project}" class="text-link" data-focus-id="career-related-${c.id}">Explore related work <span aria-hidden="true">→</span></a>`
-            : ""
-        }</div></li>`,
-    )
-    .join("")
   function openImage(key) {
     const im = imageAssets[key]
     if (activeStage === "work") emitRepeatable("open_demo", demoItem(currentProject, currentVisual))

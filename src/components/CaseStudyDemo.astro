@@ -1,4 +1,5 @@
 ---
+import { demoPortraitItems } from "../data/project-visuals.js"
 import type { demoLoaders } from "../scripts/demo-loaders.js"
 
 interface Props {
@@ -9,7 +10,7 @@ interface Props {
 const { demo, label, fallback } = Astro.props
 ---
 
-<div class="demo-mount" data-study-demo={demo}>
+<div class="demo-mount" data-study-demo={demo} data-portrait-study={demoPortraitItems[demo]}>
   <button class="button button-primary" type="button" hidden>{label}</button>
   <noscript><p>{fallback}</p></noscript>
 </div>
@@ -38,6 +39,8 @@ const { demo, label, fallback } = Astro.props
           target?.focus({ preventScroll: true })
         }
         start()
+        stage.dataset.demoStarted = "true"
+        stage.dispatchEvent(new Event("portrait:demo-open", { bubbles: true }))
       } catch {
         open.disabled = false
         open.textContent = "Try opening the demo again"

@@ -49,16 +49,3 @@ const previews = await Promise.all([480, 800].map(width => getImage({ src: study
     <CaseStudyDemo demo={study.demo} label={study.button} fallback={`Enable JavaScript to try the ${study.name} demo.`} />
   </section>
 </CaseStudyLayout>
-
-<script>
-  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)")
-  function syncMotion() {
-    let enabled = !reducedMotion.matches
-    try {
-      enabled &&= localStorage.getItem("jerome-studio-motion") !== "off"
-    } catch {}
-    document.documentElement.dataset.motion = enabled ? "on" : "off"
-  }
-  syncMotion()
-  reducedMotion.addEventListener("change", syncMotion)
-</script>

@@ -1,3 +1,6 @@
+---
+import { chapters } from "../data/career.js"
+---
 <section class="stage" id="stage-about" aria-labelledby="about-title" data-focus-id="career-about" hidden>
   <header class="page-head" data-reveal>
     <div>
@@ -21,7 +24,22 @@
         view of what it takes to deliver a product.
       </p>
     </div>
-    <ol class="career-list" id="chapter-list" tabindex="-1" aria-label="Full career" data-reveal></ol>
+    <div id="about/career" class="career-history" tabindex="-1">
+      <h3 id="career-title">Career history</h3>
+      <ol class="career-list" id="chapter-list" aria-labelledby="career-title">
+        {chapters.map(c => (
+          <li class="career-item" id={`career-${c.id}`} tabindex="-1" data-chapter-item={c.id} data-focus-id={`career-${c.id}`}>
+            <p class="career-date">{c.date}</p>
+            <div class="career-main">
+              <h4>{c.company}</h4>
+              <p class="career-role">{c.role}</p>
+              <p class="career-description">{c.description}</p>
+              {c.project && <a href={`/work/#${c.project === "rubiwin" ? "redspher" : c.project}`} class="text-link" data-focus-id={`career-related-${c.id}`}>Explore related work <span aria-hidden="true">→</span></a>}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
   </div>
   <div class="career-footer">
     <p>Based in Seoul. Connecting the product interface to the systems and people behind it.</p><button

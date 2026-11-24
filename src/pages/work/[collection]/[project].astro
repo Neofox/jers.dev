@@ -1,20 +1,31 @@
 ---
 import { getImage } from "astro:assets"
 import { enhansStudies } from "../../../data/enhans-studies"
+import { sideStudies } from "../../../data/side-studies"
 import CaseStudyDemo from "../../../components/CaseStudyDemo.astro"
 import CaseStudyLayout from "../../../layouts/CaseStudyLayout.astro"
 
 export function getStaticPaths() {
-  return enhansStudies.map(study => ({ params: { project: study.slug }, props: { study } }))
+  return [
+    ...enhansStudies.map(study => ({
+      params: { collection: "enhans", project: study.slug },
+      props: { study, employer: "Enhans" as const },
+    })),
+    ...sideStudies.map(study => ({
+      params: { collection: "side-projects", project: study.slug },
+      props: { study, employer: "Independent" as const },
+    })),
+  ]
 }
-const { study } = Astro.props
+const { study, employer } = Astro.props
 const previews = await Promise.all([480, 800].map(width => getImage({ src: study.image, width, format: "webp" })))
 ---
 
 <CaseStudyLayout
-  employer="Enhans"
-  path={`/work/enhans/${study.slug}/`}
-  title={`${study.heading} — Enhans case study — Jérôme Schaeffer`}
+  {employer}
+  workLink={"view" in study ? { href: `/#work/${study.slug}/${study.view}`, label: `More about ${study.name}` } : undefined}
+  path={Astro.url.pathname}
+  title={`${study.heading} — ${employer === "Enhans" ? "Enhans case study" : study.name} — Jérôme Schaeffer`}
   description={study.description}
   heading={study.heading}
   image={study.image.src}
@@ -35,6 +46,7 @@ const previews = await Promise.all([480, 800].map(width => getImage({ src: study
   <section class="demo-section" aria-labelledby="demo-title">
     <h2 id="demo-title">{study.demoHeading}</h2>
     <p>{study.instructions}</p>
+    {"source" in study && <p><a class="text-link" href={study.source}>{study.sourceLabel}</a></p>}
     <CaseStudyDemo demo={study.demo} label={study.button} fallback={`Enable JavaScript to try the ${study.name} demo.`} />
   </section>
 </CaseStudyLayout>

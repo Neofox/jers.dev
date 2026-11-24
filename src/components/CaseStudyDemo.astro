@@ -32,7 +32,7 @@ const { demo, label, fallback } = Astro.props
           dispose = mount(stage)
           stage.querySelector("[data-demo-reset]")?.addEventListener("click", start)
           const firstControl = stage.querySelector<HTMLElement | SVGElement>(
-            "[data-bm=svg], [data-pm-layout][aria-pressed=true], [data-pc-tab][aria-selected=true], [data-cf=search], [data-cs-filter][aria-pressed=true]",
+            "[data-bm=svg], [data-pm-layout][aria-pressed=true], [data-pc-tab][aria-selected=true], [data-cf=search], [data-cs-filter][aria-pressed=true], [data-gs=model]",
           )
           const target = firstControl ?? stage.querySelector<HTMLElement>(".eh-body summary, .eh-body button:not([hidden]), .eh-body input")
           target?.focus({ preventScroll: true })

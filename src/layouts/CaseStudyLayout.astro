@@ -2,6 +2,7 @@
 import PortfolioLayout from "./PortfolioLayout.astro"
 
 interface Props {
+  employer?: "3i" | "Enhans"
   title: string
   description: string
   path: string
@@ -13,7 +14,8 @@ interface Props {
   srcset?: string
   sizes?: string
 }
-const { heading, srcset, sizes, ...metadata } = Astro.props
+const { heading, srcset, sizes, employer = "3i", ...metadata } = Astro.props
+const workUrl = "/#work/" + employer.toLowerCase()
 ---
 
 <PortfolioLayout {...metadata} type="article">
@@ -21,15 +23,15 @@ const { heading, srcset, sizes, ...metadata } = Astro.props
   <div class="study">
     <header class="mast">
       <a class="signature" href="/">Jérôme Schaeffer</a>
-      <a href="/#work/3i">Selected work <span aria-hidden="true">↗</span></a>
+      <a href={workUrl}>Selected work <span aria-hidden="true">↗</span></a>
     </header>
     <main id="main" tabindex="-1">
       <article>
         <header class="opening">
-          <p class="eyebrow">3i · Frontend engineering</p>
+          <p class="eyebrow">{employer} · Frontend engineering</p>
           <h1>{heading}</h1>
           <p class="lead"><slot name="lead" /></p>
-          <p class="byline">Jérôme Schaeffer · Frontend Developer &amp; AX Engineer</p>
+          <p class="byline">Jérôme Schaeffer · {employer === "3i" ? "Frontend Developer & AX Engineer" : "Frontend Developer"}</p>
         </header>
         <figure>
           <img class="scene" src={metadata.image} {srcset} {sizes} width={metadata.imageWidth}
@@ -39,7 +41,7 @@ const { heading, srcset, sizes, ...metadata } = Astro.props
         <slot />
       </article>
     </main>
-    <footer><a class="text-link" href="/#work/3i">More of my work at 3i <span aria-hidden="true">→</span></a></footer>
+    <footer><a class="text-link" href={workUrl}>More of my work at {employer} <span aria-hidden="true">→</span></a></footer>
   </div>
 </PortfolioLayout>
 

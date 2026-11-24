@@ -1,6 +1,8 @@
 ---
+import type { demoLoaders } from "../scripts/demo-loaders.js"
+
 interface Props {
-  demo: "beamo" | "meet" | "cloud" | "coaches" | "cs"
+  demo: keyof typeof demoLoaders
   label: string
   fallback: string
 }
@@ -16,7 +18,7 @@ const { demo, label, fallback } = Astro.props
   import { demoLoaders } from "../scripts/demo-loaders.js"
 
   for (const stage of document.querySelectorAll<HTMLElement>("[data-study-demo]")) {
-    const demo = stage.dataset.studyDemo as "beamo" | "meet" | "cloud" | "coaches" | "cs"
+    const demo = stage.dataset.studyDemo as keyof typeof demoLoaders
     const open = stage.querySelector<HTMLButtonElement>("button")!
     open.hidden = false
     open.addEventListener("click", async () => {
@@ -32,7 +34,8 @@ const { demo, label, fallback } = Astro.props
           const firstControl = stage.querySelector<HTMLElement | SVGElement>(
             "[data-bm=svg], [data-pm-layout][aria-pressed=true], [data-pc-tab][aria-selected=true], [data-cf=search], [data-cs-filter][aria-pressed=true]",
           )
-          firstControl?.focus({ preventScroll: true })
+          const target = firstControl ?? stage.querySelector<HTMLElement>(".eh-body summary, .eh-body button:not([hidden]), .eh-body input")
+          target?.focus({ preventScroll: true })
         }
         start()
       } catch {

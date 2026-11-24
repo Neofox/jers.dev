@@ -1,0 +1,79 @@
+import act from "../assets/enhans-act.webp"
+import workflow from "../assets/enhans-workflow.webp"
+import compare from "../assets/enhans-compare.webp"
+import recorder from "../assets/enhans-recorder.webp"
+
+export const enhansStudies = [
+  {
+    slug: "act-1",
+    name: "ACT-1",
+    demo: "enhansAct",
+    heading: "Following a web agent’s work in ACT-1",
+    description: "How Jérôme Schaeffer built the ACT-1 web agent interface at Enhans. Step through a sample shopping task, inspect its action log, and check the final recommendation.",
+    lead: "I built the interface for ACT-1, a web agent at Enhans. A person could give it a task and follow its progress in the browser. While the answer was still pending, the interface needed to show which actions had already finished.",
+    image: act,
+    alt: "An expanded budget step in the ACT-1 demo alongside a lamp catalog with one item marked over budget.",
+    caption: "The portfolio demo after the budget step. The illustrated catalog shows which of four fictional lamps crossed the price limit.",
+    chapters: [
+      { title: "Reading the action log", text: "A browser task can generate many small actions. The ACT-1 interface grouped those actions into named steps. A reader could scan the step list, then expand a group to inspect the detail behind a progress update." },
+      { title: "Checking the recommendation", text: "In the demo, the request is to compare three compact desk lamps under $80. At the budget step, the $96 Arc drops out of contention. The final answer names the three remaining lamps and their prices. The browser view and log let you trace that answer back to the decision that narrowed the list." },
+    ],
+    demoHeading: "Inspect the budget step",
+    instructions: "Advance two steps, then expand Apply the budget. Look at the Arc lamp before advancing to the recommendation. This four-step replay uses an illustrated storefront and an authored result.",
+    button: "Open ACT-1 demo",
+  },
+  {
+    slug: "aiap",
+    name: "AIAP",
+    demo: "enhansWorkflow",
+    heading: "Tracing a translation through AIAP",
+    description: "Explore Jérôme Schaeffer’s visual workflow work at Enhans. Inspect connected AIAP blocks, change a translation setting, and follow a successful or failed sample run.",
+    lead: "I worked on AIAP, a visual workflow builder at Enhans. Its interface connected blocks on a canvas and let people inspect each block’s settings and output. A three-block translation makes the handoff between two blocks easy to see.",
+    image: workflow,
+    alt: "Input, Text Translation, and Output blocks above the language settings and a block inspector showing a Korean translation.",
+    caption: "A completed sample run. Selecting a block reveals the value at that point in the workflow.",
+    chapters: [
+      { title: "Following one value through the graph", text: "Input supplies the original sentence. Text Translation reads it along with a target language, and Output receives the translated sentence. The inspector gives each value a place on the graph. You can select Input and Output in turn to compare the text that went in with the text that came out." },
+      { title: "Seeing where a run stopped", text: "A failed translation leaves the final block waiting for a value. The demo exposes this dependency by letting you trigger an error in the middle block. Change the language or sample sentence after a successful run and the previous output clears, so you can tell which settings produced the next result." },
+    ],
+    demoHeading: "Run the three-block workflow",
+    instructions: "Choose a sentence and French or Korean, advance the workflow, then select Output. Repeat with Simulate a translation error enabled to see where execution stops. The sample translations are prewritten.",
+    button: "Open workflow demo",
+  },
+  {
+    slug: "select-llm",
+    name: "Select LLM",
+    demo: "enhansCompare",
+    heading: "Comparing model responses in Select LLM",
+    description: "A frontend case study of Select LLM at Enhans. Compare sample responses as they arrive, inspect output variants, and see how an evaluation explains its ranking.",
+    lead: "At Enhans, I worked on Select LLM, an interface for running the same instruction across multiple language models. Responses arrive at different times. Keeping each result attached to its model lets someone start reading one answer while the others are still pending.",
+    image: compare,
+    alt: "Three fictional model results in ranked order, each with output variants, a price, and a latency.",
+    caption: "The demo ranks the first output from each selected model. The responses, timings, prices, and ranking are sample data.",
+    chapters: [
+      { title: "Holding the instruction constant", text: "The sample asks each model to summarize a delivery update in one sentence. The source gives the dispatch date, estimated arrival, and time when tracking becomes available. As each result arrives, its card shows the response alongside its price and latency. Numbered variants let you read a second attempt from the same model." },
+      { title: "Making a ranking inspectable", text: "The sample evaluation favors Model B because its first output keeps all three details in one sentence. Model A omits tracking. Expanding the evaluation reveals that reasoning, and switching a card to Output 02 keeps the ranking tied to the first output that was judged." },
+    ],
+    demoHeading: "Compare the delivery summaries",
+    instructions: "Choose at least two fictional models and step through their responses. Read Output 02 on one card, advance to the ranking, and expand the evaluation to see which answer it judged.",
+    button: "Open comparison demo",
+  },
+  {
+    slug: "action-recorder",
+    name: "Action Recorder",
+    demo: "enhansRecorder",
+    heading: "Recording browser actions at Enhans",
+    description: "Explore Jérôme Schaeffer’s work on browser action tracking at Enhans. Record sample interactions, annotate an event, and inspect its JSON Lines export in the demo.",
+    lead: "At Enhans, I worked on Chrome extensions for web agents and user-action tracking. Action Recorder turned a sequence of interactions into events that someone could review and annotate. A click records what happened. A comment can explain why the person chose it.",
+    image: recorder,
+    alt: "A sample workspace picker beside the Action Recorder panel, with a Seoul click selected and annotated.",
+    caption: "A click in the sample workspace appears as a numbered event in the extension panel. Its comment belongs to that event.",
+    chapters: [
+      { title: "From an interaction to an event", text: "The recorder gives each action a number, timestamp, and type. In the demo, finishing an edit in the destination field produces a keyboard-input event, while choosing Seoul or Busan produces a click event. The newest event appears first, so the effect of the last interaction is visible immediately." },
+      { title: "Keeping an annotation with its action", text: "Select an earlier event and add a comment. The JSON Lines preview places the comment beside the same action number and payload, with one record on each line. Pausing tracking leaves existing records available to inspect while you continue using the sample workspace." },
+    ],
+    demoHeading: "Annotate a browser action",
+    instructions: "Type a destination, then choose a workspace. Select the click in the log, add a comment, and open the JSONL export preview. The recorder listens only inside this sample and keeps the trace in memory.",
+    button: "Open recorder demo",
+  },
+] as const

@@ -53,7 +53,8 @@ export function ehPlayback(root, { label, length, draw }) {
   // Pause when hidden, off the Work stage or when motion is turned off; repaint either way so the run button
   // reappears as soon as motion is enabled again.
   const suspend = () => {
-    if (document.hidden || document.body.dataset.stage !== "work" || !motionEnabled()) stop()
+    const stage = document.body.dataset.stage
+    if (document.hidden || (stage && stage !== "work") || !motionEnabled()) stop()
     paint()
   }
   document.addEventListener("visibilitychange", suspend)

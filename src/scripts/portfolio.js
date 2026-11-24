@@ -1091,13 +1091,14 @@ import { demoLoaders } from "./demo-loaders.js"
       { name: "AI / AX", description: "Company-wide AI adoption", views: ["ax"] },
     ],
     enhans: [
-      { name: "ACT-1", description: "Web agent task runner", preview: "enhans-act", views: ["act"] },
-      { name: "AIAP", description: "Visual workflow builder", preview: "enhans-workflow", views: ["workflow"] },
-      { name: "Select LLM", description: "Side-by-side model comparison", preview: "enhans-compare", views: ["compare"] },
+      { name: "ACT-1", description: "Web agent task runner", preview: "enhans-act", caseStudy: "/work/enhans/act-1/", views: ["act"] },
+      { name: "AIAP", description: "Visual workflow builder", preview: "enhans-workflow", caseStudy: "/work/enhans/aiap/", views: ["workflow"] },
+      { name: "Select LLM", description: "Side-by-side model comparison", preview: "enhans-compare", caseStudy: "/work/enhans/select-llm/", views: ["compare"] },
       {
         name: "Action Recorder",
         description: "Browser interaction recorder",
         preview: "enhans-recorder",
+        caseStudy: "/work/enhans/action-recorder/",
         views: ["recorder"],
       },
     ],

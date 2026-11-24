@@ -1,0 +1,53 @@
+---
+import { getImage } from "astro:assets"
+import { enhansStudies } from "../../../data/enhans-studies"
+import CaseStudyDemo from "../../../components/CaseStudyDemo.astro"
+import CaseStudyLayout from "../../../layouts/CaseStudyLayout.astro"
+
+export function getStaticPaths() {
+  return enhansStudies.map(study => ({ params: { project: study.slug }, props: { study } }))
+}
+const { study } = Astro.props
+const previews = await Promise.all([480, 800].map(width => getImage({ src: study.image, width, format: "webp" })))
+---
+
+<CaseStudyLayout
+  employer="Enhans"
+  path={`/work/enhans/${study.slug}/`}
+  title={`${study.heading} — Enhans case study — Jérôme Schaeffer`}
+  description={study.description}
+  heading={study.heading}
+  image={study.image.src}
+  imageWidth={study.image.width}
+  imageHeight={study.image.height}
+  srcset={`${previews[0].src} 480w, ${previews[1].src} 800w, ${study.image.src} ${study.image.width}w`}
+  sizes="(min-width: 1174px) 1080px, (max-width: 500px) calc(100vw - 40px), 92vw"
+  imageAlt={study.alt}
+>
+  <Fragment slot="lead">{study.lead}</Fragment>
+  <Fragment slot="caption">{study.caption}</Fragment>
+  {study.chapters.map(chapter => (
+    <section class="chapter">
+      <h2>{chapter.title}</h2>
+      <div><p>{chapter.text}</p></div>
+    </section>
+  ))}
+  <section class="demo-section" aria-labelledby="demo-title">
+    <h2 id="demo-title">{study.demoHeading}</h2>
+    <p>{study.instructions}</p>
+    <CaseStudyDemo demo={study.demo} label={study.button} fallback={`Enable JavaScript to try the ${study.name} demo.`} />
+  </section>
+</CaseStudyLayout>
+
+<script>
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)")
+  function syncMotion() {
+    let enabled = !reducedMotion.matches
+    try {
+      enabled &&= localStorage.getItem("jerome-studio-motion") !== "off"
+    } catch {}
+    document.documentElement.dataset.motion = enabled ? "on" : "off"
+  }
+  syncMotion()
+  reducedMotion.addEventListener("change", syncMotion)
+</script>

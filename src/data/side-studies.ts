@@ -1,4 +1,7 @@
 import request from "../assets/gleamstral-request.webp"
+import kaltoe from "../assets/kaltoe-timer-demo.webp"
+import translater from "../assets/translater-demo.webp"
+import neoharness from "../assets/neoharness-demo.webp"
 
 export const sideStudies = [
   {
@@ -21,5 +24,68 @@ export const sideStudies = [
     button: "Open request builder",
     source: "https://hexdocs.pm/gleamstral/",
     sourceLabel: "Gleamstral documentation",
+  },
+  {
+    slug: "kaltoe-timer",
+    name: "Kaltoe Timer",
+    demo: "kaltoe",
+    view: "phases",
+    heading: "Reading a workday at a glance with Kaltoe Timer",
+    description: "How Jérôme Schaeffer built a menu bar and tray countdown for a flexible workday. Move a sample clock through lunch, a shortened day, and overtime.",
+    lead: "At 10:45, the next useful countdown is the time until lunch. By midafternoon, it is the time until I can leave. I built Kaltoe Timer to answer those questions in a macOS menu bar or Linux tray, using the same working-time rules on both desktops.",
+    image: kaltoe,
+    alt: "Kaltoe shows 35 minutes until the lunch break, an 18:00 leave time, and a slider set to 10:45.",
+    caption: "The sample day starts at 09:00. At 10:45 the timer counts down to the early lunch window at 11:20.",
+    chapters: [
+      { title: "Two clocks in one indicator", text: "The label counts down to the end of the current phase. The ring or track fills as that boundary approaches, then starts another cycle after the transition. Color follows progress through the whole day. That gives the small tray icon a way to show both the next event and how much of the day has elapsed." },
+      { title: "Why the leave time changes", text: "With a 09:00 start, eight hours of work and a one-hour break put departure at 18:00. Family day takes two hours off the target, moving departure to 16:00. The timer also accounts for overtime already worked that week. The same extra half hour can put one sample day at the weekly limit while another still has room." },
+    ],
+    demoHeading: "Move the workday clock",
+    instructions: "Switch between Ring and Track, then move the time slider through lunch. Turn on Family day and check the leave time. Set the week’s overtime to 11:30 and advance half an hour beyond departure to reach the sample cap.",
+    button: "Open timer demo",
+    source: "https://github.com/Neofox/kaltoe-timer",
+    sourceLabel: "Kaltoe Timer repository",
+  },
+  {
+    slug: "translater",
+    name: "Translater",
+    demo: "translater",
+    view: "refine",
+    heading: "Finding the right tone with Translater",
+    description: "Explore Jérôme Schaeffer’s English-to-Korean translation interface. Refine a sample sentence, inspect its grammar, and see how the last translation survives a failed adjustment.",
+    lead: "I built Translater for everyday conversations where a translation can be accurate and still sound wrong for the person reading it. A greeting to a friend and the same greeting to a colleague give the interface a concrete job. It needs to let me change the register and see exactly which words changed.",
+    image: translater,
+    alt: "The English greeting and tone controls appear beside a Korean translation and its phrase breakdown, with Softer selected.",
+    caption: "One English greeting, a softer Korean rendering, and the phrases that make up that result.",
+    chapters: [
+      { title: "Refining the whole sentence", text: "Friends, Casual, and Professional provide starting points. Up to three refinements can be active together, so a reader can ask for a softer, shorter sentence. Each adjustment regenerates the result as a whole. If two changes arrive close together, the latest selection determines the sentence that appears." },
+      { title: "Keeping a sentence worth using", text: "A failed adjustment restores the last completed translation and its selected refinements. The phrase breakdown belongs to that same result. Opening a row reveals its meaning in context, base form, and grammar, so the explanation stays tied to the words on screen." },
+    ],
+    demoHeading: "Refine a Korean greeting",
+    instructions: "Choose a tone, add Softer, and open a phrase in the breakdown. Turn on Simulate a failed adjustment, then change a refinement and watch which sentence and selections return. This demo uses prewritten Korean samples.",
+    button: "Open translation demo",
+    source: "https://www.neofox.dev/",
+    sourceLabel: "Open Translater",
+  },
+  {
+    slug: "neoharness",
+    name: "Neoharness",
+    demo: "neoharness",
+    view: "turn",
+    heading: "Following a memory update in Neoharness",
+    description: "How Jérôme Schaeffer built an Elixir and Phoenix LiveView agent runtime. Inspect a sample memory update, stop a turn, and see how a skipped heartbeat affects the chat.",
+    lead: "A change of travel plans gave me a useful test for Neoharness, my personal agent runtime. If I tell an agent we picked the train to Busan, I want to see whether it found the earlier plan and updated it. I built the chat in Phoenix LiveView so tool calls and their results are visible alongside the reply.",
+    image: neoharness,
+    alt: "A sample conversation about the Busan train plan with recall and memory tool calls followed by the agent’s confirmation.",
+    caption: "The sample turn recalls the undecided travel plan before updating it to say the trip is by train.",
+    chapters: [
+      { title: "Reading the turn in order", text: "The conversation shows the user’s message first, then the agent’s progress and each tool call. In the Busan example, recall finds the previous entry and memory updates it. Opening either row exposes its arguments and result, so the reader can check what changed before reading the confirmation." },
+      { title: "Deciding what belongs in the conversation", text: "Stopping a turn discards its partial reply. Scheduled checks have a different outcome. If a heartbeat finds nothing to do, it ends as skipped and the runtime drops that turn from the conversation. The demo leaves a short notice so you can see why the temporary messages disappeared." },
+    ],
+    demoHeading: "Trace a sample conversation",
+    instructions: "Send the sample message and follow the turn through recall and memory. Expand a tool row to inspect it. Try Stop during another turn, or run Heartbeat tick to see a skipped check. The messages, tool results, and statistics are simulated.",
+    button: "Open runtime demo",
+    source: "https://github.com/Neofox/neoharness",
+    sourceLabel: "Neoharness repository",
   },
 ] as const

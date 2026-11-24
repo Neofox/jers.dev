@@ -1122,7 +1122,7 @@ import { demoLoaders } from "./demo-loaders.js"
         name: projects[id].name,
         description: projects[id].short,
         preview: sidePreviews[id],
-        caseStudy: id === "gleamstral" ? "/work/side-projects/gleamstral/" : undefined,
+        caseStudy: `/work/side-projects/${id}/`,
         views: projects[id].chapters.map(([view]) => view),
       }))
   }

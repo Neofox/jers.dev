@@ -19,6 +19,9 @@ Jérôme Schaeffer is a senior product engineer based in Seoul, South Korea with
 - [Enhans Select LLM](https://www.jers.dev/work/enhans/select-llm/): Model comparison with asynchronous sample results
 - [Enhans Action Recorder](https://www.jers.dev/work/enhans/action-recorder/): Browser event tracking, annotations and JSON Lines preview
 - [Gleamstral](https://www.jers.dev/work/side-projects/gleamstral/): Typed chat request builder and response decoding in Gleam
+- [Kaltoe Timer](https://www.jers.dev/work/side-projects/kaltoe-timer/): Interactive menu bar countdown with lunch, family day, and overtime
+- [Translater](https://www.jers.dev/work/side-projects/translater/): Interactive Korean tone refinement and phrase breakdown
+- [Neoharness](https://www.jers.dev/work/side-projects/neoharness/): Interactive agent turn with memory updates, cancellation, and heartbeat checks
 - [Work](https://www.jers.dev/#work/3i): Professional experience and side projects
 - [About](https://www.jers.dev/#about): Career timeline
 - [Current Korean résumé](https://www.jers.dev/assets/resume-ko.pdf)

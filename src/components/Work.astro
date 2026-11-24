@@ -1,0 +1,115 @@
+<section class="stage" id="stage-work" aria-labelledby="work-title" data-focus-id="selected-work" hidden>
+  <header class="page-head work-head" data-reveal>
+    <h2 id="work-title" tabindex="-1" data-focus-id="work-heading">Work</h2>
+  </header>
+  <div class="work-rail">
+    <nav
+      class="workplaces"
+      aria-label="Featured workplaces and side projects"
+      id="workplaces"
+      data-focus-id="project-index"
+    >
+    </nav><a class="full-career-link" href="#about/career">
+      Full career · 7 companies since 2015 <span aria-hidden="true">→</span>
+    </a>
+  </div>
+  <button
+    type="button"
+    class="work-context"
+    id="work-context"
+    aria-haspopup="dialog"
+    aria-controls="work-directory"
+    hidden
+  >
+    <span id="work-context-path"></span><strong>Switch ▾</strong>
+  </button>
+  <dialog class="work-directory" id="work-directory" aria-labelledby="directory-title">
+    <header>
+      <h3 id="directory-title">Switch project</h3><button type="button" id="directory-close" autofocus>Close</button>
+    </header>
+    <nav aria-label="Work directory" id="directory-links"></nav><a class="full-career-link" href="#about/career">
+      Full career · 7 companies since 2015 <span aria-hidden="true">→</span>
+    </a>
+  </dialog>
+  <article class="case" id="project-story" aria-labelledby="inspector-title" data-focus-id="project-inspector">
+    <header class="case-head">
+      <p class="eyebrow" id="inspector-meta"></p>
+      <h3 id="inspector-title" tabindex="-1" data-focus-id="project-heading"></h3>
+      <p class="case-role-line"><span id="inspector-role"></span><span id="case-stack"></span></p>
+    </header>
+    <nav class="product-picker" aria-labelledby="product-list-title">
+      <h4 id="product-list-title"></h4>
+      <ul class="project-list" id="project-list"></ul>
+    </nav>
+    <figure class="case-figure" data-focus-id="project-visual-column">
+      <header class="view-head">
+        <p class="eyebrow" id="view-owner"></p>
+        <h4 id="view-title" tabindex="-1"></h4>
+      </header>
+      <div class="view-tabs" id="visual-chapters" role="tablist" aria-label="Project views"></div>
+      <div class="visual-stage" id="visual-stage" data-focus-id="project-visual"></div>
+      <figcaption class="visual-text">
+        <span class="visual-annotation" id="visual-annotation" data-focus-id="visual-annotation"></span><span
+          class="visual-caption"
+          id="visual-caption"
+        >
+        </span>
+      </figcaption>
+    </figure>
+    <section class="case-did" aria-labelledby="case-did-title">
+      <h4 class="section-label" id="case-did-title">What I did</h4>
+      <ul class="did-list" id="case-did"></ul>
+    </section>
+    <details class="case-more" id="case-more" data-focus-id="case-more">
+      <summary data-focus-id="case-more-toggle">
+        <span class="more-text">
+          <span class="more-title" id="more-title">Read the full case</span><span class="more-hint">
+            Context · My role · Product detail · Sources
+          </span>
+        </span><span class="more-toggle" aria-hidden="true"></span>
+      </summary>
+      <div class="case-sections">
+        <section class="case-section" id="case-overview" tabindex="-1" aria-labelledby="case-overview-title">
+          <p class="section-label">Context</p>
+          <div class="case-section-body">
+            <h4 id="case-overview-title"></h4>
+            <p id="case-overview-meta"></p>
+            <ul class="case-highlights" id="case-highlights" aria-label="Highlights"></ul>
+            <div id="case-overview-body"></div>
+          </div>
+        </section>
+        <section class="case-section" id="case-role" tabindex="-1" aria-labelledby="case-role-title">
+          <p class="section-label">My role</p>
+          <div class="case-section-body">
+            <h4 id="case-role-title"></h4>
+            <div id="case-role-body"></div>
+          </div>
+        </section>
+        <section class="case-section" id="case-decisions" tabindex="-1" aria-labelledby="case-decisions-title">
+          <p class="section-label">Product detail</p>
+          <div class="case-section-body">
+            <h4 id="case-decisions-title"></h4>
+            <div id="case-decisions-body"></div>
+          </div>
+        </section>
+        <section class="case-section" id="case-sources" tabindex="-1" aria-labelledby="case-sources-title">
+          <p class="section-label">Sources</p>
+          <div class="case-section-body">
+            <h4 id="case-sources-title">Sources &amp; product links</h4>
+            <div id="case-sources-body"></div>
+          </div>
+        </section>
+      </div>
+    </details>
+    <nav class="case-pager" aria-label="More projects">
+      <button type="button" class="button button-outline" id="previous-project" data-focus-id="previous-project">
+      </button><span class="pager-position" id="project-position"></span><button
+        type="button"
+        class="button button-outline"
+        id="next-project"
+        data-focus-id="next-project"
+      >
+      </button>
+    </nav>
+  </article>
+</section>

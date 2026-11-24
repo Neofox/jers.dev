@@ -1,1 +1,0 @@
-export type LanguageType = 'en' | 'fr' | 'ko';

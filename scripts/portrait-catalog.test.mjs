@@ -1,4 +1,5 @@
 import test from "node:test"
+import { demoLoaders } from "../src/scripts/demo-loaders.js"
 import assert from "node:assert/strict"
 import { existsSync, readFileSync } from "node:fs"
 import { EXPRESSIONS, ITEMS, clientCatalog } from "../lib/portrait-catalog.mjs"
@@ -54,7 +55,7 @@ function blockAt(source, from) {
 }
 
 test("every demo item matches a demo chapter", () => {
-  const source = readFileSync(new URL("../public/portfolio.js", import.meta.url), "utf8")
+  const source = readFileSync(new URL("../src/scripts/portfolio.js", import.meta.url), "utf8")
   const visuals = blockAt(source, source.indexOf("const visuals = {"))
   const demos = Object.keys(ITEMS).filter((id) => id.startsWith("demo:"))
   assert.ok(demos.length > 0)
@@ -74,8 +75,16 @@ test("every demo item matches a demo chapter", () => {
   }
 })
 
+test("every portfolio demo loads a standalone mount function", async () => {
+  const source = readFileSync(new URL("../src/scripts/portfolio.js", import.meta.url), "utf8")
+  const visuals = blockAt(source, source.indexOf("const visuals = {"))
+  const names = [...new Set([...visuals.matchAll(/demo: "([^"]+)"/g)].map((match) => match[1]))]
+  assert.deepEqual(names.sort(), Object.keys(demoLoaders).sort())
+  for (const name of names) assert.equal(typeof (await demoLoaders[name]()).mount, "function", name)
+})
+
 test("project and career items match projectOrder and the career chapters in portfolio.js", () => {
-  const source = readFileSync(new URL("../public/portfolio.js", import.meta.url), "utf8")
+  const source = readFileSync(new URL("../src/scripts/portfolio.js", import.meta.url), "utf8")
   const order = /const projectOrder = (\[[^\]]*\])/.exec(source)
   assert.ok(order, "no projectOrder")
   const projects = JSON.parse(order[1]).map((id) => `project:${id}`)

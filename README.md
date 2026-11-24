@@ -1,6 +1,6 @@
 # jers.dev
 
-Jérôme Schaeffer’s portfolio. Next.js serves the approved OpenDesign experience and a living portrait whose reactions are decided server-side by OpenAI's Decisions API.
+Jérôme Schaeffer’s portfolio. Astro serves the approved OpenDesign experience and a living portrait whose reactions are decided server-side by OpenAI's Decisions API.
 
 ## Run
 
@@ -13,7 +13,7 @@ Set `OPENAI_API_KEY` in the git-ignored `.env.local`. It is server-only. No key 
 - `bun run test`
 - `bun run lint`
 - `bun run build`
-- `bun run start`
+- `bun run start` serves the app locally with Astro’s development server. The production build is written to `.vercel/output`.
 
 The homepage is English. Old `/en`, `/fr` and `/ko` URLs redirect to the new homepage; both English and Korean résumé PDFs are available from the résumé dialog. Project views use shareable URL fragments.
 
@@ -23,12 +23,13 @@ The updated professional content follows the latest Korean résumé, including B
 
 ## Source
 
-- `app/portfolio.json`: trusted, server-rendered markup from the approved design; never populate it with user content.
-- `app/globals.css`: local fonts, layout and motion preferences.
-- `public/portfolio.js`: navigation, case studies, accessible dialogs, and the `portrait:trigger` events the living portrait reacts to.
+- `src/pages/index.astro` and `src/components/`: prerendered portfolio pages and sections.
+- `src/styles/globals.css`: local fonts, layout and motion preferences.
+- `src/scripts/portfolio.js`: navigation, case studies, accessible dialogs, and the `portrait:trigger` events the living portrait reacts to.
+- `src/demos/`: one on-demand module per working demo. A demo exports `mount(stage)` and can return a cleanup function. The loader disposes it on navigation or restart. Pivo Meet can return a Solid renderer’s disposal function from the same entry point when the v8 integration is available.
 - `public/portrait.mjs`: the living portrait in the browser (faces, dock, speech bubble, mute, "why this face?" drawer).
 - `public/portrait-core.mjs`: the portrait's request scheduler (gap, per-visit cap, latest-response-wins, local fallbacks) and other DOM-free helpers, unit-tested.
-- `app/api/portrait`: `POST /api/portrait` (one reaction for `{action, itemId, recent}`) and `GET /api/portrait` (the browser catalog: item IDs, labels and default faces, plus the model name and the question text the drawer shows; no facts or asides).
+- `src/pages/api/portrait.js`: `POST /api/portrait` (one reaction for `{action, itemId, recent}`) and `GET /api/portrait` (the browser catalog: item IDs, labels and default faces, plus the model name and the question text the drawer shows; no facts or asides).
 - `lib/portrait-catalog.mjs`: the catalog of items, default faces and the approved asides (versioned by `CATALOG_VERSION`).
 - `lib/portrait-decision.mjs`: request builder, thresholds, refusal and fallback rules, cost calculation.
 - `lib/portrait-service.mjs`: bounded cache and upstream limits around the OpenAI call.
@@ -50,7 +51,7 @@ Evaluation: `bun run eval:portrait` runs the signed-off scenarios against the li
 
 Production: https://www.jers.dev (jers.dev redirects here). Released on 2026-10-08 KST to the existing `neofoxs-projects/jersdev` project. Deployment: `dpl_6YfxJw3MSX31EoPBMgmFm2g3K2jQ`.
 
-The approved `OPENAI_API_KEY` is configured as a production Secret. Future deployments should use the Next.js preset and Node.js 24. Never prefix the key with `NEXT_PUBLIC_`.
+The approved `OPENAI_API_KEY` is configured as a production Secret. The repository selects the Astro preset for Vercel. Build with Node.js 24 and keep the key server-only.
 
 Add a Vercel Firewall rule that rate-limits `POST /api/portrait` to 12 requests per IP per minute, and remove the old `/api/decision` rule. The code’s in-memory limits are defense in depth: 12 requests per IP per minute and 1,000 upstream requests per hour per function instance. They reset on cold starts and are not a global spending cap. Set a budget on the OpenAI project that holds the key: $20 hard limit with a $10 alert.
 
@@ -60,4 +61,4 @@ Product screenshots remain attributed to their actual sources. ACT-2 imagery is 
 
 ## Optional design preview
 
-`scripts/portfolio-preview.mjs` is local development tooling for the OpenDesign artifact and is not included in the public site. The Next.js application has no dependency on the OpenDesign server or any local preview port.
+`scripts/portfolio-preview.mjs` is local development tooling for the OpenDesign artifact and is not included in the public site. The Astro application has no dependency on the OpenDesign server or any local preview port.

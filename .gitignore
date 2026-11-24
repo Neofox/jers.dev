@@ -13,7 +13,9 @@ CLAUDE.md
 # testing
 /coverage
 
-# next.js
+# Generated output
+/.astro/
+/dist/
 /.next/
 /out/
 

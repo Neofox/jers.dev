@@ -1,0 +1,143 @@
+import { demoShell } from "./shared.js"
+
+// Gleamstral · request builder. Mirrors src/gleamstral/chat.gleam and client.gleam: setters clamp
+// (temperature 0.0…1.5, top_p 0.0…1.0, max_tokens ≥ 0, where 0 is sent as null), complete_request builds
+// POST https://api.mistral.ai/v1/chat/completions with body_encoder's fields in order, and nothing is sent:
+// your HTTP client sends it. handle_response maps 200 → decoded Response (or "Failed to decode response"),
+// 401 → Unauthorized, 429 → RateLimitExceeded, anything else → Unknown(message). Replies are sample data.
+function markup() {
+  const models = [
+    ["MistralLarge", "mistral-large-latest"], ["MistralMedium", "mistral-medium-latest"], ["MistralSmall", "mistral-small-latest"],
+    ["Ministral3B", "ministral-3b-latest"], ["Ministral8B", "ministral-8b-latest"], ["PixtralLarge", "pixtral-large-latest"],
+    ["Pixtral", "pixtral-12b-2409"], ["MistralNemo", "open-mistral-nemo"], ["MistralSaba", "mistral-saba-latest"],
+  ]
+  const formats = [["Text", "Text"], ["JsonObject", "JsonObject"], ["JsonSchema", "JsonSchema"]]
+  const replies = [["200", "200 OK"], ["200bad", "200 · missing field"], ["401", "401"], ["429", "429"], ["503", "503"]]
+  return demoShell(
+    "gleamstral",
+    "Gleamstral chat request builder",
+    `<div class="gs">
+      <div class="gs-controls">
+        <label class="kt-field"><span>Model</span><select data-gs="model">${models.map(([c, s]) => `<option value="${c}|${s}"${c === "MistralSmall" ? " selected" : ""}>model.${c}</option>`).join("")}</select></label>
+        <label class="gs-range"><span>set_temperature <output data-gs="t-out"></output></span><input type="range" min="-0.5" max="2" step="0.1" value="0.7" data-gs="t" aria-label="Temperature"></label>
+        <label class="gs-range"><span>set_top_p <output data-gs="p-out"></output></span><input type="range" min="-0.2" max="1.2" step="0.05" value="1" data-gs="p" aria-label="Top p"></label>
+        <label class="gs-range"><span>set_max_tokens <output data-gs="m-out"></output></span><input type="range" min="-50" max="300" step="10" value="100" data-gs="m" aria-label="Maximum tokens"></label>
+        <div class="gs-format"><span class="illo-kicker">Response format</span><div class="tl-seg" role="group" aria-label="Response format">${formats.map(([v, l]) => `<button type="button" data-gs-format="${v}" aria-pressed="${v === "JsonSchema"}">${l}</button>`).join("")}</div></div>
+      </div>
+      <div class="gs-panel gs-code"><p class="illo-kicker">Your Gleam</p><pre data-gs="code"></pre></div>
+      <div class="gs-panel gs-req"><p class="illo-kicker">complete_request → Request(String) · built, not sent</p><pre data-gs="req"></pre><p class="gs-note">Body shown formatted; <code>json.to_string</code> sends it compact.</p></div>
+      <div class="gs-panel gs-send"><p class="illo-kicker">Your HTTP client sends it · sample replies</p>
+        <div class="tl-seg" role="group" aria-label="Sample HTTP reply">${replies.map(([v, l]) => `<button type="button" data-gs-reply="${v}" aria-pressed="${v === "200"}">${l}</button>`).join("")}</div>
+        <p class="illo-kicker">Sample reply body</p><pre data-gs="raw"></pre>
+        <p class="illo-kicker">chat.handle_response(response)</p><pre class="gs-decoded" data-gs="decoded" aria-live="polite"></pre>
+      </div>
+    </div>`,
+  )
+}
+
+export function mount(stage) {
+  stage.innerHTML = markup()
+  const root = stage.querySelector(".demo")
+  const q = (k) => root.querySelector(`[data-gs="${k}"]`)
+  const st = { format: "JsonSchema", reply: "200" }
+  // Gleam prints floats with a decimal point (1.0, not 1)
+  const F = (n) => ({ f: Math.round(n * 1000) / 1000 })
+  const fmtF = (n) => (Number.isInteger(n) ? n.toFixed(1) : String(n))
+  function toJson(v, ind = "") {
+    const next = ind + "  "
+    if (v === null) return "null"
+    if (v && typeof v === "object" && "f" in v) return fmtF(v.f)
+    if (typeof v === "string") return JSON.stringify(v)
+    if (typeof v !== "object") return String(v)
+    if (Array.isArray(v)) return v.length ? `[\n${v.map((x) => next + toJson(x, next)).join(",\n")}\n${ind}]` : "[]"
+    const keys = Object.keys(v)
+    return keys.length ? `{\n${keys.map((k) => `${next}${JSON.stringify(k)}: ${toJson(v[k], next)}`).join(",\n")}\n${ind}}` : "{}"
+  }
+  const bookSchema = {
+    type: "object",
+    properties: { name: { type: "string" }, authors: { type: "array", items: { type: "string" } } },
+    required: ["name", "authors"],
+  }
+  function draw() {
+    const [ctor, modelId] = q("model").value.split("|")
+    const tRaw = +(+q("t").value).toFixed(2),
+      pRaw = +(+q("p").value).toFixed(2),
+      mRaw = +q("m").value
+    const t = Math.min(1.5, Math.max(0, tRaw)), // float.clamp(temperature, 0.0, 1.5)
+      p = Math.min(1, Math.max(0, pRaw)), // float.clamp(top_p, 0.0, 1.0)
+      m = Math.max(0, mRaw) // int.max(max_tokens, 0)
+    const note = (raw, val, extra = "") => (raw !== val ? `${fmtF(raw)} → ${fmtF(val)}${extra}` : fmtF(val))
+    q("t-out").textContent = note(tRaw, t)
+    q("p-out").textContent = note(pRaw, p)
+    q("m-out").textContent = mRaw !== m ? `${mRaw} → ${m}` : String(m)
+    const fmtCall =
+      st.format === "Text" ? "" : st.format === "JsonObject" ? "\n  |> chat.set_response_format(chat.JsonObject)" : '\n  |> chat.set_response_format(\n    chat.JsonSchema(schema: book_schema, name: "book"),\n  )'
+    const comment = (raw, val, lo) => (raw !== val ? `  // clamped to ${lo}` : "")
+    q("code").textContent =
+      `let chat_client =\n  chat.new(client)\n  |> chat.set_temperature(${fmtF(tRaw)})${comment(tRaw, t, "0.0…1.5")}\n  |> chat.set_top_p(${fmtF(pRaw)})${comment(pRaw, p, "0.0…1.0")}\n  |> chat.set_max_tokens(${mRaw})${mRaw !== m ? "  // int.max(_, 0)" : m === 0 ? "  // 0 → sent as null" : ""}${fmtCall}\n\nchat_client\n|> chat.complete_request(model.${ctor}, messages)\n|> httpc.send  // your client, your choice`
+    const body = {
+      model: modelId,
+      temperature: F(t),
+      top_p: F(p),
+      max_tokens: m === 0 ? null : m,
+      stream: false,
+      stop: [],
+      random_seed: null,
+      messages: [
+        { role: "system", content: "Extract the book informations" },
+        { role: "user", content: "I recently read To Kill a Mockingbird by Harper Lee." },
+      ],
+      response_format:
+        st.format === "Text"
+          ? { type: "text" }
+          : st.format === "JsonObject"
+            ? { type: "json_object" }
+            : { type: "json_schema", json_schema: { name: "book", schema: bookSchema, strict: true } },
+      tools: [],
+      tool_choice: "auto",
+      presence_penalty: F(0),
+      frequency_penalty: F(0),
+      n: 1,
+      prediction: { type: "content", content: "" },
+      safe_prompt: false,
+    }
+    q("req").textContent =
+      "POST https://api.mistral.ai/v1/chat/completions\nauthorization: Bearer <your-api-key>\ncontent-type: application/json\n\n" + toJson(body)
+    // Sample replies and what handle_response turns them into
+    const content = st.format === "Text" ? "To Kill a Mockingbird was written by Harper Lee." : '{"name":"To Kill a Mockingbird","authors":["Harper Lee"]}'
+    const okBody = (withToolCalls) => ({
+      id: "sample-0001",
+      object: "chat.completion",
+      created: 1700000000,
+      model: modelId,
+      choices: [{ index: 0, message: withToolCalls ? { role: "assistant", content, tool_calls: null } : { role: "assistant", content }, finish_reason: "stop" }],
+      usage: { prompt_tokens: 31, completion_tokens: 17, total_tokens: 48 },
+    })
+    let raw, decoded
+    if (st.reply === "200") {
+      raw = toJson(okBody(true))
+      decoded = `Ok(Response(\n  id: "sample-0001",\n  object: "chat.completion",\n  created: 1700000000,\n  model: "${modelId}",\n  choices: [\n    ChatCompletionChoice(\n      index: 0,\n      message: AssistantMessage(${JSON.stringify(content)}, None, False),\n      finish_reason: Stop,\n    ),\n  ],\n  usage: Usage(prompt_tokens: 31, completion_tokens: 17, total_tokens: 48),\n))`
+    } else if (st.reply === "200bad") {
+      raw = toJson(okBody(false))
+      decoded = 'Error(Unknown("Failed to decode response"))\n// assistant messages need a "tool_calls" field (it may be null)'
+    } else if (st.reply === "401") {
+      raw = toJson({ message: "Unauthorized" })
+      decoded = "Error(Unauthorized)"
+    } else if (st.reply === "429") {
+      raw = toJson({ message: "Requests rate limit exceeded" })
+      decoded = "Error(RateLimitExceeded)"
+    } else {
+      raw = toJson({ message: "Service unavailable" })
+      decoded = 'Error(Unknown("Service unavailable"))\n// any other status: the body\'s "message" field'
+    }
+    q("raw").textContent = `HTTP ${st.reply === "200bad" ? "200" : st.reply} · sample, nothing was sent\n${raw}`
+    q("decoded").textContent = decoded
+    q("decoded").classList.toggle("is-error", decoded.startsWith("Error"))
+    root.querySelectorAll("[data-gs-format]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.gsFormat === st.format)))
+    root.querySelectorAll("[data-gs-reply]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.gsReply === st.reply)))
+  }
+  ;["model", "t", "p", "m"].forEach((k) => q(k).addEventListener("input", draw))
+  root.querySelectorAll("[data-gs-format]").forEach((b) => b.addEventListener("click", () => ((st.format = b.dataset.gsFormat), draw())))
+  root.querySelectorAll("[data-gs-reply]").forEach((b) => b.addEventListener("click", () => ((st.reply = b.dataset.gsReply), draw())))
+  draw()
+}

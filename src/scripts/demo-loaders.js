@@ -1,0 +1,15 @@
+export const demoLoaders = {
+  meet: () => import("../demos/pivo-meet.js"),
+  cs: () => import("../demos/cs.js"),
+  cloud: () => import("../demos/cloud.js"),
+  gleamstral: () => import("../demos/gleamstral.js"),
+  beamo: () => import("../demos/beamo.js"),
+  coaches: () => import("../demos/coaches.js"),
+  kaltoe: () => import("../demos/kaltoe.js"),
+  translater: () => import("../demos/translater.js"),
+  neoharness: () => import("../demos/neoharness.js"),
+  enhansAct: () => import("../demos/enhans-act.js"),
+  enhansWorkflow: () => import("../demos/enhans-workflow.js"),
+  enhansCompare: () => import("../demos/enhans-compare.js"),
+  enhansRecorder: () => import("../demos/enhans-recorder.js"),
+}

@@ -1,8 +1,10 @@
 .env*
 .git
 .next
+.astro
+dist
 node_modules
-scripts
+/scripts
 new-design-app
 .claude
 .codex

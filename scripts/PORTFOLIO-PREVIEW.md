@@ -1,7 +1,7 @@
 # OpenDesign portfolio preview
 
 The design remains in the local OpenDesign project. This server serves the same
-HTML and assets on loopback. It does not replace or deploy the Next.js portfolio.
+HTML and assets on loopback. It does not replace or deploy the Astro portfolio.
 
 Requires Node 24.
 

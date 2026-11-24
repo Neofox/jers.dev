@@ -9,7 +9,7 @@ const { surface, id } = Astro.props
 
 <img
   id={id}
-  {...portraitSources("neutral")}
+  {...portraitSources("neutral", surface === "home")}
   sizes={portraitSizes[surface]}
   width="960"
   height="960"

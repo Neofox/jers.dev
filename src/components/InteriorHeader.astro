@@ -1,0 +1,18 @@
+---
+import SiteBrand from "./SiteBrand.astro"
+interface Props { current?: "work" | "career"; workHref?: string }
+const { current, workHref = "/work/" } = Astro.props
+---
+<header class="mast interior-mast">
+  <SiteBrand />
+  <nav aria-label="Portfolio sections">
+    <a href={workHref} aria-current={current === "work" ? "page" : undefined}>Work</a>
+    <a href="/career/" aria-current={current === "career" ? "page" : undefined}>Career</a>
+  </nav>
+</header>
+<style>
+  .interior-mast { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); min-height: var(--header-h); border-bottom: 1px solid var(--border); position: relative; }
+  nav { display: flex; gap: var(--space-5); font-size: var(--text-sm); }
+  nav a { display: inline-flex; align-items: center; min-height: 44px; }
+  nav a[aria-current] { color: var(--accent); }
+</style>

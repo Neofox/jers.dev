@@ -1,4 +1,5 @@
 ---
+import { EXPRESSIONS } from "../../lib/portrait-catalog.mjs"
 import PortraitImage from "./PortraitImage.astro"
 ---
 
@@ -40,7 +41,19 @@ import PortraitImage from "./PortraitImage.astro"
     </svg>
   </button>
 </div>
-<script is:inline>
+<script define:vars={{ expressions: EXPRESSIONS }}>
+  // Restore the same expression before the browser captures the incoming page.
+  try {
+    const expression = JSON.parse(sessionStorage.getItem("portrait-last-reaction"))?.response?.expression
+    if (localStorage.getItem("portrait-muted") !== "1" && expressions.includes(expression)) {
+      for (const img of document.querySelectorAll("#portrait-home-face img, #portrait-dock-face img")) {
+        img.srcset = img.srcset.replaceAll("neutral", expression)
+        img.src = img.src.replace("neutral.webp", expression + ".webp")
+      }
+      const tag = document.getElementById("portrait-home-tag")
+      if (tag) tag.textContent = expression
+    }
+  } catch {}
   // Give incoming page transitions a visible face before the interactive module starts.
   if (["work", "study", "career"].includes(document.body.dataset.stage)) {
     document.getElementById("portrait-dock").hidden = false

@@ -1,4 +1,5 @@
 ---
+import InteriorHeader from "../components/InteriorHeader.astro"
 import { portraitSources } from "../../public/portrait-core.mjs"
 import CareerTimeline from "../components/CareerTimeline.astro"
 import PortraitDock from "../components/PortraitDock.astro"
@@ -9,10 +10,7 @@ import PortfolioLayout from "../layouts/PortfolioLayout.astro"
   description="Jérôme Schaeffer’s engineering and teaching roles since 2015, from banking and logistics in Europe to AI products and digital twins in Seoul.">
   <a class="skip" href="#career-title">Skip to career history</a>
   <div class="career-page">
-    <header class="mast">
-      <a href="/" aria-label="Jérôme Schaeffer, portfolio home">Jérôme Schaeffer</a>
-      <a href="/work/">Work</a>
-    </header>
+    <InteriorHeader current="career" />
     <main>
       <div id="page-intro">
         <div class="career-bio">
@@ -32,9 +30,7 @@ import PortfolioLayout from "../layouts/PortfolioLayout.astro"
 
 <style>
   .career-page { width: min(calc(100% - 2 * var(--gutter)), 1080px); margin: 0 auto var(--space-8); }
-  .mast, footer { display: flex; align-items: baseline; gap: var(--space-4); padding: var(--space-5) 0; }
-  .mast { justify-content: space-between; font-size: var(--text-sm); border-bottom: 1px solid var(--border); }
-  .mast a:first-child { font: 600 var(--text-lg) var(--font-display); }
+  footer { display: flex; align-items: baseline; gap: var(--space-4); padding: var(--space-5) 0; }
   #page-intro { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: var(--space-4); margin: clamp(32px, 6vw, 68px) 0; }
   .career-bio p { margin-top: var(--space-3); max-width: 58ch; color: var(--muted); }
   .career-portrait { position: relative; width: 120px; aspect-ratio: 1; }

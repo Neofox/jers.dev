@@ -1,0 +1,7 @@
+---
+interface Props { compact?: boolean }
+const { compact = false } = Astro.props
+---
+<div class:list={["terrain", { "terrain-compact": compact }]} aria-hidden="true">
+  <slot />
+</div>

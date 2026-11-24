@@ -115,7 +115,7 @@ function init() {
     const token = ++surface.token
     const img = new Image(960, 960)
     img.alt = ALT[expression] ?? `Jérôme, ${expression}`
-    const { src, srcset } = portraitSources(expression)
+    const { src, srcset } = portraitSources(expression, surface.home)
     img.sizes = surface.home ? portraitSizes.home : portraitSizes.dock
     img.srcset = srcset
     img.src = src
@@ -127,7 +127,10 @@ function init() {
     if (token !== surface.token) return false
     const layers = [...surface.face.querySelectorAll("img")]
     const top = layers.at(-1)
-    if (top?.getAttribute("src") === img.getAttribute("src")) return true
+    if (top?.getAttribute("src") === img.getAttribute("src")) {
+      top.alt = img.alt
+      return true
+    }
     layers.slice(0, -1).forEach((layer) => layer.remove())
     if (top) top.alt = ""
     surface.face.append(img)
@@ -243,6 +246,8 @@ function init() {
     }
     latest = { response, situation }
     if (response.react !== false) {
+      store("sessionStorage", "portrait-last-reaction", JSON.stringify(latest))
+      if (!response.fallbackReason && !response.fallback) document.dispatchEvent(new Event("portrait:reacted"))
       shownAside = response.asideText
       setFace(response.expression, response.intensity)
       present(response.asideText)
@@ -250,6 +255,27 @@ function init() {
     }
     if (drawer.open) render()
   }
+
+  function restoreReaction() {
+    if (muted || !catalog) return
+    try {
+      const saved = JSON.parse(store("sessionStorage", "portrait-last-reaction"))
+      if (!known(saved?.response?.expression) || !ACTIONS.has(saved.situation?.action) ||
+          !Array.isArray(saved.situation.recent) || !Object.hasOwn(catalog.items, saved.situation.itemId)) return
+      latest = saved
+      shownAside = saved.response.asideText
+      setFace(saved.response.expression)
+      syncNames()
+      if (drawer.open) render()
+    } catch { /* Old or unavailable session storage starts with the neutral portrait. */ }
+  }
+
+  window.addEventListener("pageshow", event => {
+    if (!event.persisted) return
+    const preference = store("localStorage", KEY.muted) === "1"
+    if (muted !== preference) setMuted(preference)
+    restoreReaction()
+  })
 
   const scheduler = createScheduler({
     now: () => Date.now(),
@@ -396,6 +422,7 @@ function init() {
         $(`pd-q-${name}`).textContent = question.instructions
         $(`pd-t-${name}`).textContent = String(question.type ?? "")
       }
+      restoreReaction()
       watchCareerEnd()
       watchStudy()
       setTimeout(checkIdle, IDLE_MS)
@@ -485,6 +512,8 @@ function init() {
     for (const button of muteButtons) button.setAttribute("aria-pressed", String(on))
     dock.classList.toggle("is-muted", on)
     if (on) {
+      store("sessionStorage", "portrait-last-reaction", null)
+      latest = null
       shownAside = null
       setFace("neutral")
       present(null)

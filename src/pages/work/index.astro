@@ -1,4 +1,5 @@
 ---
+import InteriorHeader from "../../components/InteriorHeader.astro"
 import { getImage } from "astro:assets"
 import PortraitDock from "../../components/PortraitDock.astro"
 import PortfolioLayout from "../../layouts/PortfolioLayout.astro"
@@ -46,7 +47,7 @@ const groups = [
 <PortfolioLayout stage="work" path="/work/" title="Work — Jérôme Schaeffer" description="Explore Jérôme Schaeffer’s engineering case studies and interactive demos from 3i, Enhans, Redspher, and independent projects.">
   <a class="skip" href="#work">Skip to work</a>
   <div class="index">
-    <header><a href="/" aria-label="Jérôme Schaeffer, portfolio home">Jérôme Schaeffer</a></header>
+    <InteriorHeader current="work" />
     <main>
       <div class="work-intro" id="page-intro">
         <h1 id="work" tabindex="-1">Work</h1>
@@ -82,8 +83,6 @@ const groups = [
 
 <style>
   .index { width: min(calc(100% - 2 * var(--gutter)), 1080px); margin: 0 auto var(--space-8); }
-  header { display: flex; align-items: baseline; justify-content: space-between; padding: var(--space-5) 0; border-bottom: 1px solid var(--border); }
-  header a { font: 600 var(--text-lg) var(--font-display); }
   .work-intro { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-4); margin: clamp(40px, 7vw, 80px) 0; }
   [data-career-title] { display: inline-block; }
   .career-link { color: var(--accent); }

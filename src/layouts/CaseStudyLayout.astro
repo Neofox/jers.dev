@@ -1,4 +1,5 @@
 ---
+import InteriorHeader from "../components/InteriorHeader.astro"
 import PortraitDock from "../components/PortraitDock.astro"
 import PortfolioLayout from "./PortfolioLayout.astro"
 
@@ -25,10 +26,7 @@ const group = employer === "Independent" ? "side-projects" : employer.toLowerCas
   <link slot="head" rel="preload" as="image" href={metadata.image} imagesrcset={srcset} imagesizes={sizes} fetchpriority="high" />
   <a class="skip" href="#main">Skip to case study</a>
   <div class="study">
-    <header class="mast">
-      <a class="signature" href="/">Jérôme Schaeffer</a>
-      <a href={`/work/#${projectAnchor}`}>Work</a>
-    </header>
+    <InteriorHeader workHref={`/work/#${projectAnchor}`} />
     <main id="main" tabindex="-1">
       <article>
         <header class="opening" id="page-intro">
@@ -54,22 +52,9 @@ const group = employer === "Independent" ? "side-projects" : employer.toLowerCas
   .study {
     width: min(calc(100% - 2 * var(--gutter)), 1080px);
     margin: 0 auto;
-    .mast,
     footer {
       padding: 24px 0;
       border-bottom: 1px solid var(--border);
-    }
-    .mast {
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-      align-items: baseline;
-    }
-    .mast a {
-      font-size: var(--text-sm);
-    }
-    .mast .signature {
-      font: 600 var(--text-lg) var(--font-display);
     }
     .opening {
       padding: clamp(40px, 7vw, 88px) 0 32px;

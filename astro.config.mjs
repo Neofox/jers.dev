@@ -1,4 +1,5 @@
 import { defineConfig } from "astro/config"
+import { wgslVitePlugin } from "@vgpu/wgsl/loader-vite"
 import vercel from "@astrojs/vercel"
 
 const redirects = {}
@@ -12,5 +13,6 @@ for (const locale of ["en", "fr", "ko"]) {
 export default defineConfig({
   site: "https://www.jers.dev",
   adapter: vercel({ maxDuration: 10 }),
+  vite: { plugins: [wgslVitePlugin()] },
   redirects,
 })

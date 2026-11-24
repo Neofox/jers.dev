@@ -1,6 +1,7 @@
 ---
 import PortfolioLayout from "../layouts/PortfolioLayout.astro"
 import PortraitDock from "../components/PortraitDock.astro"
+import SiteBrand from "../components/SiteBrand.astro"
 import Home from "../components/Home.astro"
 import Work from "../components/Work.astro"
 const title = "Jérôme Schaeffer — Senior Product Engineer"
@@ -15,11 +16,7 @@ const socialDescription = "I build the experience. And what makes it work."
       <div class="shell">
         <header class="site-header" data-focus-id="portfolio-header">
           <div class="header-inner">
-            <a class="brand" href="#home" aria-label="Jérôme Schaeffer — Home" data-focus-id="home-brand">
-              <span class="brand-mark" aria-hidden="true">js.</span><span class="brand-label" aria-hidden="true">
-                <span class="brand-name">Jérôme Schaeffer</span><span class="brand-role">Senior product engineer</span>
-              </span>
-            </a>
+            <SiteBrand home />
             <nav class="site-nav" aria-label="Portfolio sections">
               <a href="/work/" data-nav="work" data-focus-id="nav-work">Work</a><a
                 href="/career/"

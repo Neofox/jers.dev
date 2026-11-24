@@ -147,8 +147,8 @@ export const portraitSizes = {
   drawer: "72px",
 }
 
-export function portraitSources(expression) {
-  const src = `/assets/portrait/portrait-${expression}.webp`
-  const candidates = portraitWidths.map(width => `/assets/portrait/resized/${expression}-${width}.webp ${width}w`)
+export function portraitSources(expression, cutout = false) {
+  const src = `/assets/portrait/${cutout ? "cutout/" : ""}portrait-${expression}.webp`
+  const candidates = portraitWidths.map(width => `/assets/portrait/resized/${cutout ? "cutout-" : ""}${expression}-${width}.webp ${width}w`)
   return { src, srcset: [...candidates, `${src} 960w`].join(", ") }
 }

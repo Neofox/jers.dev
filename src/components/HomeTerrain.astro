@@ -1,0 +1,66 @@
+---
+import Terrain from "./Terrain.astro"
+---
+<Terrain><canvas id="terrain-canvas"></canvas></Terrain>
+
+<script>
+  const canvas = document.querySelector<HTMLCanvasElement>("#terrain-canvas")
+  const root = document.documentElement
+  const home = canvas?.closest<HTMLElement>("#stage-home")
+  if (canvas && home && "gpu" in navigator) {
+    let renderer: ReturnType<typeof import("../scripts/terrain/render").mount> | undefined
+    let unavailable = false
+    let visible = false
+    let sweepStarted = -Infinity
+    let raf = 0
+    let goal = [0.5, 0.5]
+    let aim = [...goal]
+    const enabled = () => !unavailable && visible && !home.hidden && !document.hidden && root.dataset.motion === "on"
+
+    function stop() {
+      cancelAnimationFrame(raf)
+      raf = 0
+      sweepStarted = -Infinity
+      canvas!.style.opacity = "0"
+    }
+    function useStillImage() {
+      unavailable = true
+      stop()
+    }
+    function schedule() {
+      if (!enabled() || raf) return
+      raf = requestAnimationFrame(paint)
+    }
+    async function paint(now: number) {
+      try {
+        renderer ??= import("../scripts/terrain/render").then(module => module.mount(canvas!, useStillImage))
+        const draw = await renderer
+        if (!enabled() || !raf) return
+        aim = aim.map((value, i) => value + (goal[i] - value) * 0.16)
+        const t = (now - sweepStarted) / 1550
+        draw(aim, t >= 0 && t <= 1 ? -0.15 + t * 1.55 : -2)
+        canvas!.style.opacity = "1"
+        raf = 0
+        if (t < 1 || aim.some((value, i) => Math.abs(goal[i] - value) > 0.002)) schedule()
+      } catch { useStillImage() }
+    }
+    home.addEventListener("pointermove", e => {
+      if (e.pointerType !== "mouse") return
+      const rect = canvas!.getBoundingClientRect()
+      if (e.clientY < rect.top || e.clientY > rect.bottom) return
+      goal = [(e.clientX - rect.left) / rect.width, (e.clientY - rect.top) / rect.height]
+      schedule()
+    })
+    home.addEventListener("pointerleave", () => { goal = [0.5, 0.5]; schedule() })
+    document.addEventListener("portrait:reacted", () => {
+      if (!enabled()) return
+      sweepStarted = performance.now()
+      schedule()
+    })
+    new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; if (!visible) stop() }).observe(canvas)
+    new ResizeObserver(() => { if (renderer) schedule() }).observe(canvas)
+    new MutationObserver(() => { if (!enabled()) stop() }).observe(root, { attributes: true, attributeFilter: ["data-motion"] })
+    document.addEventListener("visibilitychange", () => { if (document.hidden) stop() })
+    window.addEventListener("pagehide", stop)
+  }
+</script>

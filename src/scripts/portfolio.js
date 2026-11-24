@@ -1087,7 +1087,7 @@ import { demoLoaders } from "./demo-loaders.js"
       { name: "Pivo Meet", description: "Remote video lessons", preview: "meet", caseStudy: "/work/pivo-meet/", views: ["live"] },
       { name: "Pivo Cloud", description: "Personal video library", preview: "cloud", caseStudy: "/work/pivo-cloud/", views: ["library"] },
       { name: "Pivo Coaches", description: "Equestrian coach discovery", preview: "coaches", caseStudy: "/work/pivo-coaches/", views: ["coaches"] },
-      { name: "CS / QA app", description: "Internal support triage", preview: "cs", views: ["cs"] },
+      { name: "CS / QA app", description: "Internal support triage", preview: "cs", caseStudy: "/work/pivo-cs-qa/", views: ["cs"] },
       { name: "AI / AX", description: "Company-wide AI adoption", views: ["ax"] },
     ],
     enhans: [

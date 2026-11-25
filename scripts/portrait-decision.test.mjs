@@ -62,6 +62,13 @@ test("rejects unknown actions, unknown items and long histories", () => {
   assert.deepEqual(validateSituation({ action: "idle", itemId: "event:idle" }).recent, [])
 })
 
+test("a landed flick asks about the gesture without sending pointer measurements", () => {
+  const flick = validateSituation({ action: "flick_portrait", itemId: "event:flick", velocity: 1500, x: 72 })
+  const request = buildRequest(flick)
+  assert.deepEqual(request.input[2].content[0].data, { action: "flick_portrait", itemId: "event:flick", recent: [] })
+  assert.equal(interpret(answers(), flick).asideText, ITEMS["event:flick"].asides[1].text)
+})
+
 test("builds a cacheable request with the four named questions", () => {
   const a = buildRequest(situation)
   const b = buildRequest({ action: "dwell", itemId: "demo:3i/beamo", recent: [] })

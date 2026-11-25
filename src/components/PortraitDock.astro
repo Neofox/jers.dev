@@ -4,6 +4,7 @@ import PortraitImage from "./PortraitImage.astro"
 ---
 
 <div class="portrait-dock" id="portrait-dock" hidden>
+  <span class="flick-stars" aria-hidden="true"><i>✦</i><i>✧</i><i>✦</i></span>
   <p class="portrait-aside" id="portrait-dock-aside" aria-hidden="true"></p><button
     type="button"
     class="dock-face"
@@ -140,4 +141,4 @@ import PortraitImage from "./PortraitImage.astro"
   </div>
 </dialog>
 
-<script is:inline type="module" src="/portrait.mjs"></script>
+<script src="../scripts/portrait.js"></script>

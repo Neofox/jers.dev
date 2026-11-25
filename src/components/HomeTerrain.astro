@@ -21,6 +21,8 @@ import Terrain from "./Terrain.astro"
       cancelAnimationFrame(raf)
       raf = 0
       sweepStarted = -Infinity
+      goal = [0.5, 0.5]
+      aim = [...goal]
       canvas!.style.opacity = "0"
     }
     function useStillImage() {
@@ -31,16 +33,24 @@ import Terrain from "./Terrain.astro"
       if (!enabled() || raf) return
       raf = requestAnimationFrame(paint)
     }
+    function syncVisibility() {
+      if (enabled()) schedule()
+      else stop()
+    }
     async function paint(now: number) {
+      const scheduled = raf
       try {
         renderer ??= import("../scripts/terrain/render").then(module => module.mount(canvas!, useStillImage))
         const draw = await renderer
-        if (!enabled() || !raf) return
+        // Navigation may cancel this frame while the GPU pipeline is compiling.
+        if (raf !== scheduled) return
+        raf = 0
+        if (!enabled()) return
         aim = aim.map((value, i) => value + (goal[i] - value) * 0.16)
         const t = (now - sweepStarted) / 1550
-        draw(aim, t >= 0 && t <= 1 ? -0.15 + t * 1.55 : -2)
+        const sweep = t >= 0 && t <= 1 ? -0.15 + t * 1.55 : -2
+        draw(aim, sweep)
         canvas!.style.opacity = "1"
-        raf = 0
         if (t < 1 || aim.some((value, i) => Math.abs(goal[i] - value) > 0.002)) schedule()
       } catch { useStillImage() }
     }
@@ -57,10 +67,16 @@ import Terrain from "./Terrain.astro"
       sweepStarted = performance.now()
       schedule()
     })
-    new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; if (!visible) stop() }).observe(canvas)
-    new ResizeObserver(() => { if (renderer) schedule() }).observe(canvas)
-    new MutationObserver(() => { if (!enabled()) stop() }).observe(root, { attributes: true, attributeFilter: ["data-motion"] })
-    document.addEventListener("visibilitychange", () => { if (document.hidden) stop() })
+    new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting
+      syncVisibility()
+    }).observe(canvas)
+    new ResizeObserver(schedule).observe(canvas)
+    const visibility = new MutationObserver(syncVisibility)
+    visibility.observe(root, { attributes: true, attributeFilter: ["data-motion"] })
+    visibility.observe(home, { attributes: true, attributeFilter: ["hidden"] })
+    document.addEventListener("visibilitychange", syncVisibility)
+    window.addEventListener("pageshow", syncVisibility)
     window.addEventListener("pagehide", stop)
   }
 </script>

@@ -1,6 +1,7 @@
 // Living portrait: swaps Jérôme's face in reaction to `portrait:trigger` events from portfolio.js,
 // docks as a bubble on non-home stages and explains each reaction in the "Why this face?" drawer.
 // Only { action, itemId, recent } is ever sent to /api/portrait.
+import { enablePortraitFlick } from "./portrait-flick.js"
 import {
   createAsideHold,
   createScheduler,
@@ -10,9 +11,9 @@ import {
   formatLatency,
   portraitSizes,
   portraitSources,
-} from "./portrait-core.mjs"
+} from "../../public/portrait-core.mjs"
 
-const HIGH_PRIORITY = ["open_project", "open_demo", "download_resume"]
+const HIGH_PRIORITY = ["open_project", "open_demo", "download_resume", "flick_portrait"]
 const ACTIONS = new Set([...HIGH_PRIORITY, "dwell", "reach_end", "idle", "return"])
 const MAX_PER_VISIT = 20
 const ASIDE_MS = 4000
@@ -38,6 +39,7 @@ const ALT = {
 const TRIGGER_WORDS = {
   open_project: (label) => `You opened ${label}`,
   open_demo: (label) => `You opened the ${label} demo`,
+  flick_portrait: () => "You flicked the portrait",
   download_resume: () => "You downloaded my résumé",
   dwell: (label) => `You lingered on ${label}`,
   reach_end: () => "You reached the end of my timeline",
@@ -460,6 +462,15 @@ function init() {
   })
 
   // ─── Dock visibility ─────────────────────────────────────────────────
+  // A second toss is always playable. Give the first reaction time to land before asking again.
+  let lastFlick = Number(store("sessionStorage", "portrait-last-flick")) || 0
+  enablePortraitFlick(dock, $("portrait-dock-button"), motionEnabled, () => {
+    const now = Date.now()
+    if (muted || !catalog?.items["event:flick"] || now - lastFlick < 30000) return
+    lastFlick = now
+    store("sessionStorage", "portrait-last-flick", String(now))
+    request("flick_portrait", "event:flick")
+  })
   const careerPortrait = dock.closest(".career-portrait")
   if (careerPortrait && "IntersectionObserver" in window) {
     // Hand off while most of the face is still visible. Observe the reserved space,

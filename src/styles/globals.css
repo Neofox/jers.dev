@@ -6964,13 +6964,27 @@ html[data-motion="off"] .eh-product {
 }
 
 /* The same ridge fills the hero and runs along the interior mastheads. */
-.home-grid { position: relative; isolation: isolate; }
+.home-grid {
+  position: relative;
+  isolation: isolate;
+  /* Invert the camera span from terrain.wgsl for the centered, wide poster. */
+  --terrain-poster-width: clamp(100cqw, 160cqh, calc(100cqw * 1.6 / .65));
+}
+.terrain-compact, .home-grid > .terrain::before {
+  background: url("/assets/terrain-ridge.webp") center bottom / 100% 100% no-repeat;
+}
+.home-grid > .terrain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-size: var(--terrain-poster-width) 100%;
+}
 .terrain {
   pointer-events: none;
-  background: url("/assets/terrain-ridge.webp") center bottom / 100% 100% no-repeat;
   mask-image: linear-gradient(180deg, transparent 0%, #000 28%, #000 88%, transparent);
 }
 .home-grid > .terrain {
+  container-type: size;
   grid-column: 1 / -1;
   grid-row: 1;
   align-self: stretch;
@@ -6981,6 +6995,8 @@ html[data-motion="off"] .eh-product {
 }
 .terrain canvas { display: block; position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
 .terrain-compact { position: absolute; inset: 0 0 auto; height: clamp(110px, 11vw, 156px); opacity: .66; }
+#stage-work .work-head { position: relative; isolation: isolate; }
+.work-head .terrain-compact { height: 100%; z-index: -1; }
 .brand-mark { color: var(--accent); }
 .home-person #portrait-home-face { background: transparent; border-color: transparent; }
 .home-person #portrait-home-face img { mask-image: linear-gradient(#000 68%, transparent 100%); }
@@ -7013,3 +7029,30 @@ html[data-motion="off"] .eh-product {
   ::view-transition-group(terrain) { mix-blend-mode: screen; animation-duration: 500ms; animation-timing-function: cubic-bezier(.22,.8,.22,1); }
   ::view-transition-old(terrain), ::view-transition-new(terrain) { width: 100%; height: 100%; }
 }
+
+.dock-face[data-tossable] {
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+/* Route the whole gesture to the button, including presses on its photo. */
+.dock-face[data-tossable] .pf-face { pointer-events: none; }
+/* Keep the mute button clear of the circular portrait's hit area. */
+.dock-face[data-tossable] + .dock-mute { top: -16px; left: -16px; }
+[data-flick="dragging"] .dock-face { cursor: grabbing; }
+[data-flick] :is(.dock-mute, .portrait-aside) { visibility: hidden; }
+.flick-stars {
+  display: none;
+  position: absolute;
+  z-index: 1;
+  inset: -13px -4px auto;
+  height: 20px;
+  color: #ffe8a7;
+  pointer-events: none;
+}
+[data-flick="dizzy"] .flick-stars { display: block; }
+.flick-stars i { position: absolute; font: normal 14px/1 sans-serif; text-shadow: 0 1px 2px #352d20; }
+.flick-stars i:first-child { left: 8%; top: 8px; }
+.flick-stars i:nth-child(2) { left: 50%; top: 0; font-size: 12px; }
+.flick-stars i:last-child { right: 0; top: 9px; font-size: 10px; }

@@ -6,9 +6,9 @@ import assert from "node:assert/strict"
 import { existsSync, readFileSync } from "node:fs"
 import { EXPRESSIONS, ITEMS, clientCatalog } from "../lib/portrait-catalog.mjs"
 
-test("lists the 31 items with kind prefixes", () => {
+test("lists the 32 items with kind prefixes", () => {
   const ids = Object.keys(ITEMS)
-  assert.equal(ids.length, 31)
+  assert.equal(ids.length, 32)
   for (const id of ids) {
     assert.match(id, /^(project|demo|career|event):[a-z0-9/-]+$/)
     assert.equal(id.split(":")[0], ITEMS[id].kind)

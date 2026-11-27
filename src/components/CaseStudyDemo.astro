@@ -17,6 +17,7 @@ const { demo, label, fallback } = Astro.props
 
 <script>
   import { uiText } from "../demos/demo-locale.js"
+  import { watchDemoInteraction } from "../scripts/analytics.js"
   import { demoLoaders } from "../scripts/demo-loaders.js"
 
   for (const stage of document.querySelectorAll<HTMLElement>("[data-study-demo]")) {
@@ -40,6 +41,7 @@ const { demo, label, fallback } = Astro.props
           target?.focus({ preventScroll: true })
         }
         start()
+        watchDemoInteraction(stage)
         stage.dataset.demoStarted = "true"
         stage.dispatchEvent(new Event("portrait:demo-open", { bubbles: true }))
       } catch {

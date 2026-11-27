@@ -1,6 +1,7 @@
 import { visuals } from "../data/project-visuals.js"
 import { icon } from "./icons.js"
 import { localPath } from "../i18n/locale.js"
+import { selectAnalyticsStudy, watchContactLinks } from "./analytics.js"
 
 ;(function () {
   "use strict"
@@ -712,6 +713,7 @@ import { localPath } from "../i18n/locale.js"
       else a.removeAttribute("aria-current")
     })
     if (activeStage === "work" && stageChanged) {
+      selectAnalyticsStudy(null)
       illoObserver?.disconnect()
       $("visual-stage").replaceChildren()
       caseRendered = false
@@ -781,8 +783,9 @@ import { localPath } from "../i18n/locale.js"
       })
   }
   window.addEventListener("hashchange", routeChange)
-  function ext(label, url) {
-    return `<a href="${url}" target="_blank" rel="noopener noreferrer" data-focus-id="external-${currentProject}-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}">${label} <span aria-hidden="true">↗</span><span class="sr-only"> ${t("(opens in a new tab)", "(새 탭에서 열림)")}</span></a>`
+  function ext(label, url, contactChannel) {
+    const channel = contactChannel ? ` data-contact-channel="${contactChannel}"` : ""
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer"${channel} data-focus-id="external-${currentProject}-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}">${label} <span aria-hidden="true">↗</span><span class="sr-only"> ${t("(opens in a new tab)", "(새 탭에서 열림)")}</span></a>`
   }
   // ── Work: scannable summary first, visuals second, full case behind one disclosure ──
   // Short lines are condensed from the vetted story copy above; no new claims.
@@ -1024,6 +1027,7 @@ import { localPath } from "../i18n/locale.js"
     const place = workplaces.find((w) => w.id === activePlace())
     const productsHere = productsAt(place.id)
     const selected = productsHere.find((p) => p.caseId === currentProject && p.views.includes(currentVisual))
+    selectAnalyticsStudy(selected.caseStudy?.split("/").filter(Boolean).at(-1) ?? selected.views[0])
     const chapter = projects[currentProject].chapters.find(([key]) => key === currentVisual)
     const multiple = selected.views.length > 1
     $("view-owner").textContent = place.name + " / " + viewTypeLabel(viewType(visuals[currentProject][currentVisual]))
@@ -1403,15 +1407,16 @@ import { localPath } from "../i18n/locale.js"
       $("dialog-body").innerHTML = `<h2 id="dialog-title" data-focus-id="contact-heading">${t("Have an idea<br>worth building?", "함께 만들고 싶은<br>아이디어가 있으신가요?")}</h2>
         <p>Jérôme Schaeffer<br>${t("Senior product engineer · Seoul", "시니어 프로덕트 엔지니어 · 서울")}</p>
         <div class="detail-links">
-          <a href="mailto:jer.schaeffer@gmail.com">${t("Email me", "이메일 보내기")} ↗</a>
-          ${ext("LinkedIn", "https://www.linkedin.com/in/jerome-schaeffer/")}
-          ${ext("GitHub", "https://github.com/Neofox")}
+          <a href="mailto:jer.schaeffer@gmail.com" data-contact-channel="email">${t("Email me", "이메일 보내기")} ↗</a>
+          ${ext("LinkedIn", "https://www.linkedin.com/in/jerome-schaeffer/", "linkedin")}
+          ${ext("GitHub", "https://github.com/Neofox", "github")}
         </div>`
     }
     $("detail-dialog").showModal()
     $("dialog-close").focus({ preventScroll: true })
     animateIn($("detail-dialog"), true)
   }
+  watchContactLinks($("detail-dialog"))
   $("dialog-close").addEventListener("click", () => $("detail-dialog").close())
   $("detail-dialog").addEventListener("close", () => {
     if (dialogOpener?.isConnected && !dialogOpener.closest("[hidden]")) dialogOpener.focus({ preventScroll: true })

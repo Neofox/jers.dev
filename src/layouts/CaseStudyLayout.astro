@@ -37,7 +37,7 @@ const group = employer === "Independent" ? "side-projects" : employer.toLowerCas
   <div class="study">
     <InteriorHeader workHref={`/work/#${projectAnchor}`} />
     <main id="main" tabindex="-1">
-      <article>
+      <article data-case-study={projectAnchor}>
         <header class="opening" id="page-intro">
           <p class="eyebrow">{ko && employer === "Independent" ? "개인 프로젝트" : employer} · <span data-project-name>{projectName}</span></p>
           <h1>{heading}</h1>
@@ -55,6 +55,10 @@ const group = employer === "Independent" ? "side-projects" : employer.toLowerCas
     <footer><a class="text-link" href={localPath(`/work/#${group}`, locale)}>{moreLabel} <span aria-hidden="true">→</span></a></footer>
   </div>
   <PortraitDock />
+  <script>
+    import { selectAnalyticsStudy } from "../scripts/analytics.js"
+    selectAnalyticsStudy(document.querySelector<HTMLElement>("[data-case-study]")?.dataset.caseStudy)
+  </script>
 </PortfolioLayout>
 
 <style is:global>

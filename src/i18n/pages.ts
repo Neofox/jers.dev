@@ -15,3 +15,9 @@ export const portfolioPages = [
     ...props,
   })),
 ]
+
+// Only a published portfolio page can be selected by a language switch.
+export const languageTargets = new Set(portfolioPages.flatMap(({ path }) => {
+  const english = path ? `/${path}/` : "/"
+  return [english, "/ko" + english]
+}))

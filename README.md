@@ -15,7 +15,7 @@ Set `OPENAI_API_KEY` in the git-ignored `.env.local`. It is server-only. No key 
 - `bun run build`
 - `bun run start` serves the app locally with Astro’s development server. The production build is written to `.vercel/output`.
 
-The English portfolio is at `/` and the Korean edition at `/ko/`, with matching career and project pages. Old `/en` and `/fr` URLs redirect to the English homepage; both English and Korean résumé PDFs are available from the résumé dialog. Project views use shareable URL fragments.
+The English portfolio is at `/` and the Korean edition at `/ko/`, with matching career and project pages. The homepage honors the visitor’s explicit language choice (a one-year first-party cookie), then their browser’s preferred supported language. Direct article and career links open in the language of their URL. Old `/en` and `/fr` URLs lead to the homepage; both English and Korean résumé PDFs are available from the résumé dialog. Project views use shareable URL fragments.
 
 The November 2026 Open Design refresh uses visual case summaries, screenshot thumbnails, labelled animated illustrations, expandable full case studies and a complete career timeline. Illustrations respect the motion toggle and reduced-motion preferences, and pause offscreen. Existing project, screenshot and story-section fragments still resolve; legacy detail-section links open the full case automatically, and legacy story page numbers are accepted. The Korean résumé is current; the English PDF is explicitly labelled as an earlier version.
 

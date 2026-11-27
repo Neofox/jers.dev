@@ -6,6 +6,41 @@ import Home from "../components/Home.astro"
 import Work from "../components/Work.astro"
 import LanguageLink from "../components/LanguageLink.astro"
 import { localeFromPath, localPath } from "../i18n/locale.js"
+import { preferredLanguage } from "../i18n/preference.js"
+import { languageTargets } from "../i18n/pages"
+
+export const prerender = false
+
+// The Korean homepage also uses this template as a static component.
+let cleanEnglishChoice = false
+if (Astro.url.pathname === "/") {
+  const headers = Astro.response.headers
+  headers.set("Cache-Control", "private, no-store")
+  headers.set("Vary", "Accept-Language, Cookie")
+  const query = new URLSearchParams(Astro.url.search)
+  const target = query.get("switchTo")
+  const cookie = "portfolio-language"
+  let destination: string | undefined
+  let status = 307
+  if (target && languageTargets.has(target)) {
+    Astro.cookies.set(cookie, localeFromPath(target), {
+      path: "/", maxAge: 60 * 60 * 24 * 365, httpOnly: true,
+      secure: Astro.url.protocol === "https:", sameSite: "lax",
+    })
+    query.delete("switchTo")
+    status = 303
+    // Serve an explicit English homepage immediately, even with cookies disabled.
+    if (target === "/") cleanEnglishChoice = true
+    else destination = target + (query.size ? "?" + query.toString() : "")
+  } else if (preferredLanguage(Astro.cookies.get(cookie)?.value, Astro.request.headers.get("Accept-Language")) === "ko") {
+    destination = "/ko/" + Astro.url.search
+  }
+  if (destination) {
+    headers.set("Location", destination)
+    return new Response(null, { status, headers })
+  }
+}
+
 const locale = localeFromPath(Astro.url.pathname)
 const ko = locale === "ko"
 const title = ko ? "Jérôme Schaeffer — 시니어 프로덕트 엔지니어" : "Jérôme Schaeffer — Senior Product Engineer"
@@ -16,6 +51,13 @@ const socialDescription = ko ? "사람들이 쓰는 화면과 그 뒤에서 움�
 ---
 
 <PortfolioLayout path="/" {title} {description} {socialDescription}>
+    <Fragment slot="head">
+      {cleanEnglishChoice && <script is:inline>
+        const url = new URL(location.href)
+        url.searchParams.delete("switchTo")
+        history.replaceState(history.state, "", url)
+      </script>}
+    </Fragment>
     <div id="portfolio">
       <a class="skip" href="#main" data-focus-id="skip-navigation">{ko ? "본문 바로가기" : "Skip to content"}</a>
       <div class="shell">

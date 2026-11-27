@@ -1,16 +1,18 @@
 ---
 import { localeFromPath, localPath } from "../i18n/locale.js"
+import { languageSwitchHref } from "../i18n/preference.js"
 const { pathname } = Astro.url
 const alternate = localeFromPath(pathname) === "ko" ? "en" : "ko"
-const href = localPath(pathname.replace(/\/?$/, "/"), alternate)
+const target = localPath(pathname.replace(/\/?$/, "/"), alternate)
 ---
-<a class="language-link" data-language-link href={href} lang={alternate} hreflang={alternate}>
+<a class="language-link" data-language-link={target} href={languageSwitchHref(target)} rel="nofollow" lang={alternate} hreflang={alternate}>
   {alternate === "ko" ? "한국어" : "English"}
 </a>
 <script>
+  import { languageSwitchHref } from "../i18n/preference.js"
   for (const link of document.querySelectorAll<HTMLAnchorElement>("[data-language-link]")) {
-    const path = link.pathname
-    const sync = () => link.setAttribute("href", path + location.search + location.hash)
+    const target = link.dataset.languageLink!
+    const sync = () => link.setAttribute("href", languageSwitchHref(target, location.search, location.hash))
     sync()
     window.addEventListener("hashchange", sync)
     window.addEventListener("pageshow", sync)

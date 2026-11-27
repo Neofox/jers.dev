@@ -28,7 +28,7 @@ Jérôme Schaeffer is a senior product engineer based in Seoul, South Korea with
 - [Current Korean résumé](https://www.jers.dev/assets/resume-ko.pdf)
 - [Earlier English résumé](https://www.jers.dev/assets/resume-en.pdf)
 
-English and Korean pages have matching paths, with /ko/ preceding the Korean path. Legacy /en and /fr URLs redirect to the English homepage.
+English and Korean pages have matching paths, with /ko/ preceding the Korean path. The homepage uses the visitor’s saved choice or preferred browser language. Legacy /en and /fr URLs lead to the homepage.
 
 ## Contact & Social
 

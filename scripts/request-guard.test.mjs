@@ -46,7 +46,7 @@ test("defaults to 12 requests per minute per IP", async () => {
   assert.equal((await handle(request(undefined, { "x-real-ip": "2.2.2.2" }))).status, 200)
 })
 
-test("accepts the public host when Next uses an internal request URL", async () => {
+test("accepts the public host when the request URL is internal", async () => {
   const handle = createGuardedJsonHandler(async () => ({ ok: true }))
   const req = new Request("http://localhost:43118/api/portrait", {
     method: "POST",

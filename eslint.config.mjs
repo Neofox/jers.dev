@@ -4,7 +4,7 @@ import astro from "eslint-plugin-astro"
 import globals from "globals"
 
 export default defineConfig([
-  globalIgnores([".astro/**", ".next/**", ".vercel/**", "dist/**", "new-design-app/**"]),
+  globalIgnores([".astro/**", ".vercel/**", "dist/**", "new-design-app/**"]),
   js.configs.recommended,
   ...astro.configs.recommended,
   { files: ["**/*.{js,mjs}"], languageOptions: { globals: globals.node } },

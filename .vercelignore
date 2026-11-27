@@ -1,6 +1,5 @@
 .env*
 .git
-.next
 .astro
 dist
 node_modules

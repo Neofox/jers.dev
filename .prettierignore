@@ -1,5 +1,7 @@
 build
 coverage
 node_modules
-.next
+.astro
+.vercel
+dist
 README.md

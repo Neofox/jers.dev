@@ -11,7 +11,7 @@ function markup() {
     uiText("Neoharness chat turn", "Neoharness 대화 한 턴"),
     `<div class="nh-demo">
       <div class="nh-chat" data-nh="chat" data-empty-label="${uiText("Send the sample message to watch one turn.", "예시 메시지를 보내면 대화가 어떻게 진행되는지 볼 수 있습니다.")}" aria-live="polite"></div>
-      <div class="nh-stats" data-nh="stats" aria-label="${uiText("Turn stats", "이번 턴의 사용 통계")}"></div>
+      <div class="nh-stats" data-nh="stats" role="group" aria-label="${uiText("Turn stats", "이번 턴의 사용 통계")}"></div>
       <div class="nh-actions">
         <button type="button" class="button button-primary" data-nh="send">${uiText("Send sample message", "예시 메시지 보내기")}</button>
         <button type="button" class="button button-outline" data-nh="step" hidden>${uiText("Next step", "다음 단계")}</button>

@@ -153,6 +153,19 @@ const socialImage = new URL(image, Astro.site)
   <body data-stage={stage}>
     {stage && <Terrain compact />}
     <slot />
+    <script>
+      // Keep light dismissal on browsers that predate the closedby attribute.
+      if (!("closedBy" in HTMLDialogElement.prototype)) {
+        for (const dialog of document.querySelectorAll<HTMLDialogElement>('dialog[closedby="any"]')) {
+          dialog.addEventListener("click", (event) => {
+            if (event.target !== dialog) return
+            const r = dialog.getBoundingClientRect()
+            if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom)
+              dialog.close()
+          })
+        }
+      }
+    </script>
     <script is:inline defer src="https://app.rybbit.io/api/script.js" data-site-id="1712"></script>
     <Analytics />
     <SpeedInsights />

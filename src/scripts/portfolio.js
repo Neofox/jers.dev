@@ -573,15 +573,10 @@ import { selectAnalyticsStudy, watchContactLinks } from "./analytics.js"
     if (!on && routeTransition) routeTransition.skipTransition()
     document.documentElement.dataset.motion = on ? "on" : "off"
     $("motion-toggle").setAttribute("aria-pressed", String(on))
-    $("motion-label").textContent = on ? t("Motion on", "애니메이션 켜짐") : reducedMotion.matches ? t("Reduced motion", "동작 줄이기") : t("Motion off", "애니메이션 꺼짐")
-    $("motion-toggle").setAttribute(
-      "aria-label",
-      reducedMotion.matches
-        ? t("Reduced motion follows your device setting", "기기의 동작 줄이기 설정을 따릅니다")
-        : on
-          ? t("Turn animations off", "애니메이션 끄기")
-          : t("Turn animations on", "애니메이션 켜기"),
-    )
+    $("motion-toggle").disabled = reducedMotion.matches
+    $("motion-toggle").title = reducedMotion.matches
+      ? t("Reduced motion follows your device setting", "기기의 동작 줄이기 설정을 따릅니다")
+      : ""
     if (!on) {
       resetPortrait()
       document.getAnimations?.().forEach((a) => a.cancel())
@@ -1388,7 +1383,6 @@ import { selectAnalyticsStudy, watchContactLinks } from "./analytics.js"
     $("image-size").setAttribute("aria-pressed", String(actual))
     $("image-size").textContent = actual ? t("Fit image", "화면에 맞추기") : t("Actual size", "원본 크기")
   })
-  $("image-close").addEventListener("click", () => $("image-dialog").close())
   $("image-dialog").addEventListener("close", () => {
     if (imageOpener?.isConnected && !imageOpener.closest("[hidden]")) imageOpener.focus({ preventScroll: true })
   })
@@ -1417,38 +1411,9 @@ import { selectAnalyticsStudy, watchContactLinks } from "./analytics.js"
     animateIn($("detail-dialog"), true)
   }
   watchContactLinks($("detail-dialog"))
-  $("dialog-close").addEventListener("click", () => $("detail-dialog").close())
   $("detail-dialog").addEventListener("close", () => {
     if (dialogOpener?.isConnected && !dialogOpener.closest("[hidden]")) dialogOpener.focus({ preventScroll: true })
   })
-  for (const dialog of [$("image-dialog"), $("detail-dialog")])
-    dialog.addEventListener("click", (e) => {
-      if (e.target !== dialog) return
-      const r = dialog.getBoundingClientRect()
-      if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) dialog.close()
-    })
-  for (const dialog of [$("image-dialog"), $("detail-dialog")])
-    dialog.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        e.preventDefault()
-        dialog.close()
-        return
-      }
-      if (e.key === "Tab") {
-        const items = [...dialog.querySelectorAll('a[href],button:not([disabled]),[tabindex="0"]')].filter(
-          (el) => !el.closest("[hidden]"),
-        )
-        const first = items[0],
-          last = items[items.length - 1]
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault()
-          last?.focus()
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault()
-          first?.focus()
-        }
-      }
-    })
   document.addEventListener("click", (e) => {
     const b = e.target.closest("button,a")
     if (!b) return

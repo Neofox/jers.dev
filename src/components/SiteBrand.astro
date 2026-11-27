@@ -4,9 +4,10 @@ const locale = localeFromPath(Astro.url.pathname)
 interface Props { home?: boolean }
 const { home = false } = Astro.props
 ---
-<a class="brand" href={home ? "#home" : localPath("/", locale)} aria-label={locale === "ko" ? "Jérôme Schaeffer 포트폴리오 홈" : "Jérôme Schaeffer, portfolio home"} data-focus-id="home-brand">
-  <span class="brand-mark" aria-hidden="true">js.</span>
-  <span class="brand-label" aria-hidden="true">
+<a class="brand" href={home ? "#home" : localPath("/", locale)} data-focus-id="home-brand">
+  <span class="brand-mark">js.</span>
+  <span class="brand-label">
     <span class="brand-name">Jérôme Schaeffer</span><span class="brand-role">{locale === "ko" ? "시니어 프로덕트 엔지니어" : "Senior product engineer"}</span>
   </span>
+  <span class="sr-only">{locale === "ko" ? "포트폴리오 홈" : "Portfolio home"}</span>
 </a>

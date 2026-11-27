@@ -52,6 +52,7 @@ const socialDescription = ko ? "사람들이 쓰는 화면과 그 뒤에서 움�
 
 <PortfolioLayout path="/" {title} {description} {socialDescription}>
     <Fragment slot="head">
+      <link rel="preload" as="image" type="image/webp" href="/assets/terrain-ridge.webp" fetchpriority="high" />
       {cleanEnglishChoice && <script is:inline>
         const url = new URL(location.href)
         url.searchParams.delete("switchTo")
@@ -75,7 +76,7 @@ const socialDescription = ko ? "사람들이 쓰는 화면과 그 뒤에서 움�
             </nav>
             <div class="header-actions">
               <LanguageLink />
-              <span class="location">{ko ? "서울" : "Seoul"} <time id="seoul-time"></time></span><button
+              <span class="location">{ko ? "서울" : "Seoul"} <span id="seoul-time"></span></span><button
                 type="button"
                 class="text-button header-resume"
                 data-dialog="resume"
@@ -110,28 +111,31 @@ const socialDescription = ko ? "사람들이 쓰는 화면과 그 뒤에서 움�
               aria-pressed="true"
               data-focus-id="motion-toggle"
             >
-              <span class="motion-icon" aria-hidden="true"></span><span id="motion-label">{ko ? "애니메이션 켜짐" : "Motion on"}</span>
+              <span class="motion-icon" aria-hidden="true"></span><span>{ko ? "애니메이션" : "Motion"}</span>
             </button>
           </div>
         </footer>
       </div>
       <PortraitDock />
-      <dialog id="detail-dialog" aria-labelledby="dialog-title" data-focus-id="context-dialog">
+      <dialog closedby="any" id="detail-dialog" aria-labelledby="dialog-title" data-focus-id="context-dialog">
         <div class="dialog-top">
-          <span class="eyebrow" id="dialog-label">{ko ? "연락하기" : "Let’s connect"}</span><button
-            type="button"
-            class="icon-button"
-            id="dialog-close"
-            aria-label={ko ? "대화상자 닫기" : "Close dialog"}
-            data-focus-id="close-dialog"
-          >
-            ×
-          </button>
+          <span class="eyebrow" id="dialog-label">{ko ? "연락하기" : "Let’s connect"}</span><form method="dialog">
+            <button
+              type="submit"
+              class="icon-button"
+              id="dialog-close"
+              aria-label={ko ? "대화상자 닫기" : "Close dialog"}
+              data-focus-id="close-dialog"
+            >
+              ×
+            </button>
+          </form>
         </div>
         <div class="dialog-body" id="dialog-body"></div>
       </dialog>
       <dialog
         id="image-dialog"
+        closedby="any"
         aria-labelledby="lightbox-title"
         aria-describedby="lightbox-caption"
         data-focus-id="image-lightbox"
@@ -147,20 +151,23 @@ const socialDescription = ko ? "사람들이 쓰는 화면과 그 뒤에서 움�
               data-focus-id="image-size"
             >
               {ko ? "원본 크기" : "Actual size"}
-            </button><button
-              type="button"
-              class="icon-button"
-              id="image-close"
-              aria-label={ko ? "이미지 닫기" : "Close image"}
-              data-focus-id="close-image"
-            >
-              ×
-            </button>
+            </button><form method="dialog">
+              <button
+                type="submit"
+                class="icon-button"
+                id="image-close"
+                aria-label={ko ? "이미지 닫기" : "Close image"}
+                data-focus-id="close-image"
+              >
+                ×
+              </button>
+            </form>
           </div>
         </div>
         <div
           class="lightbox-viewport"
           id="lightbox-viewport"
+          role="region"
           tabindex="0"
           aria-label={ko ? "제품 이미지. 원본 크기에서는 스크롤할 수 있습니다." : "Product image; scroll when viewing actual size"}
         >

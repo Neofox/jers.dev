@@ -63,16 +63,18 @@ const ko = localeFromPath(Astro.url.pathname) === "ko"
     document.getElementById("portrait-dock").hidden = false
   }
 </script>
-<dialog id="portrait-dialog" class="portrait-drawer" aria-labelledby="pd-title">
+<dialog closedby="any" id="portrait-dialog" class="portrait-drawer" aria-labelledby="pd-title">
   <div class="dialog-top">
-    <span class="eyebrow">{ko ? "반응하는 초상화" : "Living portrait"}<span id="pd-model"></span></span><button
-      type="button"
-      class="icon-button"
-      id="pd-close"
-      aria-label={ko ? "닫기" : "Close"}
-    >
-      ×
-    </button>
+    <span class="eyebrow">{ko ? "반응하는 초상화" : "Living portrait"}<span id="pd-model"></span></span><form method="dialog">
+      <button
+        type="submit"
+        class="icon-button"
+        id="pd-close"
+        aria-label={ko ? "닫기" : "Close"}
+      >
+        ×
+      </button>
+    </form>
   </div>
   <div class="pd-body">
     <header class="pd-head">

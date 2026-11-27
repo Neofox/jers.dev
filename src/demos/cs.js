@@ -4,7 +4,7 @@ import { demoShell } from "./shared.js"
 function markup() {
   return demoShell("cs", uiText("Pivo CS report triage", "Pivo 고객 지원 문의 분류"), `
     <div class="eh-panel eh-form" data-cs-queue>
-      <h4>${uiText("CS reports", "고객 지원 문의")}</h4>
+      <h3>${uiText("CS reports", "고객 지원 문의")}</h3>
       <div class="eh-controls" role="group" aria-label="${uiText("Filter reports by status", "처리 상태별 문의 보기")}" data-cs-filters></div>
       <div data-cs-list></div>
     </div>
@@ -56,7 +56,7 @@ export function mount(stage) {
     panel.hidden = false
     panel.innerHTML = `<button type="button" class="demo-reset" data-back>${uiText("Back to reports", "문의 목록으로")}</button>
       <span class="eh-eyebrow">${selected.id} · ${detail ? uiText("Report detail", "문의 상세") : uiText("Report preview", "문의 미리보기")}</span>
-      <h4 tabindex="-1">${selected.title}</h4><p>${selected.summary}</p>
+      <h3 tabindex="-1">${selected.title}</h3><p>${selected.summary}</p>
       <p>${selected.category} · ${selected.device}</p>`
     panel.querySelector("[data-back]").onclick = backToQueue
     if (detail) {
@@ -92,7 +92,7 @@ export function mount(stage) {
       panel.insertAdjacentHTML("beforeend", `<p>${uiText("Status ·", "처리 상태 ·")} ${statusLabel(selected.status)}</p><button type="button" class="button button-primary" data-open>${uiText("Open full report", "문의 상세 보기")}</button>`)
       panel.querySelector("[data-open]").onclick = () => openReport(true)
     }
-    panel.querySelector("h4").focus()
+    panel.querySelector("h3").focus()
   }
   for (const key of ["All", ...statuses]) {
     const button = document.createElement("button")

@@ -656,13 +656,6 @@ function init(korean) {
   }
   for (const id of ["portrait-home", "portrait-dock-button", "portrait-hint"])
     $(id)?.addEventListener("click", openDrawer)
-  $("pd-close").addEventListener("click", () => drawer.close())
-  drawer.addEventListener("click", (event) => {
-    if (event.target !== drawer) return
-    const r = drawer.getBoundingClientRect()
-    if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom)
-      drawer.close()
-  })
   drawer.addEventListener("close", () => {
     syncDock()
     if (opener?.isConnected && !opener.closest("[hidden]")) opener.focus({ preventScroll: true })

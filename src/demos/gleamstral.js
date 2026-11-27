@@ -25,12 +25,12 @@ function markup() {
         <label class="gs-range"><span>set_max_tokens <output data-gs="m-out"></output></span><input type="range" min="-50" max="300" step="10" value="100" data-gs="m" aria-label="${uiText("Maximum tokens", "최대 토큰 수")}"></label>
         <div class="gs-format"><span class="illo-kicker">${uiText("Response format", "응답 형식")}</span><div class="tl-seg" role="group" aria-label="${uiText("Response format", "응답 형식")}">${formats.map(([v, l]) => `<button type="button" data-gs-format="${v}" aria-pressed="${v === "JsonSchema"}">${l}</button>`).join("")}</div></div>
       </div>
-      <div class="gs-panel gs-code"><p class="illo-kicker">${uiText("Your Gleam", "Gleam 코드")}</p><pre data-gs="code"></pre></div>
-      <div class="gs-panel gs-req"><p class="illo-kicker">${uiText("complete_request → Request(String) · built, not sent", "complete_request → Request(String) · 요청 생성 완료, 전송 전")}</p><pre data-gs="req"></pre><p class="gs-note">${uiText("Body shown formatted;", "여기서는 본문을 읽기 쉽게 표시합니다.")} <code>json.to_string</code> ${uiText("sends it compact.", "호출 시에는 공백 없이 직렬화합니다.")}</p></div>
+      <div class="gs-panel gs-code"><p class="illo-kicker">${uiText("Your Gleam", "Gleam 코드")}</p><pre tabindex="0" data-gs="code"></pre></div>
+      <div class="gs-panel gs-req"><p class="illo-kicker">${uiText("complete_request → Request(String) · built, not sent", "complete_request → Request(String) · 요청 생성 완료, 전송 전")}</p><pre tabindex="0" data-gs="req"></pre><p class="gs-note">${uiText("Body shown formatted;", "여기서는 본문을 읽기 쉽게 표시합니다.")} <code>json.to_string</code> ${uiText("sends it compact.", "호출 시에는 공백 없이 직렬화합니다.")}</p></div>
       <div class="gs-panel gs-send"><p class="illo-kicker">${uiText("Your HTTP client sends it · sample replies", "선택한 HTTP 클라이언트로 전송 · 응답 예시")}</p>
         <div class="tl-seg" role="group" aria-label="${uiText("Sample HTTP reply", "HTTP 응답 예시")}">${replies.map(([v, l]) => `<button type="button" data-gs-reply="${v}" aria-pressed="${v === "200"}">${l}</button>`).join("")}</div>
-        <p class="illo-kicker">${uiText("Sample reply body", "응답 본문 예시")}</p><pre data-gs="raw"></pre>
-        <p class="illo-kicker">chat.handle_response(response)</p><pre class="gs-decoded" data-gs="decoded" aria-live="polite"></pre>
+        <p class="illo-kicker">${uiText("Sample reply body", "응답 본문 예시")}</p><pre tabindex="0" data-gs="raw"></pre>
+        <p class="illo-kicker">chat.handle_response(response)</p><pre tabindex="0" class="gs-decoded" data-gs="decoded" aria-live="polite"></pre>
       </div>
     </div>`,
   )

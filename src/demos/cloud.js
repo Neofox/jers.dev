@@ -32,7 +32,7 @@ function markup() {
         <div class="pc-list" data-pc="list"></div>
         <p class="pc-toast" data-pc="toast" role="status" aria-live="polite" hidden></p>
       </div>
-      <div class="pc-modal" data-pc="modal" hidden></div>
+      <dialog class="pc-dialog" data-pc="modal" aria-labelledby="pc-dialog-title"></dialog>
     </div>`,
   )
 }
@@ -58,8 +58,8 @@ export function mount(stage) {
   let files = seed.map(([gallery, name, ext, bytes, ago, status], i) => ({ id: i + 1, gallery, name, ext, bytes, date: new Date(now - ago * day), status }))
   const TOTAL = 3_000_000_000
   const st = { tab: "cloud", selecting: false, selected: new Set(), open: null }
-  let toastTimer = null,
-    lastFocus = null
+  let toastTimer = null
+  const dialog = q("modal")
   const fmtBytes = (b) => {
     if (b <= 0) return "0 B"
     const units = ["byte", "kilobyte", "megabyte", "gigabyte", "terabyte"]
@@ -91,11 +91,11 @@ export function mount(stage) {
       ? [...groups.values()]
           .map(
             (g) =>
-              `<section class="pc-group"><h4>${header(g[0].date)}</h4><ul class="pc-grid">${g
+              `<section class="pc-group"><h3>${header(g[0].date)}</h3><ul class="pc-grid">${g
                 .map((f) => {
                   const locked = f.status === "validating"
                   const sel = st.selected.has(f.id)
-                  return `<li><button type="button" class="pc-card${sel ? " is-selected" : ""}" data-pc-file="${f.id}" ${locked ? 'aria-disabled="true"' : ""} aria-label="${f.name}${st.selecting ? (sel ? uiText(", selected", ", 선택됨") : uiText(", not selected", ", 선택 안 됨")) : ""}${locked ? uiText(", validating", ", 확인 중") : ""}" style="--thumb:${shade(f.id)}">
+                  return `<li><button type="button" class="pc-card${sel ? " is-selected" : ""}" data-pc-file="${f.id}" ${locked ? 'aria-disabled="true"' : ""} aria-label="${f.name}${f.status && !locked ? ", " + f.status : ""}${st.selecting ? (sel ? uiText(", selected", ", 선택됨") : uiText(", not selected", ", 선택 안 됨")) : ""}${locked ? uiText(", validating", ", 확인 중") : ""}" style="--thumb:${shade(f.id)}">
                     ${st.selecting && !locked ? `<span class="pc-check" aria-hidden="true">${sel ? icon("check") : ""}</span>` : ""}
                     ${f.status && !locked ? `<span class="pc-badge">${f.status}</span>` : ""}
                     ${locked ? '<span class="pc-lock" aria-hidden="true"><i></i></span>' : `<span class="pc-play" aria-hidden="true"></span>`}
@@ -126,18 +126,11 @@ export function mount(stage) {
     root.querySelector('[data-pc-act="download"]').disabled = n !== 1 // Download is single-file only
     root.querySelector('[data-pc-act="delete"]').disabled = n < 1
   }
-  function modal(html) {
-    lastFocus = document.activeElement
-    q("modal").innerHTML = `<div class="pc-dialog" role="dialog" aria-modal="true" aria-labelledby="pc-dialog-title">${html}</div>`
-    q("modal").hidden = false
-    q("modal").querySelector("button:not([disabled])")?.focus()
-  }
-  function closeModal() {
-    q("modal").hidden = true
-    q("modal").innerHTML = ""
-    st.open = null
-    if (lastFocus?.isConnected) lastFocus.focus()
-    else root.querySelector("[data-pc-file]")?.focus()
+  function modal(html, viewer = false) {
+    dialog.classList.toggle("is-viewer", viewer)
+    dialog.innerHTML = html
+    if (!dialog.open) dialog.showModal()
+    dialog.querySelector("button:not([disabled])")?.focus()
   }
   function openViewer(id) {
     const list = [...visible()].sort((a, b) => b.date - a.date).filter((f) => f.status !== "validating")
@@ -145,19 +138,12 @@ export function mount(stage) {
     if (i < 0) return
     const f = list[i]
     st.open = id
-    const wasOpen = !q("modal").hidden
-    const html = `<div class="pc-viewer"><header class="pc-vhead"><button type="button" class="pc-icon" data-pc-close aria-label="${uiText("Back", "뒤로")}">‹</button><h4 id="pc-dialog-title">${f.name}.${f.ext}</h4></header>
+    const html = `<div class="pc-viewer"><header class="pc-vhead"><button type="button" class="pc-icon" data-pc-close aria-label="${uiText("Back", "뒤로")}">‹</button><h3 id="pc-dialog-title">${f.name}.${f.ext}</h3></header>
       <div class="pc-vbody"><div class="pc-player" style="--thumb:${shade(f.id)}"><span class="pc-play" aria-hidden="true"></span><p>${uiText("Sample video · no media", "동영상 예시 화면 · 실제 영상 없음")}</p>
         <button type="button" class="pc-nav prev" data-pc-step="-1" aria-label="${uiText("Previous", "이전")}" ${i === 0 ? "disabled" : ""}>‹</button><button type="button" class="pc-nav next" data-pc-step="1" aria-label="${uiText("Next", "다음")}" ${i === list.length - 1 ? "disabled" : ""}>›</button></div>
         <div class="pc-info"><div class="pc-itabs"><span>${uiText("Video Annotation", "영상 주석")}</span><span class="is-on">${uiText("Info", "정보")}</span></div><p class="pc-iname">${f.name}.${f.ext}</p>
         <dl><div><dt>${uiText("File type", "파일 형식")}</dt><dd>${f.ext}</dd></div><div><dt>${uiText("File size", "파일 크기")}</dt><dd>${fmtBytes(f.bytes)}</dd></div><div><dt>${uiText("Last modified", "마지막 수정일")}</dt><dd>${f.date.toLocaleDateString(uiText(undefined, "ko-KR"))}</dd></div></dl></div></div></div>`
-    if (wasOpen) {
-      q("modal").innerHTML = `<div class="pc-dialog is-viewer" role="dialog" aria-modal="true" aria-labelledby="pc-dialog-title">${html}</div>`
-      q("modal").querySelector("[data-pc-close]").focus()
-    } else {
-      modal(html)
-      q("modal").querySelector(".pc-dialog").classList.add("is-viewer")
-    }
+    modal(html, true)
   }
   function step(dir) {
     const list = [...visible()].sort((a, b) => b.date - a.date).filter((f) => f.status !== "validating")
@@ -194,9 +180,9 @@ export function mount(stage) {
     if (act && !act.disabled) {
       const n = st.selected.size
       if (act.dataset.pcAct === "delete")
-        modal(`<h4 id="pc-dialog-title">${uiText(`Delete ${n} files`, `파일 ${n}개 삭제`)}</h4><p>${uiText("I understand that deleting is permanent and can't be undone.", "삭제한 파일은 복구할 수 없습니다.")}</p><p class="pc-note">${uiText("Demo: only the sample list changes.", "데모에서는 예시 파일 목록만 바뀝니다.")}</p><div class="pc-dbtns"><button type="button" class="button button-outline" data-pc-close>${uiText("Close", "닫기")}</button><button type="button" class="button pc-danger" data-pc-confirm="delete">${uiText("Delete", "삭제")}</button></div>`)
+        modal(`<h3 id="pc-dialog-title">${uiText(`Delete ${n} files`, `파일 ${n}개 삭제`)}</h3><p>${uiText("I understand that deleting is permanent and can't be undone.", "삭제한 파일은 복구할 수 없습니다.")}</p><p class="pc-note">${uiText("Demo: only the sample list changes.", "데모에서는 예시 파일 목록만 바뀝니다.")}</p><div class="pc-dbtns"><button type="button" class="button button-outline" data-pc-close>${uiText("Close", "닫기")}</button><button type="button" class="button pc-danger" data-pc-confirm="delete">${uiText("Delete", "삭제")}</button></div>`)
       else if (act.dataset.pcAct === "share")
-        modal(`<h4 id="pc-dialog-title">${uiText(`Share ${n} files`, `파일 ${n}개 공유`)}</h4><p class="pc-link">https://example.invalid/share/sample</p><p class="pc-note">${uiText("Sample link · the real one expires after 30 days. Nothing is created or copied here.", "실제 공유 링크는 30일 후 만료됩니다. 이 데모에서는 링크를 만들거나 복사하지 않습니다.")}</p><div class="pc-dbtns"><button type="button" class="button button-outline" data-pc-close>${uiText("Cancel", "취소")}</button><button type="button" class="button button-primary" data-pc-confirm="copy">${uiText("Copy Link", "링크 복사")}</button></div>`)
+        modal(`<h3 id="pc-dialog-title">${uiText(`Share ${n} files`, `파일 ${n}개 공유`)}</h3><p class="pc-link">https://example.invalid/share/sample</p><p class="pc-note">${uiText("Sample link · the real one expires after 30 days. Nothing is created or copied here.", "실제 공유 링크는 30일 후 만료됩니다. 이 데모에서는 링크를 만들거나 복사하지 않습니다.")}</p><div class="pc-dbtns"><button type="button" class="button button-outline" data-pc-close>${uiText("Cancel", "취소")}</button><button type="button" class="button button-primary" data-pc-confirm="copy">${uiText("Copy Link", "링크 복사")}</button></div>`)
       else toast(uiText("Download starts for a single file · demo, nothing is downloaded", "한 번에 파일 하나를 다운로드할 수 있습니다. 데모에서는 실제로 다운로드하지 않습니다."))
       return
     }
@@ -206,16 +192,17 @@ export function mount(stage) {
         files = files.filter((f) => !st.selected.has(f.id))
         st.selected.clear()
         st.selecting = false // deleting clears the selection and leaves select mode
-        closeModal()
+        dialog.close()
         draw()
-        q("select").focus()
+        const next = q("select").hidden ? root.querySelector('[role="tab"][aria-selected="true"]') : q("select")
+        next.focus()
       } else {
-        closeModal()
+        dialog.close()
         toast(uiText("Link Copied! · demo, clipboard untouched", "링크 복사 완료 예시입니다. 실제 클립보드는 바뀌지 않았습니다."))
       }
       return
     }
-    if (e.target.closest("[data-pc-close]")) return closeModal()
+    if (e.target.closest("[data-pc-close]")) return dialog.close()
     const nav = e.target.closest("[data-pc-step]")
     if (nav && !nav.disabled) step(+nav.dataset.pcStep)
   })
@@ -224,8 +211,7 @@ export function mount(stage) {
     draw()
   })
   root.addEventListener("keydown", (e) => {
-    if (q("modal").hidden) return
-    if (e.key === "Escape") return e.preventDefault(), closeModal()
+    if (!dialog.open || !dialog.classList.contains("is-viewer")) return
     if (st.open != null && (e.key === "ArrowLeft" || e.key === "a" || e.key === "A")) step(-1)
     if (st.open != null && (e.key === "ArrowRight" || e.key === "d" || e.key === "D")) step(1)
   })

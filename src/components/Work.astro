@@ -12,13 +12,13 @@ const ko = locale === "ko"
   <article class="case" id="project-story" aria-labelledby="inspector-title" data-focus-id="project-inspector">
     <header class="case-head">
       <p class="eyebrow" id="inspector-meta"></p>
-      <h3 id="inspector-title" tabindex="-1" data-focus-id="project-heading"></h3>
+      <h2 id="inspector-title" tabindex="-1" data-focus-id="project-heading"></h2>
       <p class="case-role-line"><span id="inspector-role"></span><span id="case-stack"></span></p>
     </header>
     <figure class="case-figure" data-focus-id="project-visual-column">
       <header class="view-head">
         <p class="eyebrow" id="view-owner"></p>
-        <h4 id="view-title" tabindex="-1"></h4>
+        <h3 id="view-title" tabindex="-1"></h3>
       </header>
       <div class="view-tabs" id="visual-chapters" role="tablist" aria-label={ko ? "프로젝트 화면" : "Project views"}></div>
       <div class="visual-stage" id="visual-stage" data-focus-id="project-visual"></div>
@@ -31,7 +31,7 @@ const ko = locale === "ko"
       </figcaption>
     </figure>
     <section class="case-did" aria-labelledby="case-did-title">
-      <h4 class="section-label" id="case-did-title">{ko ? "담당한 일" : "What I did"}</h4>
+      <h3 class="section-label" id="case-did-title">{ko ? "담당한 일" : "What I did"}</h3>
       <ul class="did-list" id="case-did"></ul>
     </section>
     <details class="case-more" id="case-more" data-focus-id="case-more">
@@ -46,7 +46,7 @@ const ko = locale === "ko"
         <section class="case-section" id="case-overview" tabindex="-1" aria-labelledby="case-overview-title">
           <p class="section-label">{ko ? "배경" : "Context"}</p>
           <div class="case-section-body">
-            <h4 id="case-overview-title"></h4>
+            <h3 id="case-overview-title"></h3>
             <p id="case-overview-meta"></p>
             <ul class="case-highlights" id="case-highlights" aria-label={ko ? "주요 내용" : "Highlights"}></ul>
             <div id="case-overview-body"></div>
@@ -55,21 +55,21 @@ const ko = locale === "ko"
         <section class="case-section" id="case-role" tabindex="-1" aria-labelledby="case-role-title">
           <p class="section-label">{ko ? "담당 업무" : "My role"}</p>
           <div class="case-section-body">
-            <h4 id="case-role-title"></h4>
+            <h3 id="case-role-title"></h3>
             <div id="case-role-body"></div>
           </div>
         </section>
         <section class="case-section" id="case-decisions" tabindex="-1" aria-labelledby="case-decisions-title">
           <p class="section-label">{ko ? "제품 상세" : "Product detail"}</p>
           <div class="case-section-body">
-            <h4 id="case-decisions-title"></h4>
+            <h3 id="case-decisions-title"></h3>
             <div id="case-decisions-body"></div>
           </div>
         </section>
         <section class="case-section" id="case-sources" tabindex="-1" aria-labelledby="case-sources-title">
           <p class="section-label">{ko ? "참고 자료" : "Sources"}</p>
           <div class="case-section-body">
-            <h4 id="case-sources-title">{ko ? "참고 자료와 제품 링크" : "Sources & product links"}</h4>
+            <h3 id="case-sources-title">{ko ? "참고 자료와 제품 링크" : "Sources & product links"}</h3>
             <div id="case-sources-body"></div>
           </div>
         </section>

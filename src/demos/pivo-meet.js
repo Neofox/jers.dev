@@ -34,6 +34,10 @@ function markup() {
         <p class="pm-tip" id="pm-pod-tip" data-pm="tip"></p>
         <div class="pm-guest"><label class="tl-fail"><input type="checkbox" data-pm="grant"> ${uiText("Guest turns “Guest Control” on", "게스트가 카메라 원격 제어를 허용함")}</label></div>
       </div>
+      <dialog class="pm-card pm-confirm" data-pm="confirm" aria-labelledby="pm-leave-t">
+        <h3 id="pm-leave-t">${uiText("Are you sure you want to leave this video call?", "영상 통화에서 나갈까요?")}</h3>
+        <div class="pc-dbtns"><button type="button" class="button button-outline" data-pm-back autofocus>${uiText("Cancel", "취소")}</button><button type="button" class="button pc-danger" data-pm-left>${uiText("Leave", "나가기")}</button></div>
+      </dialog>
       <div class="pm-sheet" data-pm="sheet" hidden></div>
       <p class="pc-toast" data-pm="toast" role="status" aria-live="polite" hidden></p>
     </div>`,
@@ -66,7 +70,7 @@ export function mount(stage) {
       ? ""
       : `<img class="pm-scene" src="/assets/pivo-meet-arena.webp" alt="${uiText("A rider on horseback in an indoor arena", "실내 마장에서 말을 탄 기수")}" draggable="false">`
     return `${camOn ? `<div class="pm-video">${scene}${me ? '<span class="pm-avatar sample">C</span>' : ""}</div>` : `<div class="pm-off"><span class="pm-avatar">C</span></div>`}
-      <span class="pm-badge"><b>${me ? uiText("Me", "나") : uiText("Guest", "게스트")}</b><i class="pm-mic${micOn ? "" : " off"}" aria-label="${micOn ? uiText("Microphone on", "마이크 켜짐") : uiText("Microphone off", "마이크 꺼짐")}"></i></span>
+      <span class="pm-badge"><b>${me ? uiText("Me", "나") : uiText("Guest", "게스트")}</b><i role="img" class="pm-mic${micOn ? "" : " off"}" aria-label="${micOn ? uiText("Microphone on", "마이크 켜짐") : uiText("Microphone off", "마이크 꺼짐")}"></i></span>
       <span class="pm-sample">${me ? uiText("Sample video", "예시 영상") : uiText("Sample photo", "예시 사진")}</span>`
   }
   function draw() {
@@ -155,11 +159,6 @@ export function mount(stage) {
     q("sheet").innerHTML = ""
     q("call").hidden = false
   }
-  // Cancel on "leave this call?": the call never stopped, so nothing is reset; timers and recording carry on.
-  function resume() {
-    closeSheet()
-    q("leave").focus()
-  }
   // A genuine leave ends the call: drop pending recording steps, stop recording and revoke guest control.
   function endCall() {
     session++
@@ -227,22 +226,26 @@ export function mount(stage) {
       })
       return
     }
-    if (t.closest('[data-pm="leave"]'))
-      return sheet(`<div class="pm-card" role="dialog" aria-modal="true" aria-labelledby="pm-leave-t"><h4 id="pm-leave-t">${uiText("Are you sure you want to leave this video call?", "영상 통화에서 나갈까요?")}</h4><div class="pc-dbtns"><button type="button" class="button button-outline" data-pm-back>${uiText("Cancel", "취소")}</button><button type="button" class="button pc-danger" data-pm-left>${uiText("Leave", "나가기")}</button></div></div>`)
-    if (t.closest("[data-pm-back]")) return resume()
+    if (t.closest('[data-pm="leave"]')) {
+      stopCamera()
+      q("confirm").showModal()
+      return
+    }
+    if (t.closest("[data-pm-back]")) return q("confirm").close()
     if (t.closest("[data-pm-left]")) {
+      q("confirm").close()
       // leaving stops your own recording and ends guest control
       endCall()
-      return sheet(`<form class="pm-card" data-pm-survey><h4>${uiText("How was your call?", "통화는 어떠셨나요?")}</h4><div class="pm-stars" role="radiogroup" aria-label="${uiText("Rating", "통화 평점")}">${[1, 2, 3, 4, 5].map((n) => `<label><input type="radio" name="pm-stars" value="${n}"><span aria-hidden="true">★</span><span class="sr-only">${uiText(`${n} star${n > 1 ? "s" : ""}`, `별 ${n}개`)}</span></label>`).join("")}</div><label class="kt-field"><span>${uiText("Tell us how we can improve?", "개선할 점을 알려 주세요.")}</span><textarea rows="2"></textarea></label><div class="pc-dbtns"><button type="button" class="button button-outline" data-pm-skip>${uiText("Skip", "건너뛰기")}</button><button type="submit" class="button button-primary">${uiText("Submit", "제출")}</button></div><p class="pc-note">${uiText("Demo · nothing is submitted.", "데모에서는 의견이 전송되지 않습니다.")}</p></form>`)
+      return sheet(`<form class="pm-card" data-pm-survey><h3>${uiText("How was your call?", "통화는 어떠셨나요?")}</h3><div class="pm-stars" role="radiogroup" aria-label="${uiText("Rating", "통화 평점")}">${[1, 2, 3, 4, 5].map((n) => `<label><input type="radio" name="pm-stars" value="${n}"><span aria-hidden="true">★</span><span class="sr-only">${uiText(`${n} star${n > 1 ? "s" : ""}`, `별 ${n}개`)}</span></label>`).join("")}</div><label class="kt-field"><span>${uiText("Tell us how we can improve?", "개선할 점을 알려 주세요.")}</span><textarea rows="2"></textarea></label><div class="pc-dbtns"><button type="button" class="button button-outline" data-pm-skip>${uiText("Skip", "건너뛰기")}</button><button type="submit" class="button button-primary">${uiText("Submit", "제출")}</button></div><p class="pc-note">${uiText("Demo · nothing is submitted.", "데모에서는 의견이 전송되지 않습니다.")}</p></form>`)
     }
-    if (t.closest("[data-pm-skip]")) return sheet(`<div class="pm-card"><h4>${uiText("Ready to start?", "레슨을 시작할까요?")}</h4><p class="pc-note">${uiText("Sample lesson room.", "예시 레슨 통화방입니다.")}</p><button type="button" class="button button-primary" data-pm-rejoin>${uiText("Start now", "지금 시작")}</button></div>`)
+    if (t.closest("[data-pm-skip]")) return sheet(`<div class="pm-card"><h3>${uiText("Ready to start?", "레슨을 시작할까요?")}</h3><p class="pc-note">${uiText("Sample lesson room.", "예시 레슨 통화방입니다.")}</p><button type="button" class="button button-primary" data-pm-rejoin>${uiText("Start now", "지금 시작")}</button></div>`)
     if (t.closest("[data-pm-rejoin]")) return rejoin()
-    if (t.closest("[data-pm-close]")) return sheet(`<div class="pm-card"><h4>${uiText("Ready to start?", "레슨을 시작할까요?")}</h4><p class="pc-note">${uiText("Sample lesson room.", "예시 레슨 통화방입니다.")}</p><button type="button" class="button button-primary" data-pm-rejoin>${uiText("Start now", "지금 시작")}</button></div>`)
+    if (t.closest("[data-pm-close]")) return sheet(`<div class="pm-card"><h3>${uiText("Ready to start?", "레슨을 시작할까요?")}</h3><p class="pc-note">${uiText("Sample lesson room.", "예시 레슨 통화방입니다.")}</p><button type="button" class="button button-primary" data-pm-rejoin>${uiText("Start now", "지금 시작")}</button></div>`)
   })
   root.addEventListener("submit", (e) => {
     if (!e.target.matches("[data-pm-survey]")) return
     e.preventDefault()
-    sheet(`<div class="pm-card"><h4>${uiText("Thanks for your feedback", "의견을 남겨 주셔서 감사합니다.")}</h4><p class="pc-note">${uiText("Go to customer support for help · demo, nothing was sent.", "도움이 필요하면 고객 지원에 문의하세요. 데모에서는 의견이 전송되지 않았습니다.")}</p><button type="button" class="button button-outline" data-pm-close>${uiText("Close", "닫기")}</button></div>`)
+    sheet(`<div class="pm-card"><h3>${uiText("Thanks for your feedback", "의견을 남겨 주셔서 감사합니다.")}</h3><p class="pc-note">${uiText("Go to customer support for help · demo, nothing was sent.", "도움이 필요하면 고객 지원에 문의하세요. 데모에서는 의견이 전송되지 않았습니다.")}</p><button type="button" class="button button-outline" data-pm-close>${uiText("Close", "닫기")}</button></div>`)
   })
   q("grant").addEventListener("change", (e) => {
     st.grant = e.target.checked
@@ -254,8 +257,7 @@ export function mount(stage) {
   })
   root.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && !q("where").hidden) return setWhere(false), q("rec").focus()
-    if (e.key === "Escape" && q("sheet").querySelector("[data-pm-back]")) return resume()
-    if (!st.pod || q("call").hidden || e.target.closest("input, textarea, select")) return
+    if (q("confirm").open || !st.pod || q("call").hidden || e.target.closest("input, textarea, select")) return
     const map = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "in", ArrowDown: "out" }
     const buttonKey = e.key === " " || e.key === "Enter"
     const dir = map[e.key] || (buttonKey && e.target.closest("[data-pm-pod]")?.dataset.pmPod)

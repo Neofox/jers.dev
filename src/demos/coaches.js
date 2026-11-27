@@ -137,7 +137,7 @@ export function mount(stage) {
     if (!c) return
     state.open = order
     const p = q("profile")
-    p.innerHTML = `<div class="cf-profile-head"><div class="cf-photo small" aria-hidden="true"><span>${c.name[0]}</span></div><div><p class="illo-kicker">${uiText("Sample profile", "예시 프로필")}</p><h4>${c.name}</h4><p class="cf-loc">${location(c)}</p></div><button type="button" class="demo-reset" data-cf="close">${uiText("Close", "닫기")}</button></div>
+    p.innerHTML = `<div class="cf-profile-head"><div class="cf-photo small" aria-hidden="true"><span>${c.name[0]}</span></div><div><p class="illo-kicker">${uiText("Sample profile", "예시 프로필")}</p><h3>${c.name}</h3><p class="cf-loc">${location(c)}</p></div><button type="button" class="demo-reset" data-cf="close">${uiText("Close", "닫기")}</button></div>
       <dl class="cf-facts"><div><dt>${uiText("Discipline", "승마 종목")}</dt><dd>${labels[c.discipline]}</dd></div><div><dt>${uiText("Languages", "수업 언어")}</dt><dd>${c.langs.join(", ")}</dd></div><div><dt>${uiText("Pivo Certified", "Pivo 인증")}</dt><dd>${c.pivoCertified ? uiText("Yes", "예") : uiText("No", "아니요")}</dd></div><div><dt>${uiText("New students", "신규 수강생")}</dt><dd>${c.acceptStudents ? uiText("Accepting", "모집 중") : uiText("Not accepting", "모집 마감")}</dd></div></dl>
       <p class="cf-note">${uiText("In the product, See More opens this coach's page. Fictional coach · no request is made.", "실제 서비스에서는 ‘자세히 보기’를 누르면 코치 페이지가 열립니다. 여기서는 가상 코치의 정보를 바로 보여 줍니다.")}</p>`
     p.hidden = false

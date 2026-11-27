@@ -1,19 +1,19 @@
 // What each chapter shows: an authentic capture, the small renderer images, or an illustration.
 export const visuals = {
   translater: {
-    entry: { image: "translater", source: "Translater · language, tone and reply context." },
+    entry: { image: "translater", source: "Translater · language, tone and reply context.", sourceKo: "Translater · 언어와 말투, 답장할 대화의 맥락" },
     refine: { demo: "translater" },
   },
   "kaltoe-timer": {
-    popover: { image: "kaltoe", source: "Kaltoe Timer · macOS popover · sample data." },
+    popover: { image: "kaltoe", source: "Kaltoe Timer · macOS popover · sample data.", sourceKo: "Kaltoe Timer · macOS 팝오버 · 예시 데이터" },
     phases: { demo: "kaltoe" },
     label: {
       custom: "label",
-      source: "Official ring and track label images, shown at their natural proportions.",
+      source: "Official ring and track label images, shown at their natural proportions.", sourceKo: "공식 저장소의 링과 막대 이미지로, 원본 비율로 표시했습니다.",
     },
     linux: {
       custom: "linux",
-      source: "KDE tray renderer examples from the public repository · synthetic data.",
+      source: "KDE tray renderer examples from the public repository · synthetic data.", sourceKo: "공개 저장소의 KDE 트레이 렌더링 예시 · 예시 데이터",
     },
   },
   "3i": {
@@ -31,8 +31,8 @@ export const visuals = {
     recorder: { demo: "enhansRecorder" },
   },
   rubiwin: {
-    rubiwin: { image: "rubiwin-auction", source: "Rubiwin support · product reference" },
-    pricing: { image: "rubiwin-pricing", source: "Rubiwin support · product reference · CSV upload detail" },
+    rubiwin: { image: "rubiwin-auction", source: "Rubiwin support · product reference", sourceKo: "Rubiwin 고객지원 문서 · 제품 화면" },
+    pricing: { image: "rubiwin-pricing", source: "Rubiwin support · product reference · CSV upload detail", sourceKo: "Rubiwin 고객지원 문서 · 요율표 CSV 업로드 화면" },
     supplier: { illo: "logistics" },
   },
   neoharness: {

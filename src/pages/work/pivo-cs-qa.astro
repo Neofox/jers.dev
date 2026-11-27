@@ -1,71 +1,18 @@
 ---
+import ThreeIStudy from "../../components/ThreeIStudy.astro"
 import { getImage } from "astro:assets"
 import reportForm from "../../../public/assets/pivo-cs-current.jpg"
-import CaseStudyDemo from "../../components/CaseStudyDemo.astro"
-import CaseStudyLayout from "../../layouts/CaseStudyLayout.astro"
 
 const previews = await Promise.all(
   [480, 800, reportForm.width].map(width => getImage({ src: reportForm, width, format: "webp" })),
 )
 ---
 
-<CaseStudyLayout
-  projectName="Pivo CS / QA"
-  path="/work/pivo-cs-qa/"
-  title="Pivo CS / QA support report triage with React — Jérôme Schaeffer"
-  description="How Jérôme Schaeffer built Pivo’s React intranet for customer support and QA. Follow a sample report from the queue to a status change and an investigation note."
-  heading="Triaging support reports at Pivo"
+<ThreeIStudy
+  slug="pivo-cs-qa"
   image={previews[2].src}
   imageWidth={reportForm.width}
   imageHeight={reportForm.height}
   srcset={previews.map(image => `${image.src} ${image.attributes.width}w`).join(", ")}
   sizes="(min-width: 1174px) 1080px, (max-width: 500px) calc(100vw - 40px), 92vw"
-  imageAlt="Pivo’s empty New report form, with a Zendesk ticket import above the issue title and description."
->
-  <Fragment slot="lead">
-    “The preview froze” gives support a symptom. QA also needs to know which device was in use and what the rider
-    did just before the freeze. At 3i, I independently designed and built the Pivo CS / QA app, a React intranet
-    that keeps a customer report and the team’s investigation together.
-  </Fragment>
-  <Fragment slot="caption">
-    The New report screen in the internal app. Support can start from a Zendesk ticket number or URL.
-  </Fragment>
-
-  <section class="chapter" aria-labelledby="intake">
-    <h2 id="intake">What carries over from a support ticket?</h2>
-    <div>
-      <p>
-        Importing a Zendesk ticket brings its subject, description, and attachments into the report. Support can
-        then add device and app details and assign the issue. QA can trace the investigation through to its root
-        cause and release.
-      </p>
-      <p>
-        The dashboard groups work by status. Each filter shows how many reports it contains. Opening a preview
-        reveals the issue summary and device, so someone scanning the queue can decide which report to investigate.
-      </p>
-    </div>
-  </section>
-  <section class="chapter" aria-labelledby="handoff">
-    <h2 id="handoff">What does the next investigator need?</h2>
-    <div>
-      <p>
-        In one fictional report, a video preview freezes on the last frame when an Android tablet rotates during
-        playback. The preview identifies the device. The full report gives QA a place to record which steps reproduced
-        the freeze and what they plan to check next.
-      </p>
-      <p>
-        Changing the status moves the report into the corresponding queue. An internal note stays with the report,
-        so the next person who opens it can pick up the investigation where their colleague left off.
-      </p>
-    </div>
-  </section>
-  <section class="demo-section" aria-labelledby="demo-title">
-    <h2 id="demo-title">Triage a sample report</h2>
-    <p>
-      Choose Unresolved and open the frozen-preview report. In the full report, set its status to Pending and add
-      a note. Return to the queue and find it under Pending. The four reports are fictional, and Restart restores
-      their original statuses and clears your notes.
-    </p>
-    <CaseStudyDemo demo="cs" label="Open triage demo" fallback="Enable JavaScript to try the support report queue." />
-  </section>
-</CaseStudyLayout>
+/>

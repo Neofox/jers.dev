@@ -1,0 +1,49 @@
+---
+import { threeIStudies } from "../data/three-i-studies"
+import { threeIStudiesKo } from "../data/three-i-studies.ko"
+import { localeFromPath } from "../i18n/locale.js"
+import CaseStudyLayout from "../layouts/CaseStudyLayout.astro"
+import CaseStudyDemo from "./CaseStudyDemo.astro"
+
+interface Props {
+  slug: keyof typeof threeIStudies
+  image: string
+  imageWidth: number
+  imageHeight: number
+  srcset?: string
+  sizes?: string
+}
+const { slug, ...image } = Astro.props
+const study = threeIStudies[slug]
+const ko = localeFromPath(Astro.url.pathname) === "ko"
+const translated = threeIStudiesKo[slug]
+const copy = ko ? translated : study
+---
+
+<CaseStudyLayout
+  projectName={study.name}
+  path={`/work/${slug}/`}
+  title={copy.title}
+  description={copy.description}
+  heading={copy.heading}
+  {...image}
+  imageAlt={copy.alt}
+>
+  <Fragment slot="lead">{copy.lead}</Fragment>
+  <Fragment slot="caption">
+    {copy.caption}{study.links.map((link, index) => (
+      <Fragment> <a class="text-link" href={link.href}>{ko ? translated.linkLabels[index] : link.label}</a>.</Fragment>
+    ))}
+  </Fragment>
+  {copy.chapters.map((chapter, index) => (
+    <section class="chapter" aria-labelledby={study.chapters[index].id}>
+      <h2 id={study.chapters[index].id}>{chapter.title}</h2>
+      <div>{chapter.paragraphs.map(paragraph => <p>{paragraph}</p>)}</div>
+    </section>
+  ))}
+  <section class="demo-section" aria-labelledby="demo-title">
+    <h2 id="demo-title">{copy.demoHeading}</h2>
+    <p>{copy.instructions}</p>
+    <CaseStudyDemo demo={study.demo} label={copy.button} fallback={copy.fallback} />
+  </section>
+</CaseStudyLayout>

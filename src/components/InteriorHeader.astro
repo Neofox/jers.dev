@@ -1,13 +1,18 @@
 ---
 import SiteBrand from "./SiteBrand.astro"
+import LanguageLink from "./LanguageLink.astro"
+import { localPath, localeFromPath } from "../i18n/locale.js"
+const locale = localeFromPath(Astro.url.pathname)
+const ko = locale === "ko"
 interface Props { current?: "work" | "career"; workHref?: string }
 const { current, workHref = "/work/" } = Astro.props
 ---
 <header class="mast interior-mast">
   <SiteBrand />
-  <nav aria-label="Portfolio sections">
-    <a href={workHref} aria-current={current === "work" ? "page" : undefined}>Work</a>
-    <a href="/career/" aria-current={current === "career" ? "page" : undefined}>Career</a>
+  <nav aria-label={ko ? "포트폴리오 메뉴" : "Portfolio sections"}>
+    <a href={localPath(workHref, locale)} aria-current={current === "work" ? "page" : undefined}>{ko ? "프로젝트" : "Work"}</a>
+    <a href={localPath("/career/", locale)} aria-current={current === "career" ? "page" : undefined}>{ko ? "경력" : "Career"}</a>
+    <LanguageLink />
   </nav>
 </header>
 <style>

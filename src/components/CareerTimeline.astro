@@ -1,5 +1,9 @@
 ---
-import { chapters } from "../data/career.js"
+import { careerChapters } from "../data/career.js"
+import { localeFromPath, localPath } from "../i18n/locale.js"
+const locale = localeFromPath(Astro.url.pathname)
+const ko = locale === "ko"
+const chapters = careerChapters(locale)
 ---
 
 <ol class="career-list" id="chapter-list" aria-labelledby="career-title">
@@ -10,7 +14,7 @@ import { chapters } from "../data/career.js"
         <h2>{c.company}</h2>
         <p class="career-role">{c.role}</p>
         <p class="career-description">{c.description}</p>
-        {c.project && <a href={`/work/#${c.project === "rubiwin" ? "redspher" : c.project}`} class="text-link" data-focus-id={`career-related-${c.id}`}>Explore related work <span aria-hidden="true">→</span></a>}
+        {c.project && <a href={localPath(`/work/#${c.project === "rubiwin" ? "redspher" : c.project}`, locale)} class="text-link" data-focus-id={`career-related-${c.id}`}>{ko ? "관련 프로젝트 보기" : "Explore related work"} <span aria-hidden="true">→</span></a>}
       </div>
     </li>
   ))}

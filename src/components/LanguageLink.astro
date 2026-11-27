@@ -1,0 +1,29 @@
+---
+import { localeFromPath, localPath } from "../i18n/locale.js"
+const { pathname } = Astro.url
+const alternate = localeFromPath(pathname) === "ko" ? "en" : "ko"
+const href = localPath(pathname.replace(/\/?$/, "/"), alternate)
+---
+<a class="language-link" data-language-link href={href} lang={alternate} hreflang={alternate}>
+  {alternate === "ko" ? "한국어" : "English"}
+</a>
+<script>
+  for (const link of document.querySelectorAll<HTMLAnchorElement>("[data-language-link]")) {
+    const path = link.pathname
+    const sync = () => link.setAttribute("href", path + location.search + location.hash)
+    sync()
+    window.addEventListener("hashchange", sync)
+    window.addEventListener("pageshow", sync)
+  }
+</script>
+<style>
+  .language-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: var(--text-sm);
+    color: var(--fg-soft);
+    white-space: nowrap;
+  }
+  .language-link:hover { text-decoration: underline; text-underline-offset: .2em; }
+</style>

@@ -1,3 +1,4 @@
+import { uiText } from "./demo-locale.js"
 import { icon } from "../scripts/icons.js"
 import { demoShell, motionEnabled } from "./shared.js"
 
@@ -10,28 +11,28 @@ import { demoShell, motionEnabled } from "./shared.js"
 function markup() {
   return demoShell(
     "meet",
-    "Pivo Meet remote lesson",
+    uiText("Pivo Meet remote lesson", "Pivo Meet 원격 레슨"),
     `<div class="pm" data-pm="root">
       <div class="pm-call" data-pm="call">
-        <div class="pm-top"><span class="pm-room">Lesson · sample room</span>
-          <div class="pm-layouts" role="group" aria-label="Layout"><button type="button" data-pm-layout="fifty" aria-pressed="true">Side by side</button><button type="button" data-pm-layout="small" aria-pressed="false">Small preview</button><button type="button" data-pm-layout="large" aria-pressed="false">Large preview</button></div></div>
+        <div class="pm-top"><span class="pm-room">${uiText("Lesson · sample room", "레슨 · 예시 통화방")}</span>
+          <div class="pm-layouts" role="group" aria-label="${uiText("Layout", "화면 배치")}"><button type="button" data-pm-layout="fifty" aria-pressed="true">${uiText("Side by side", "나란히 보기")}</button><button type="button" data-pm-layout="small" aria-pressed="false">${uiText("Small preview", "작은 미리보기")}</button><button type="button" data-pm-layout="large" aria-pressed="false">${uiText("Large preview", "큰 미리보기")}</button></div></div>
         <div class="pm-stage" data-pm="stage" data-layout="fifty">
           <div class="pm-tile self" data-pm="self"></div>
           <div class="pm-tile remote" data-pm="remote"></div>
         </div>
-        <div class="pm-podbar" data-pm="podbar" hidden><span>Rotate (← →)</span><span>Zoom in/out (↑ ↓)</span><span class="pm-podbtns"><button type="button" data-pm-pod="left" aria-label="Rotate left">←</button><button type="button" data-pm-pod="right" aria-label="Rotate right">→</button><button type="button" data-pm-pod="in" aria-label="Zoom in">↑</button><button type="button" data-pm-pod="out" aria-label="Zoom out">↓</button></span></div>
+        <div class="pm-podbar" data-pm="podbar" hidden><span>${uiText("Rotate (← →)", "회전 (← →)")}</span><span>${uiText("Zoom in/out (↑ ↓)", "확대·축소 (↑ ↓)")}</span><span class="pm-podbtns"><button type="button" data-pm-pod="left" aria-label="${uiText("Rotate left", "왼쪽으로 회전")}">←</button><button type="button" data-pm-pod="right" aria-label="${uiText("Rotate right", "오른쪽으로 회전")}">→</button><button type="button" data-pm-pod="in" aria-label="${uiText("Zoom in", "확대")}">↑</button><button type="button" data-pm-pod="out" aria-label="${uiText("Zoom out", "축소")}">↓</button></span></div>
         <div class="pm-controls">
           <div class="pm-ctl-mid">
-            <button type="button" class="pm-btn" data-pm="mic" aria-pressed="true" title="Turn on/off microphone">${icon("mic")}<span>Mic</span></button>
-            <button type="button" class="pm-btn" data-pm="cam" aria-pressed="true" title="Turn on/off camera">${icon("video")}<span>Camera</span></button>
-            <button type="button" class="pm-btn" data-pm="pod" aria-pressed="false" aria-describedby="pm-pod-tip">${icon("refresh")}<span>Camera control</span></button>
-            <div class="pm-rec-wrap"><button type="button" class="pm-btn pm-rec" data-pm="rec" aria-haspopup="true" aria-expanded="false"><span data-pm="rec-label">Start recording</span></button>
-              <div class="pm-pop" data-pm="where" hidden><p class="illo-kicker">Where to save?</p><button type="button" data-pm-save="cloud"><strong>Cloud</strong><small>02:00 hours remaining</small></button><button type="button" disabled><strong>Desktop <em>BETA</em></strong><small>Records your screen · not in this demo</small></button></div></div>
+            <button type="button" class="pm-btn" data-pm="mic" aria-pressed="true" title="${uiText("Turn on/off microphone", "마이크 켜기 또는 끄기")}">${icon("mic")}<span>${uiText("Mic", "마이크")}</span></button>
+            <button type="button" class="pm-btn" data-pm="cam" aria-pressed="true" title="${uiText("Turn on/off camera", "카메라 켜기 또는 끄기")}">${icon("video")}<span>${uiText("Camera", "카메라")}</span></button>
+            <button type="button" class="pm-btn" data-pm="pod" aria-pressed="false" aria-describedby="pm-pod-tip">${icon("refresh")}<span>${uiText("Camera control", "카메라 제어")}</span></button>
+            <div class="pm-rec-wrap"><button type="button" class="pm-btn pm-rec" data-pm="rec" aria-haspopup="true" aria-expanded="false"><span data-pm="rec-label">${uiText("Start recording", "녹화 시작")}</span></button>
+              <div class="pm-pop" data-pm="where" hidden><p class="illo-kicker">${uiText("Where to save?", "어디에 저장할까요?")}</p><button type="button" data-pm-save="cloud"><strong>${uiText("Cloud", "클라우드")}</strong><small>${uiText("02:00 hours remaining", "2시간 남음")}</small></button><button type="button" disabled><strong>${uiText("Desktop", "내 컴퓨터")} <em>${uiText("BETA", "베타")}</em></strong><small>${uiText("Records your screen · not in this demo", "화면 녹화 · 데모에서 사용 불가")}</small></button></div></div>
           </div>
-          <div class="pm-ctl-right"><span class="pm-timer" data-pm="timer" title="Room age">00:00</span><button type="button" class="pm-leave" data-pm="leave" title="Leave call">Leave</button></div>
+          <div class="pm-ctl-right"><span class="pm-timer" data-pm="timer" title="${uiText("Room age", "통화 경과 시간")}">00:00</span><button type="button" class="pm-leave" data-pm="leave" title="${uiText("Leave call", "통화 나가기")}">${uiText("Leave", "나가기")}</button></div>
         </div>
         <p class="pm-tip" id="pm-pod-tip" data-pm="tip"></p>
-        <div class="pm-guest"><label class="tl-fail"><input type="checkbox" data-pm="grant"> Guest turns “Guest Control” on</label></div>
+        <div class="pm-guest"><label class="tl-fail"><input type="checkbox" data-pm="grant"> ${uiText("Guest turns “Guest Control” on", "게스트가 카메라 원격 제어를 허용함")}</label></div>
       </div>
       <div class="pm-sheet" data-pm="sheet" hidden></div>
       <p class="pc-toast" data-pm="toast" role="status" aria-live="polite" hidden></p>
@@ -63,10 +64,10 @@ export function mount(stage) {
     const micOn = me ? st.mic : true
     const scene = me
       ? ""
-      : '<img class="pm-scene" src="/assets/pivo-meet-arena.webp" alt="A rider on horseback in an indoor arena" draggable="false">'
+      : `<img class="pm-scene" src="/assets/pivo-meet-arena.webp" alt="${uiText("A rider on horseback in an indoor arena", "실내 마장에서 말을 탄 기수")}" draggable="false">`
     return `${camOn ? `<div class="pm-video">${scene}${me ? '<span class="pm-avatar sample">C</span>' : ""}</div>` : `<div class="pm-off"><span class="pm-avatar">C</span></div>`}
-      <span class="pm-badge"><b>${me ? "Me" : "Guest"}</b><i class="pm-mic${micOn ? "" : " off"}" aria-label="${micOn ? "Microphone on" : "Microphone off"}"></i></span>
-      <span class="pm-sample">${me ? "Sample video" : "Sample photo"}</span>`
+      <span class="pm-badge"><b>${me ? uiText("Me", "나") : uiText("Guest", "게스트")}</b><i class="pm-mic${micOn ? "" : " off"}" aria-label="${micOn ? uiText("Microphone on", "마이크 켜짐") : uiText("Microphone off", "마이크 꺼짐")}"></i></span>
+      <span class="pm-sample">${me ? uiText("Sample video", "예시 영상") : uiText("Sample photo", "예시 사진")}</span>`
   }
   function draw() {
     q("stage").dataset.layout = st.layout
@@ -78,10 +79,10 @@ export function mount(stage) {
     q("podbar").hidden = !st.pod
     q("tip").textContent = st.grant
       ? st.pod
-        ? "Hold an arrow button or arrow key to pan or zoom the guest camera."
-        : "Guest Control is on. Press Camera control to move their camera."
-      : "You can't move their camera. Ask guest to turn “Guest Control” on."
-    const label = { idle: "Start recording", starting: "Starting...", stopping: "Stopping...", processing: "Processing..." }[st.rec]
+        ? uiText("Hold an arrow button or arrow key to pan or zoom the guest camera.", "화살표 버튼이나 방향키를 길게 누르면 게스트 카메라를 회전하거나 확대·축소할 수 있습니다.")
+        : uiText("Guest Control is on. Press Camera control to move their camera.", "게스트가 원격 제어를 허용했습니다. ‘카메라 제어’를 눌러 카메라를 움직여 보세요.")
+      : uiText("You can't move their camera. Ask guest to turn “Guest Control” on.", "게스트가 원격 제어를 허용해야 카메라를 움직일 수 있습니다.")
+    const label = { idle: uiText("Start recording", "녹화 시작"), starting: uiText("Starting...", "녹화 시작 중…"), stopping: uiText("Stopping...", "녹화 종료 중…"), processing: uiText("Processing...", "처리 중…") }[st.rec]
     if (label) q("rec-label").textContent = label
     q("rec").classList.toggle("is-on", st.rec === "on")
     // aria-disabled (not disabled) so keyboard focus stays on the button through Starting/Stopping/Processing
@@ -184,10 +185,10 @@ export function mount(stage) {
     const t = e.target
     const lay = t.closest("[data-pm-layout]")
     if (lay) return ((st.layout = lay.dataset.pmLayout), draw())
-    if (t.closest('[data-pm="mic"]')) return ((st.mic = !st.mic), draw(), toast(st.mic ? "Microphone on" : "Microphone off"))
-    if (t.closest('[data-pm="cam"]')) return ((st.cam = !st.cam), draw(), toast(st.cam ? "Camera on" : "Camera off"))
+    if (t.closest('[data-pm="mic"]')) return ((st.mic = !st.mic), draw(), toast(st.mic ? uiText("Microphone on", "마이크 켜짐") : uiText("Microphone off", "마이크 꺼짐")))
+    if (t.closest('[data-pm="cam"]')) return ((st.cam = !st.cam), draw(), toast(st.cam ? uiText("Camera on", "카메라 켜짐") : uiText("Camera off", "카메라 꺼짐")))
     if (t.closest('[data-pm="pod"]')) {
-      if (!st.grant) return toast("Camera control", "You can't move their camera. Ask guest to turn “Guest Control” on.")
+      if (!st.grant) return toast(uiText("Camera control", "카메라 제어"), uiText("You can't move their camera. Ask guest to turn “Guest Control” on.", "게스트가 원격 제어를 허용해야 카메라를 움직일 수 있습니다."))
       st.pod = !st.pod
       if (!st.pod) stopCamera()
       return draw()
@@ -206,7 +207,7 @@ export function mount(stage) {
           wait(900, () => {
             st.rec = "idle"
             draw()
-            toast("Cloud recording saved successfully", "Demo · nothing was recorded or saved")
+            toast(uiText("Cloud recording saved successfully", "클라우드 녹화 저장 완료"), uiText("Demo · nothing was recorded or saved", "데모에서는 영상을 녹화하거나 저장하지 않습니다."))
           })
         })
       }
@@ -222,26 +223,26 @@ export function mount(stage) {
         st.recStart = Date.now()
         draw()
         clocks()
-        toast("Recording Started", "This meeting is now being recorded · demo, nothing is captured")
+        toast(uiText("Recording Started", "녹화 시작"), uiText("This meeting is now being recorded · demo, nothing is captured", "녹화 중인 화면의 예시입니다. 실제 통화 내용은 기록하지 않습니다."))
       })
       return
     }
     if (t.closest('[data-pm="leave"]'))
-      return sheet(`<div class="pm-card" role="dialog" aria-modal="true" aria-labelledby="pm-leave-t"><h4 id="pm-leave-t">Are you sure you want to leave this video call?</h4><div class="pc-dbtns"><button type="button" class="button button-outline" data-pm-back>Cancel</button><button type="button" class="button pc-danger" data-pm-left>Leave</button></div></div>`)
+      return sheet(`<div class="pm-card" role="dialog" aria-modal="true" aria-labelledby="pm-leave-t"><h4 id="pm-leave-t">${uiText("Are you sure you want to leave this video call?", "영상 통화에서 나갈까요?")}</h4><div class="pc-dbtns"><button type="button" class="button button-outline" data-pm-back>${uiText("Cancel", "취소")}</button><button type="button" class="button pc-danger" data-pm-left>${uiText("Leave", "나가기")}</button></div></div>`)
     if (t.closest("[data-pm-back]")) return resume()
     if (t.closest("[data-pm-left]")) {
       // leaving stops your own recording and ends guest control
       endCall()
-      return sheet(`<form class="pm-card" data-pm-survey><h4>How was your call?</h4><div class="pm-stars" role="radiogroup" aria-label="Rating">${[1, 2, 3, 4, 5].map((n) => `<label><input type="radio" name="pm-stars" value="${n}"><span aria-hidden="true">★</span><span class="sr-only">${n} star${n > 1 ? "s" : ""}</span></label>`).join("")}</div><label class="kt-field"><span>Tell us how we can improve?</span><textarea rows="2"></textarea></label><div class="pc-dbtns"><button type="button" class="button button-outline" data-pm-skip>Skip</button><button type="submit" class="button button-primary">Submit</button></div><p class="pc-note">Demo · nothing is submitted.</p></form>`)
+      return sheet(`<form class="pm-card" data-pm-survey><h4>${uiText("How was your call?", "통화는 어떠셨나요?")}</h4><div class="pm-stars" role="radiogroup" aria-label="${uiText("Rating", "통화 평점")}">${[1, 2, 3, 4, 5].map((n) => `<label><input type="radio" name="pm-stars" value="${n}"><span aria-hidden="true">★</span><span class="sr-only">${uiText(`${n} star${n > 1 ? "s" : ""}`, `별 ${n}개`)}</span></label>`).join("")}</div><label class="kt-field"><span>${uiText("Tell us how we can improve?", "개선할 점을 알려 주세요.")}</span><textarea rows="2"></textarea></label><div class="pc-dbtns"><button type="button" class="button button-outline" data-pm-skip>${uiText("Skip", "건너뛰기")}</button><button type="submit" class="button button-primary">${uiText("Submit", "제출")}</button></div><p class="pc-note">${uiText("Demo · nothing is submitted.", "데모에서는 의견이 전송되지 않습니다.")}</p></form>`)
     }
-    if (t.closest("[data-pm-skip]")) return sheet(`<div class="pm-card"><h4>Ready to start?</h4><p class="pc-note">Sample lesson room.</p><button type="button" class="button button-primary" data-pm-rejoin>Start now</button></div>`)
+    if (t.closest("[data-pm-skip]")) return sheet(`<div class="pm-card"><h4>${uiText("Ready to start?", "레슨을 시작할까요?")}</h4><p class="pc-note">${uiText("Sample lesson room.", "예시 레슨 통화방입니다.")}</p><button type="button" class="button button-primary" data-pm-rejoin>${uiText("Start now", "지금 시작")}</button></div>`)
     if (t.closest("[data-pm-rejoin]")) return rejoin()
-    if (t.closest("[data-pm-close]")) return sheet(`<div class="pm-card"><h4>Ready to start?</h4><p class="pc-note">Sample lesson room.</p><button type="button" class="button button-primary" data-pm-rejoin>Start now</button></div>`)
+    if (t.closest("[data-pm-close]")) return sheet(`<div class="pm-card"><h4>${uiText("Ready to start?", "레슨을 시작할까요?")}</h4><p class="pc-note">${uiText("Sample lesson room.", "예시 레슨 통화방입니다.")}</p><button type="button" class="button button-primary" data-pm-rejoin>${uiText("Start now", "지금 시작")}</button></div>`)
   })
   root.addEventListener("submit", (e) => {
     if (!e.target.matches("[data-pm-survey]")) return
     e.preventDefault()
-    sheet(`<div class="pm-card"><h4>Thanks for your feedback</h4><p class="pc-note">Go to customer support for help · demo, nothing was sent.</p><button type="button" class="button button-outline" data-pm-close>Close</button></div>`)
+    sheet(`<div class="pm-card"><h4>${uiText("Thanks for your feedback", "의견을 남겨 주셔서 감사합니다.")}</h4><p class="pc-note">${uiText("Go to customer support for help · demo, nothing was sent.", "도움이 필요하면 고객 지원에 문의하세요. 데모에서는 의견이 전송되지 않았습니다.")}</p><button type="button" class="button button-outline" data-pm-close>${uiText("Close", "닫기")}</button></div>`)
   })
   q("grant").addEventListener("change", (e) => {
     st.grant = e.target.checked

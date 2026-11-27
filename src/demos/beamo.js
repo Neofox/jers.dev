@@ -1,3 +1,4 @@
+import { uiText } from "./demo-locale.js"
 import { demoShell, motionEnabled } from "./shared.js"
 
 // Beamo · 3D viewer measurement. Re-implements audited behaviour of the 3D tour ruler and viewer:
@@ -10,35 +11,35 @@ import { demoShell, motionEnabled } from "./shared.js"
 function markup() {
   return demoShell(
     "beamo",
-    "Beamo 3D measurement on a sample room",
+    uiText("Beamo 3D measurement on a sample room", "Beamo 예시 공간 3D 측정"),
     `<div class="bm">
       <div class="bm-toolbar">
-        <div class="bm-seg" role="group" aria-label="Measurement tool">
-          <button type="button" data-bm-mode="select" aria-pressed="false"><kbd>1</kbd>Select</button>
-          <button type="button" data-bm-mode="distance" aria-pressed="true"><kbd>2</kbd>Measure</button>
-          <button type="button" data-bm-mode="volume" aria-pressed="false"><kbd>3</kbd>Build objects</button>
+        <div class="bm-seg" role="group" aria-label="${uiText("Measurement tool", "측정 도구")}">
+          <button type="button" data-bm-mode="select" aria-pressed="false"><kbd>1</kbd>${uiText("Select", "선택")}</button>
+          <button type="button" data-bm-mode="distance" aria-pressed="true"><kbd>2</kbd>${uiText("Measure", "거리 측정")}</button>
+          <button type="button" data-bm-mode="volume" aria-pressed="false"><kbd>3</kbd>${uiText("Build objects", "상자 그리기")}</button>
         </div>
         <div class="bm-actions">
-          <button type="button" data-bm="finish">Finish</button>
-          <button type="button" data-bm="reset">Reset</button>
-          <button type="button" data-bm="save" disabled title="Saving is not part of this demo">Save <span data-bm="count">0</span></button>
-          <button type="button" data-bm="clear">Clear all</button>
+          <button type="button" data-bm="finish">${uiText("Finish", "측정 마치기")}</button>
+          <button type="button" data-bm="reset">${uiText("Reset", "초기화")}</button>
+          <button type="button" data-bm="save" disabled title="${uiText("Saving is not part of this demo", "데모에서는 저장할 수 없습니다")}">${uiText("Save", "저장")} <span data-bm="count">0</span></button>
+          <button type="button" data-bm="clear">${uiText("Clear all", "모두 지우기")}</button>
         </div>
       </div>
       <div class="bm-view">
-        <svg class="bm-svg" data-bm="svg" tabindex="0" role="application" aria-label="Sample room in 3D. Press ] or [ to move between snap targets and Enter to place a point or select. Arrow keys orbit; in first-person, W A S D move and Q E change eye height. Escape keeps the line, Backspace removes the last point."></svg>
+        <svg class="bm-svg" data-bm="svg" tabindex="0" role="application" aria-label="${uiText("Sample room in 3D. Press ] or [ to move between snap targets and Enter to place a point or select. Arrow keys orbit; in first-person, W A S D move and Q E change eye height. Escape keeps the line, Backspace removes the last point.", "3D 예시 공간입니다. ] 또는 [ 키로 기준점을 옮기고 Enter로 점을 찍거나 항목을 선택하세요. 방향키로 시점을 회전합니다. 1인칭 시점에서는 W, A, S, D로 이동하고 Q, E로 눈높이를 조절합니다. Esc로 선을 남기고 Backspace로 마지막 점을 지웁니다.")}"></svg>
         <p class="bm-hint" data-bm="hint" aria-live="polite"></p>
         <div class="bm-inspect" data-bm="inspect" hidden></div>
       </div>
       <div class="bm-side">
-        <div class="bm-seg" role="group" aria-label="Camera"><button type="button" data-bm-cam="orbit" aria-pressed="true">Orbit</button><button type="button" data-bm-cam="fp" aria-pressed="false">First-person</button></div>
-        <div class="bm-seg" role="group" aria-label="Units"><button type="button" data-bm-unit="m" aria-pressed="true">m</button><button type="button" data-bm-unit="ft" aria-pressed="false">ft</button></div>
-        <div class="bm-seg bm-kbd" role="group" aria-label="Keyboard targets"><button type="button" data-bm="prev" aria-label="Previous target">‹</button><button type="button" data-bm="next" aria-label="Next target">›</button><button type="button" data-bm="place">Place point</button></div>
-        <label class="bm-clip"><input type="checkbox" data-bm="clip"> Section box</label>
+        <div class="bm-seg" role="group" aria-label="${uiText("Camera", "카메라")}"><button type="button" data-bm-cam="orbit" aria-pressed="true">${uiText("Orbit", "회전 시점")}</button><button type="button" data-bm-cam="fp" aria-pressed="false">${uiText("First-person", "1인칭 시점")}</button></div>
+        <div class="bm-seg" role="group" aria-label="${uiText("Units", "단위")}"><button type="button" data-bm-unit="m" aria-pressed="true">m</button><button type="button" data-bm-unit="ft" aria-pressed="false">ft</button></div>
+        <div class="bm-seg bm-kbd" role="group" aria-label="${uiText("Keyboard targets", "키보드로 지점 선택")}"><button type="button" data-bm="prev" aria-label="${uiText("Previous target", "이전 지점")}">‹</button><button type="button" data-bm="next" aria-label="${uiText("Next target", "다음 지점")}">›</button><button type="button" data-bm="place">${uiText("Place point", "점 찍기")}</button></div>
+        <label class="bm-clip"><input type="checkbox" data-bm="clip"> ${uiText("Section box", "단면 상자")}</label>
         <div class="bm-sliders" data-bm="sliders" hidden>
-          <label>X max <input type="range" min="0.2" max="1" step="0.005" value="1" data-bm-axis="0"></label>
-          <label>Y max <input type="range" min="0.2" max="1" step="0.005" value="1" data-bm-axis="1"></label>
-          <label>Z max <input type="range" min="0.2" max="1" step="0.005" value="1" data-bm-axis="2"></label>
+          <label>${uiText("X max", "X축 경계")} <input type="range" min="0.2" max="1" step="0.005" value="1" data-bm-axis="0"></label>
+          <label>${uiText("Y max", "Y축 경계")} <input type="range" min="0.2" max="1" step="0.005" value="1" data-bm-axis="1"></label>
+          <label>${uiText("Z max", "Z축 경계")} <input type="range" min="0.2" max="1" step="0.005" value="1" data-bm-axis="2"></label>
         </div>
       </div>
     </div>`,
@@ -65,15 +66,15 @@ export function mount(stage) {
     H = 2.8
   const quad = (a, b, c, d) => [a, b, c, d]
   const elements = [
-    { id: 1, type: "IfcSlab", name: "Floor slab", obj: "Concrete slab", tag: "S-01", pre: "FLOOR", faces: [quad([0, 0, 0], [W, 0, 0], [W, D, 0], [0, D, 0])], n: [0, 0, 1] },
-    { id: 2, type: "IfcWall", name: "Wall north", obj: "Partition 120", tag: "W-01", pre: "STANDARD", faces: [quad([0, D, 0], [W, D, 0], [W, D, H], [0, D, H])], n: [0, -1, 0] },
-    { id: 3, type: "IfcWall", name: "Wall south", obj: "Partition 120", tag: "W-02", pre: "STANDARD", faces: [quad([0, 0, 0], [0, 0, H], [W, 0, H], [W, 0, 0])], n: [0, 1, 0] },
-    { id: 4, type: "IfcWall", name: "Wall west", obj: "Partition 120", tag: "W-03", pre: "STANDARD", faces: [quad([0, 0, 0], [0, D, 0], [0, D, H], [0, 0, H])], n: [1, 0, 0] },
-    { id: 5, type: "IfcWall", name: "Wall east", obj: "Partition 120", tag: "W-04", pre: "STANDARD", faces: [quad([W, 0, 0], [W, 0, H], [W, D, H], [W, D, 0])], n: [-1, 0, 0] },
-    { id: 6, type: "IfcDoor", name: "Door 01", obj: "Single swing 900", tag: "D-01", pre: "DOOR", faces: [quad([0.01, 1.2, 0], [0.01, 2.1, 0], [0.01, 2.1, 2.1], [0.01, 1.2, 2.1])], n: [1, 0, 0] },
-    { id: 7, type: "IfcWindow", name: "Window 01", obj: "Fixed 2000×1100", tag: "WN-01", pre: "WINDOW", faces: [quad([2, D - 0.01, 0.9], [4, D - 0.01, 0.9], [4, D - 0.01, 2], [2, D - 0.01, 2])], n: [0, -1, 0] },
+    { id: 1, type: "IfcSlab", name: uiText("Floor slab", "바닥 슬래브"), obj: uiText("Concrete slab", "콘크리트 슬래브"), tag: "S-01", pre: "FLOOR", faces: [quad([0, 0, 0], [W, 0, 0], [W, D, 0], [0, D, 0])], n: [0, 0, 1] },
+    { id: 2, type: "IfcWall", name: uiText("Wall north", "북쪽 벽"), obj: uiText("Partition 120", "칸막이벽 120"), tag: "W-01", pre: "STANDARD", faces: [quad([0, D, 0], [W, D, 0], [W, D, H], [0, D, H])], n: [0, -1, 0] },
+    { id: 3, type: "IfcWall", name: uiText("Wall south", "남쪽 벽"), obj: uiText("Partition 120", "칸막이벽 120"), tag: "W-02", pre: "STANDARD", faces: [quad([0, 0, 0], [0, 0, H], [W, 0, H], [W, 0, 0])], n: [0, 1, 0] },
+    { id: 4, type: "IfcWall", name: uiText("Wall west", "서쪽 벽"), obj: uiText("Partition 120", "칸막이벽 120"), tag: "W-03", pre: "STANDARD", faces: [quad([0, 0, 0], [0, D, 0], [0, D, H], [0, 0, H])], n: [1, 0, 0] },
+    { id: 5, type: "IfcWall", name: uiText("Wall east", "동쪽 벽"), obj: uiText("Partition 120", "칸막이벽 120"), tag: "W-04", pre: "STANDARD", faces: [quad([W, 0, 0], [W, 0, H], [W, D, H], [W, D, 0])], n: [-1, 0, 0] },
+    { id: 6, type: "IfcDoor", name: uiText("Door 01", "문 01"), obj: uiText("Single swing 900", "외여닫이문 900"), tag: "D-01", pre: "DOOR", faces: [quad([0.01, 1.2, 0], [0.01, 2.1, 0], [0.01, 2.1, 2.1], [0.01, 1.2, 2.1])], n: [1, 0, 0] },
+    { id: 7, type: "IfcWindow", name: uiText("Window 01", "창 01"), obj: uiText("Fixed 2000×1100", "고정창 2000×1100"), tag: "WN-01", pre: "WINDOW", faces: [quad([2, D - 0.01, 0.9], [4, D - 0.01, 0.9], [4, D - 0.01, 2], [2, D - 0.01, 2])], n: [0, -1, 0] },
     {
-      id: 8, type: "IfcColumn", name: "Column C1", obj: "Concrete 400×400", tag: "C-01", pre: "COLUMN",
+      id: 8, type: "IfcColumn", name: uiText("Column C1", "기둥 C1"), obj: uiText("Concrete 400×400", "콘크리트 400×400"), tag: "C-01", pre: "COLUMN",
       faces: [
         quad([4.6, 1, 0], [5, 1, 0], [5, 1, H], [4.6, 1, H]),
         quad([5, 1, 0], [5, 1.4, 0], [5, 1.4, H], [5, 1, H]),
@@ -211,8 +212,8 @@ export function mount(stage) {
       ft = Math.floor(feet)
     return `${ft}' ${Math.floor((feet - ft) * 12)}"`
   }
-  const fmtArea = (m2) => (st.unit === "m" ? `s: ${m2.toFixed(2)} m²` : `s: ${(m2 * 10.7639).toFixed(2)} ft²`)
-  const fmtVol = (m3) => (st.unit === "m" ? `v: ${m3.toFixed(2)} m³` : `v: ${(m3 * 35.31467).toFixed(2)} ft³`)
+  const fmtArea = (m2) => (st.unit === "m" ? `${uiText("s:", "면적")} ${m2.toFixed(2)} m²` : `${uiText("s:", "면적")} ${(m2 * 10.7639).toFixed(2)} ft²`)
+  const fmtVol = (m3) => (st.unit === "m" ? `${uiText("v:", "부피")} ${m3.toFixed(2)} m³` : `${uiText("v:", "부피")} ${(m3 * 35.31467).toFixed(2)} ft³`)
   // ── Snapping: existing points within ~30 px, else world-axis lock within 10°
   function snapPoint(c, p, sx, sy) {
     st.guide = null
@@ -243,7 +244,7 @@ export function mount(stage) {
     return { p, kind: null }
   }
   // ── Box building: corner → edge (horizontal) → depth (perpendicular) → height (vertical)
-  const BOX_PROMPTS = ["Box: click the first corner.", "Click the end of the first edge.", "Click the depth.", "Click the height."]
+  const BOX_PROMPTS = [uiText("Box: click the first corner.", "상자를 그릴 첫 모서리를 클릭하세요."), uiText("Click the end of the first edge.", "첫 번째 모서리의 끝점을 클릭하세요."), uiText("Click the depth.", "깊이를 정할 지점을 클릭하세요."), uiText("Click the height.", "높이를 정할 지점을 클릭하세요.")]
   function boxCandidate(c, sx, sy) {
     const b = st.building,
       dir = ray(c, sx, sy)
@@ -297,8 +298,8 @@ export function mount(stage) {
     if (st.mode !== "select")
       return [...anchors.filter((p) => insideSection(p)), ...st.current.slice(0, 1)].map((p) => ({ kind: "point", p }))
     const items = [
-      ...st.lines.map((l, i) => ({ kind: "line", key: "l" + i, p: l.pts[0], label: "Measurement " + (i + 1) })),
-      ...st.boxes.map((b, i) => ({ kind: "box", key: "b" + i, p: b[0], label: "Box " + (i + 1) })),
+      ...st.lines.map((l, i) => ({ kind: "line", key: "l" + i, p: l.pts[0], label: uiText("Measurement ", "측정선 ") + (i + 1) })),
+      ...st.boxes.map((b, i) => ({ kind: "box", key: "b" + i, p: b[0], label: uiText("Box ", "상자 ") + (i + 1) })),
     ]
     if (st.cam === "orbit")
       for (const e of elements) items.push({ kind: "element", id: e.id, p: e.faces[0][0].map((v, k) => e.faces[0].reduce((a, q2) => a + q2[k], 0) / 4), label: e.name })
@@ -467,28 +468,28 @@ export function mount(stage) {
         if (tgt.label) label(ink, [x, y - 8], tgt.label, "is-live")
       }
     }
-    q("place").textContent = st.mode === "select" ? "Select item" : "Place point"
+    q("place").textContent = st.mode === "select" ? uiText("Select item", "항목 선택") : uiText("Place point", "점 찍기")
     // toolbar + hint state
     root.querySelectorAll("[data-bm-mode]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.bmMode === st.mode)))
     root.querySelectorAll("[data-bm-cam]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.bmCam === st.cam)))
     root.querySelectorAll("[data-bm-unit]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.bmUnit === st.unit)))
     q("count").textContent = st.lines.length + st.boxes.length
-    q("clear").textContent = st.selected ? "Delete" : "Clear all"
+    q("clear").textContent = st.selected ? uiText("Delete", "삭제") : uiText("Clear all", "모두 지우기")
     q("sliders").hidden = !st.clip
     q("hint").textContent =
       st.mode === "distance"
         ? st.current.length
-          ? `${st.current.length} point${st.current.length > 1 ? "s" : ""} · Esc or Finish keeps it · Backspace removes the last point`
-          : "Click a surface, or press ] then Enter to place a point."
+          ? uiText(`${st.current.length} point${st.current.length > 1 ? "s" : ""} · Esc or Finish keeps it · Backspace removes the last point`, `점 ${st.current.length}개 · Esc 또는 ‘측정 마치기’로 선을 남기고 Backspace로 마지막 점을 지웁니다.`)
+          : uiText("Click a surface, or press ] then Enter to place a point.", "표면을 클릭하거나 ] 키로 지점을 고른 뒤 Enter로 점을 찍으세요.")
         : st.mode === "volume"
           ? BOX_PROMPTS[st.building.length]
           : st.cam === "fp"
-            ? "Picking is off in first-person · click the floor to glide there."
-            : "Click a measurement or a building element."
+            ? uiText("Picking is off in first-person · click the floor to glide there.", "1인칭 시점에서는 요소를 선택할 수 없습니다. 바닥을 클릭하면 그곳으로 이동합니다.")
+            : uiText("Click a measurement or a building element.", "측정선이나 건축 요소를 클릭하세요.")
     const e = elements.find((x) => x.id === st.picked)
     q("inspect").hidden = !e
     if (e)
-      q("inspect").innerHTML = `<p class="bm-ifc">${e.type}</p><dl><div><dt>Name</dt><dd>${e.name}</dd></div><div><dt>GlobalId</dt><dd>${e.guid}</dd></div><div><dt>ObjectType</dt><dd>${e.obj}</dd></div><div><dt>Tag</dt><dd>${e.tag}</dd></div><div><dt>PredefinedType</dt><dd>${e.pre}</dd></div></dl>`
+      q("inspect").innerHTML = `<p class="bm-ifc">${e.type}</p><dl><div><dt>${uiText("Name", "이름")}</dt><dd>${e.name}</dd></div><div><dt>${uiText("GlobalId", "전역 ID")}</dt><dd>${e.guid}</dd></div><div><dt>${uiText("ObjectType", "객체 유형")}</dt><dd>${e.obj}</dd></div><div><dt>${uiText("Tag", "태그")}</dt><dd>${e.tag}</dd></div><div><dt>${uiText("PredefinedType", "사전 정의 유형")}</dt><dd>${e.pre}</dd></div></dl>`
   }
   const schedule = () => {
     if (!frame) frame = requestAnimationFrame(draw)

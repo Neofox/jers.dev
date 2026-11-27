@@ -1,0 +1,167 @@
+export const threeIStudies = {
+  "beamo": {
+    name: "Beamo",
+    demo: "beamo",
+    title: "Building Beamo’s React and Three.js digital-twin viewer — Jérôme Schaeffer",
+    description: "Explore Jérôme Schaeffer’s work on Beamo at 3i. Navigate captured sites, measure in 3D, and inspect building elements in an interactive sample room.",
+    heading: "Building Beamo’s digital-twin viewer",
+    alt: "An orbit view of a sample room with a six-metre floor edge and a two-metre vertical measurement.",
+    lead: "At 3i, I develop the React and Three.js viewer for Beamo. It lets people walk through a captured site, measure the space, and inspect the building elements around them.",
+    caption: "Measurement tools in my portfolio demo. The room and its measurements are synthetic.",
+    links: [],
+    chapters: [
+      {
+        id: "navigation",
+        title: "Finding your way around a capture",
+        paragraphs: [
+          "Beamo brings 360° panoramas, Gaussian splat captures, building information models (BIM), and indoor maps (IMDF) into the viewer. Waypoints connect locations so someone can move from one captured viewpoint to the next.",
+          "Two camera modes let people ask different questions of the same space. In orbit mode you rotate around a point, which is useful for seeing how a column sits against a wall. In first person you can walk up to the column and look back across the room from eye level.",
+        ],
+      },
+      {
+        id: "measurement",
+        title: "Placing a ruler in three dimensions",
+        paragraphs: [
+          "A line can look straight from one camera angle and run diagonally into the room. The measurement tool gives feedback before the second click. A dashed line previews the segment, nearby endpoints snap into place, and an axis guide shows when the segment lines up with the room.",
+          "For a volume, you pick a corner, then set the edge, depth, and height of the box. A section box lets you clip away part of the scene to see inside. In orbit mode, selecting a building element reveals its IFC type and identifier.",
+        ],
+      },
+    ],
+    demoHeading: "Measure the sample room",
+    instructions: "Place two points along the floor, then orbit the camera to see where they landed. You can also use the target controls and the Place point button. I recreated these interactions with a lightweight SVG projection for this portfolio.",
+    button: "Open measurement demo",
+    fallback: "Enable JavaScript to use the measurement tools.",
+  },
+  "pivo-meet": {
+    name: "Pivo Meet",
+    demo: "meet",
+    title: "Pivo Meet remote coaching lessons with Vue and Agora — Jérôme Schaeffer",
+    description: "A frontend case study of Pivo Meet at 3i. Try a two-person riding lesson, grant the coach camera control, and follow a simulated cloud recording.",
+    heading: "Coaching a rider with Pivo Meet",
+    alt: "The rider fills the guest view in the Pivo Meet demo. The coach’s own preview sits in the lower right corner.",
+    lead: "A coach watching a riding lesson needs to see both horse and rider, even as they cross the arena. At 3i, I maintain and extend Pivo Meet, the Vue 3 and Agora web app that lets a coach join a rider by video and adjust the camera with the rider’s permission.",
+    caption: "A sample lesson in the portfolio demo, with the coach’s preview tucked into the corner. Arena photograph by",
+    links: [{ href: "https://www.flickr.com/photos/76340031@N02/53003001579/", label: "Jeremy T. Dyer, BLM Utah" }, { href: "/assets/pivo-recording.png", label: "See the recording screen from Pivo’s lesson guide" }],
+    chapters: [
+      {
+        id: "camera-control",
+        title: "Who controls the rider’s camera?",
+        paragraphs: [
+          "The side-by-side layout gives coach and rider equal space to talk. When the rider sets off, the coach can switch to a small self-preview and use most of the screen to watch the horse.",
+          "Changing the layout only changes the coach’s screen. To move the rider’s Pivo Pod, the rider first enables Guest Control. The coach can then hold an arrow to pan or zoom. If the rider withdraws permission, movement stops.",
+        ],
+      },
+      {
+        id: "recording",
+        title: "When is a lesson recording ready?",
+        paragraphs: [
+          "The room timer starts when the participants join. Recording has a separate clock. Choosing Cloud shows the available recording time, and the recording counter starts once the recorder is ready.",
+          "Pressing stop takes the recording through stopping and processing before the app confirms it has been saved. Leaving also asks for confirmation, so a coach who presses Leave by mistake can return to the lesson with the recording still running.",
+        ],
+      },
+    ],
+    demoHeading: "Try the coach’s controls",
+    instructions: "Open the sample lesson, switch to Small preview, and try Camera control. Turn on Guest Control for the rider, then hold an arrow to follow the horse. You can also try cloud recording. The demo uses a still photograph and simulates the call and recording in your browser.",
+    button: "Open lesson demo",
+    fallback: "Enable JavaScript to try the lesson controls.",
+  },
+  "pivo-cloud": {
+    name: "Pivo Cloud",
+    demo: "cloud",
+    title: "Pivo Cloud video library and file management with Vue — Jérôme Schaeffer",
+    description: "Explore Jérôme Schaeffer’s frontend work on Pivo Cloud at 3i. Browse practice and lesson recordings, inspect file details, and manage storage in a sample library.",
+    heading: "Managing riding videos in Pivo Cloud",
+    alt: "The Cloud Gallery in selection mode, with one stabilized clip selected and a storage meter beside the file grid.",
+    lead: "A rider looking for yesterday’s canter practice can start with the day of the ride. At 3i, I maintain and extend Pivo Cloud, the Vue 3 web app where riders browse their Pivo Track uploads and revisit recorded lessons.",
+    caption: "Selecting a practice clip in the portfolio demo. The sidebar shows storage used across both galleries.",
+    links: [{ href: "/assets/pivo-cloud-current.jpg", label: "See the Pivo Cloud production gallery" }],
+    chapters: [
+      {
+        id: "finding-a-recording",
+        title: "Which gallery holds the recording?",
+        paragraphs: [
+          "A practice clip uploaded from Pivo Track goes in Cloud Gallery. A recorded coaching session goes in Lesson Gallery. Within each gallery, the newest day comes first, so a rider looking for yesterday’s work can go straight to that group.",
+          "A badge on a clip shows when it has been stabilized or compressed. A file still being validated stays in the grid while it waits. Open a ready clip to see its file type, size, and last modified date, then use the arrow keys to step through the other clips.",
+        ],
+      },
+      {
+        id: "file-actions",
+        title: "What can a rider do with a selection?",
+        paragraphs: [
+          "Select one clip and the library offers Share, Download, and Delete. Add a second clip and the rider can share or delete the group. Download is a single-file action. Switching galleries clears the selection so the next action applies only to files the rider can see.",
+          "Both galleries draw on the same storage allowance. Deleting clips asks for confirmation and shows how many files will be removed. Once confirmed, the storage meter reflects the space those files occupied.",
+        ],
+      },
+    ],
+    demoHeading: "Try the sample library",
+    instructions: "Open Lesson Gallery and inspect a recording. Then select two clips, delete them, and watch the storage meter change. The demo uses sample files and simulates sharing and downloading. Restart restores the library.",
+    button: "Open library demo",
+    fallback: "Enable JavaScript to try the library controls.",
+  },
+  "pivo-coaches": {
+    name: "Pivo Coaches",
+    demo: "coaches",
+    title: "Pivo Coaches equestrian coach directory with React — Jérôme Schaeffer",
+    description: "How Jérôme Schaeffer designed and built Pivo’s equestrian coach directory at 3i. Search sample profiles and filter by riding discipline, language, certification, and availability.",
+    heading: "Finding a riding coach with Pivo Coaches",
+    alt: "The Pivo Coaches homepage shows a rider filming a horse, a search box for lesson goals, and filters for discipline, language, certification, and availability.",
+    lead: "A rider looking for a French-speaking dressage coach needs to know who teaches that discipline and who has room for another student. At 3i, I independently designed and built Pivo Coaches, a public React directory that helps riders find equestrian coaches and riding instructors.",
+    caption: "The public Pivo Coaches directory invites riders to describe what they want to learn or choose filters directly.",
+    links: [],
+    chapters: [
+      {
+        id: "narrowing-results",
+        title: "From a riding goal to a shortlist",
+        paragraphs: [
+          "A rider can describe a goal in the directory’s AI search or start with a specific requirement. Discipline is a single choice, while the language filter lets a rider choose several languages they can take a lesson in. Pivo Certified and Accept New Students are separate filters. Availability is on when the directory opens.",
+          "The product filters on the server. The results header reports the total, and the grid loads six coaches at a time as the rider scrolls. Riders can change the order from relevance to popularity or browse by newest or oldest.",
+        ],
+      },
+      {
+        id: "profiles",
+        title: "What can you learn before opening a profile?",
+        paragraphs: [
+          "Each card puts the coach’s name, city, and country beside a short biography. Badges show certification and availability, so a rider can compare those details across the shortlist. See More opens the coach’s own page.",
+          "I recreated that decision in the demo with fictional profiles. For example, Mara teaches dressage in Lyon in French and English. You can find her by typing her city, or by combining the Dressage and French filters.",
+        ],
+      },
+    ],
+    demoHeading: "Find a sample coach",
+    instructions: "Try “Lyon” in the search box, then open See More. Clear the search to compare coaches by discipline, language, certification, or availability. This demo matches keywords against nine fictional profiles in your browser.",
+    button: "Open coach finder",
+    fallback: "Enable JavaScript to search and filter the sample coaches.",
+  },
+  "pivo-cs-qa": {
+    name: "Pivo CS / QA",
+    demo: "cs",
+    title: "Pivo CS / QA support report triage with React — Jérôme Schaeffer",
+    description: "How Jérôme Schaeffer built Pivo’s React intranet for customer support and QA. Follow a sample report from the queue to a status change and an investigation note.",
+    heading: "Triaging support reports at Pivo",
+    alt: "Pivo’s empty New report form, with a Zendesk ticket import above the issue title and description.",
+    lead: "“The preview froze” gives support a symptom. QA also needs to know which device was in use and what the rider did just before the freeze. At 3i, I independently designed and built the Pivo CS / QA app, a React intranet that keeps a customer report and the team’s investigation together.",
+    caption: "The New report screen in the internal app. Support can start from a Zendesk ticket number or URL.",
+    links: [],
+    chapters: [
+      {
+        id: "intake",
+        title: "What carries over from a support ticket?",
+        paragraphs: [
+          "Importing a Zendesk ticket brings its subject, description, and attachments into the report. Support can then add device and app details and assign the issue. QA can trace the investigation through to its root cause and release.",
+          "The dashboard groups work by status. Each filter shows how many reports it contains. Opening a preview reveals the issue summary and device, so someone scanning the queue can decide which report to investigate.",
+        ],
+      },
+      {
+        id: "handoff",
+        title: "What does the next investigator need?",
+        paragraphs: [
+          "In one fictional report, a video preview freezes on the last frame when an Android tablet rotates during playback. The preview identifies the device. The full report gives QA a place to record which steps reproduced the freeze and what they plan to check next.",
+          "Changing the status moves the report into the corresponding queue. An internal note stays with the report, so the next person who opens it can pick up the investigation where their colleague left off.",
+        ],
+      },
+    ],
+    demoHeading: "Triage a sample report",
+    instructions: "Choose Unresolved and open the frozen-preview report. In the full report, set its status to Pending and add a note. Return to the queue and find it under Pending. The four reports are fictional, and Restart restores their original statuses and clears your notes.",
+    button: "Open triage demo",
+    fallback: "Enable JavaScript to try the support report queue.",
+  },
+} as const

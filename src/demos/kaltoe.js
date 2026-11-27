@@ -1,3 +1,4 @@
+import { uiText } from "./demo-locale.js"
 import { icon } from "../scripts/icons.js"
 import { demoShell } from "./shared.js"
 
@@ -7,20 +8,20 @@ import { demoShell } from "./shared.js"
 function markup() {
   return demoShell(
     "kaltoe",
-    "Kaltoe Timer workday",
+    uiText("Kaltoe Timer workday", "Kaltoe Timer 근무 시간"),
     `<div class="kt-demo">
       <div class="kt-bar-preview" aria-hidden="true">
         <div class="kt-menubar"><span class="kt-label" data-kt="label"></span></div>
         <p class="kt-caption" data-kt="caption"></p>
       </div>
       <div class="kt-controls">
-        <div class="kt-row"><label class="kt-field"><span>Clock-in</span><select data-kt="in"><option value="480">08:00</option><option value="540" selected>09:00</option><option value="600">10:00</option><option value="-1">Not clocked in</option></select></label>
-        <label class="kt-field"><span>Week's overtime so far</span><select data-kt="week"><option value="0">0:00</option><option value="360">6:00</option><option value="690" >11:30</option></select></label></div>
-        <div class="kt-row kt-toggles"><button type="button" class="cf-pill" data-kt="family" aria-pressed="false">Family day</button><button type="button" class="cf-pill" data-kt="out" aria-pressed="false">Clock out now</button>
-          <span class="kt-seg" role="group" aria-label="Label style"><button type="button" data-kt-style="ring" aria-pressed="true">Ring</button><button type="button" data-kt-style="track" aria-pressed="false">Track</button></span></div>
-        <dl class="kt-read" aria-live="polite"><div><dt>State</dt><dd data-kt="state"></dd></div><div><dt>Leave time</dt><dd data-kt="leave"></dd></div><div><dt>Fill</dt><dd data-kt="fill"></dd></div><div><dt>Day</dt><dd data-kt="day"></dd></div></dl>
+        <div class="kt-row"><label class="kt-field"><span>${uiText("Clock-in", "출근 시각")}</span><select data-kt="in"><option value="480">08:00</option><option value="540" selected>09:00</option><option value="600">10:00</option><option value="-1">${uiText("Not clocked in", "출근 전")}</option></select></label>
+        <label class="kt-field"><span>${uiText("Week's overtime so far", "이번 주 누적 초과 근무")}</span><select data-kt="week"><option value="0">0:00</option><option value="360">6:00</option><option value="690" >11:30</option></select></label></div>
+        <div class="kt-row kt-toggles"><button type="button" class="cf-pill" data-kt="family" aria-pressed="false">${uiText("Family day", "패밀리데이")}</button><button type="button" class="cf-pill" data-kt="out" aria-pressed="false">${uiText("Clock out now", "지금 퇴근")}</button>
+          <span class="kt-seg" role="group" aria-label="${uiText("Label style", "표시 방식")}"><button type="button" data-kt-style="ring" aria-pressed="true">${uiText("Ring", "원형")}</button><button type="button" data-kt-style="track" aria-pressed="false">${uiText("Track", "막대형")}</button></span></div>
+        <dl class="kt-read" aria-live="polite"><div><dt>${uiText("State", "상태")}</dt><dd data-kt="state"></dd></div><div><dt>${uiText("Leave time", "퇴근 예정 시각")}</dt><dd data-kt="leave"></dd></div><div><dt>${uiText("Fill", "현재 구간 진행률")}</dt><dd data-kt="fill"></dd></div><div><dt>${uiText("Day", "하루 진행률")}</dt><dd data-kt="day"></dd></div></dl>
       </div>
-      <div class="kt-scrub"><label for="kt-time" class="kt-field"><span>Time of day</span><output data-kt="now"></output></label>
+      <div class="kt-scrub"><label for="kt-time" class="kt-field"><span>${uiText("Time of day", "현재 시각")}</span><output data-kt="now"></output></label>
         <input id="kt-time" type="range" min="420" max="1395" step="5" value="645" data-kt="time">
         <div class="kt-marks" aria-hidden="true" data-kt="marks"></div></div>
     </div>`,
@@ -51,7 +52,7 @@ export function mount(stage) {
   }
   function compute(now) {
     const clockIn = +q("in").value
-    if (clockIn < 0 || now < clockIn) return { phase: "idle", text: "--:--", glyph: "clock", state: "Not clocked in", fill: 0, day: 0 }
+    if (clockIn < 0 || now < clockIn) return { phase: "idle", text: "--:--", glyph: "clock", state: uiText("Not clocked in", "출근 전"), fill: 0, day: 0 }
     const start = Math.max(clockIn, R.earliest),
       target = Math.max(0, R.work - (st.family ? R.family : 0))
     const overlap = Math.max(0, Math.min(start + target, R.lunchEnd) - Math.max(start, R.lunchStart))
@@ -63,7 +64,7 @@ export function mount(stage) {
     const base = { leave, day }
     if (out != null) {
       const net = Math.max(0, out - start - R.brk)
-      return { ...base, phase: "settled", text: signed(net - target), glyph: "check", state: "Settled · clocked out", fill: day }
+      return { ...base, phase: "settled", text: signed(net - target), glyph: "check", state: uiText("Settled · clocked out", "정산 완료 · 퇴근"), fill: day }
     }
     const left = leave - now
     if (left > 0) {
@@ -71,15 +72,15 @@ export function mount(stage) {
       const lunchGo = R.lunchStart - R.early
       let state, glyph, fill, to
       if (lunch && now < lunchGo) {
-        ;[state, glyph, to] = ["To lunch", "fork", lunchGo]
+        ;[state, glyph, to] = [uiText("To lunch", "점심시간까지"), "fork", lunchGo]
         fill = (now - start) / (lunchGo - start)
       } else if (lunch && now < R.lunchEnd) {
         const from = Math.max(start, lunchGo)
-        ;[state, glyph, to] = ["On break", "cup", R.lunchEnd]
+        ;[state, glyph, to] = [uiText("On break", "휴게 시간"), "cup", R.lunchEnd]
         fill = (now - from) / (R.lunchEnd - from)
       } else {
         const from = lunch ? Math.max(start, R.lunchEnd) : start
-        ;[state, glyph, to] = ["Counting to leave", left <= 30 ? "walk" : "clock", leave]
+        ;[state, glyph, to] = [uiText("Counting to leave", "퇴근까지"), left <= 30 ? "walk" : "clock", leave]
         fill = (now - from) / (leave - from)
       }
       return { ...base, phase: "working", text: hm(to - now), glyph, state, fill: clamp(fill) }
@@ -93,7 +94,7 @@ export function mount(stage) {
       phase: atLimit ? "atLimit" : "overtime",
       text: fresh ? "자유!" : signed(daily),
       glyph: fresh ? "walk" : "flame",
-      state: atLimit ? (now >= R.cutoff ? "At limit · 22:00 cutoff" : "At limit · weekly cap") : fresh ? "Overtime · “자유!” (free!)" : "Overtime",
+      state: atLimit ? (now >= R.cutoff ? uiText("At limit · 22:00 cutoff", "근무 한도 도달 · 오후 10시") : uiText("At limit · weekly cap", "주간 초과 근무 한도 도달")) : fresh ? uiText("Overtime · “자유!” (free!)", "퇴근 시간 · 자유!") : uiText("Overtime", "초과 근무"),
       fill: 1,
     }
   }
@@ -117,7 +118,7 @@ export function mount(stage) {
         ? `<span class="kd-ring"><svg viewBox="0 0 22 22">${ring}</svg><span class="kt-glyph" style="color:${tint}">${icon(s.glyph)}</span></span><span class="kt-text">${s.text}</span>`
         : `<span class="kt-track"><i></i><span class="kt-glyph">${icon(s.glyph)}</span><span class="kt-text">${s.text}</span></span>`
     q("caption").textContent =
-      s.phase === "idle" ? "Idle: neutral, dashed." : s.phase === "working" ? "Length = this phase. Color = the whole day." : s.phase === "settled" ? "Settled: neutral, solid." : s.phase === "atLimit" ? "At limit: red." : "Overtime: orange, counting up."
+      s.phase === "idle" ? uiText("Idle: neutral, dashed.", "출근 전에는 회색 점선으로 표시합니다.") : s.phase === "working" ? uiText("Length = this phase. Color = the whole day.", "길이는 현재 구간의 진행률, 색은 하루의 진행률을 나타냅니다.") : s.phase === "settled" ? uiText("Settled: neutral, solid.", "퇴근 후에는 회색 실선으로 표시합니다.") : s.phase === "atLimit" ? uiText("At limit: red.", "한도에 도달하면 빨간색으로 표시합니다.") : uiText("Overtime: orange, counting up.", "초과 근무 중에는 주황색으로 경과 시간을 표시합니다.")
     q("state").textContent = s.state
     q("leave").textContent = s.leave != null ? clock(s.leave) : "—"
     q("fill").textContent = Math.round(fill * 100) + "%"
@@ -126,14 +127,14 @@ export function mount(stage) {
     q("time").setAttribute("aria-valuetext", clock(now) + " · " + s.state)
     q("family").setAttribute("aria-pressed", String(st.family))
     q("out").setAttribute("aria-pressed", String(st.clockOut != null))
-    q("out").textContent = st.clockOut != null ? "Clocked out " + clock(st.clockOut) : "Clock out now"
+    q("out").textContent = st.clockOut != null ? uiText("Clocked out ", "퇴근 시각 ") + clock(st.clockOut) : uiText("Clock out now", "지금 퇴근")
     root.querySelectorAll("[data-kt-style]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.ktStyle === st.style)))
     const span = 1395 - 420,
       pct = (m) => ((m - 420) / span) * 100
     q("marks").innerHTML = [
       [680, "11:20"],
       [750, "12:30"],
-      s.leave != null ? [s.leave, "Leave"] : null,
+      s.leave != null ? [s.leave, uiText("Leave", "퇴근")] : null,
       [1320, "22:00"],
     ]
       .filter(Boolean)

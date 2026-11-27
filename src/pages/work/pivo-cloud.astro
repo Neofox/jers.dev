@@ -1,70 +1,16 @@
 ---
+import ThreeIStudy from "../../components/ThreeIStudy.astro"
 import { getImage } from "astro:assets"
 import library from "../../assets/pivo-cloud-library.webp"
-import CaseStudyDemo from "../../components/CaseStudyDemo.astro"
-import CaseStudyLayout from "../../layouts/CaseStudyLayout.astro"
 
 const [small, medium] = await Promise.all([480, 800].map(width => getImage({ src: library, width, format: "webp" })))
 ---
 
-<CaseStudyLayout
-  projectName="Pivo Cloud"
-  path="/work/pivo-cloud/"
-  title="Pivo Cloud video library and file management with Vue — Jérôme Schaeffer"
-  description="Explore Jérôme Schaeffer’s frontend work on Pivo Cloud at 3i. Browse practice and lesson recordings, inspect file details, and manage storage in a sample library."
-  heading="Managing riding videos in Pivo Cloud"
+<ThreeIStudy
+  slug="pivo-cloud"
   image={library.src}
   imageWidth={library.width}
   imageHeight={library.height}
   srcset={`${small.src} 480w, ${medium.src} 800w, ${library.src} ${library.width}w`}
   sizes="(min-width: 1174px) 1080px, (max-width: 500px) calc(100vw - 40px), 92vw"
-  imageAlt="The Cloud Gallery in selection mode, with one stabilized clip selected and a storage meter beside the file grid."
->
-  <Fragment slot="lead">
-    A rider looking for yesterday’s canter practice can start with the day of the ride.
-    At 3i, I maintain and extend Pivo Cloud, the Vue 3 web app where riders browse their Pivo Track uploads
-    and revisit recorded lessons.
-  </Fragment>
-  <Fragment slot="caption">
-    Selecting a practice clip in the portfolio demo. The sidebar shows storage used across both galleries.
-   <a class="text-link" href="/assets/pivo-cloud-current.jpg">See the Pivo Cloud production gallery</a>.
-  </Fragment>
-
-  <section class="chapter" aria-labelledby="finding-a-recording">
-    <h2 id="finding-a-recording">Which gallery holds the recording?</h2>
-    <div>
-      <p>
-        A practice clip uploaded from Pivo Track goes in Cloud Gallery. A recorded coaching session goes in Lesson
-        Gallery. Within each gallery, the newest day comes first, so a rider looking for yesterday’s work can go
-        straight to that group.
-      </p>
-      <p>
-        A badge on a clip shows when it has been stabilized or compressed. A file still being validated stays in
-        the grid while it waits. Open a ready clip to see its file type, size, and last modified date, then use the
-        arrow keys to step through the other clips.
-      </p>
-    </div>
-  </section>
-  <section class="chapter" aria-labelledby="file-actions">
-    <h2 id="file-actions">What can a rider do with a selection?</h2>
-    <div>
-      <p>
-        Select one clip and the library offers Share, Download, and Delete. Add a second clip and the rider can
-        share or delete the group. Download is a single-file action. Switching galleries clears the selection so
-        the next action applies only to files the rider can see.
-      </p>
-      <p>
-        Both galleries draw on the same storage allowance. Deleting clips asks for confirmation and shows how
-        many files will be removed. Once confirmed, the storage meter reflects the space those files occupied.
-      </p>
-    </div>
-  </section>
-  <section class="demo-section" aria-labelledby="demo-title">
-    <h2 id="demo-title">Try the sample library</h2>
-    <p>
-      Open Lesson Gallery and inspect a recording. Then select two clips, delete them, and watch the storage
-      meter change. The demo uses sample files and simulates sharing and downloading. Restart restores the library.
-    </p>
-    <CaseStudyDemo demo="cloud" label="Open library demo" fallback="Enable JavaScript to try the library controls." />
-  </section>
-</CaseStudyLayout>
+/>

@@ -1,67 +1,16 @@
 ---
+import ThreeIStudy from "../../components/ThreeIStudy.astro"
 import { getImage } from "astro:assets"
 import directory from "../../../public/assets/pivo-coaches-current.jpg"
-import CaseStudyDemo from "../../components/CaseStudyDemo.astro"
-import CaseStudyLayout from "../../layouts/CaseStudyLayout.astro"
 
 const previews = await Promise.all([480, 800, directory.width].map(width => getImage({ src: directory, width, format: "webp" })))
 ---
 
-<CaseStudyLayout
-  projectName="Pivo Coaches"
-  path="/work/pivo-coaches/"
-  title="Pivo Coaches equestrian coach directory with React — Jérôme Schaeffer"
-  description="How Jérôme Schaeffer designed and built Pivo’s equestrian coach directory at 3i. Search sample profiles and filter by riding discipline, language, certification, and availability."
-  heading="Finding a riding coach with Pivo Coaches"
+<ThreeIStudy
+  slug="pivo-coaches"
   image={previews[2].src}
   imageWidth={directory.width}
   imageHeight={directory.height}
   srcset={previews.map(image => `${image.src} ${image.attributes.width}w`).join(", ")}
   sizes="(min-width: 1174px) 1080px, (max-width: 500px) calc(100vw - 40px), 92vw"
-  imageAlt="The Pivo Coaches homepage shows a rider filming a horse, a search box for lesson goals, and filters for discipline, language, certification, and availability."
->
-  <Fragment slot="lead">
-    A rider looking for a French-speaking dressage coach needs to know who teaches that discipline and who has room for
-    another student. At 3i, I independently designed and built Pivo Coaches, a public React directory that helps riders
-    find equestrian coaches and riding instructors.
-  </Fragment>
-  <Fragment slot="caption">
-    The public Pivo Coaches directory invites riders to describe what they want to learn or choose filters directly.
-  </Fragment>
-
-  <section class="chapter" aria-labelledby="narrowing-results">
-    <h2 id="narrowing-results">From a riding goal to a shortlist</h2>
-    <div>
-      <p>
-        A rider can describe a goal in the directory’s AI search or start with a specific requirement. Discipline is a
-        single choice, while the language filter lets a rider choose several languages they can take a lesson in.
-        Pivo Certified and Accept New Students are separate filters. Availability is on when the directory opens.
-      </p>
-      <p>
-        The product filters on the server. The results header reports the total, and the grid loads six coaches at a
-        time as the rider scrolls. Riders can change the order from relevance to popularity or browse by newest or oldest.
-      </p>
-    </div>
-  </section>
-  <section class="chapter" aria-labelledby="profiles">
-    <h2 id="profiles">What can you learn before opening a profile?</h2>
-    <div>
-      <p>
-        Each card puts the coach’s name, city, and country beside a short biography. Badges show certification and
-        availability, so a rider can compare those details across the shortlist. See More opens the coach’s own page.
-      </p>
-      <p>
-        I recreated that decision in the demo with fictional profiles. For example, Mara teaches dressage in Lyon
-        in French and English. You can find her by typing her city, or by combining the Dressage and French filters.
-      </p>
-    </div>
-  </section>
-  <section class="demo-section" aria-labelledby="demo-title">
-    <h2 id="demo-title">Find a sample coach</h2>
-    <p>
-      Try “Lyon” in the search box, then open See More. Clear the search to compare coaches by discipline, language,
-      certification, or availability. This demo matches keywords against nine fictional profiles in your browser.
-    </p>
-    <CaseStudyDemo demo="coaches" label="Open coach finder" fallback="Enable JavaScript to search and filter the sample coaches." />
-  </section>
-</CaseStudyLayout>
+/>

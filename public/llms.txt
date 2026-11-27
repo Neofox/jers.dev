@@ -9,6 +9,7 @@ Jérôme Schaeffer is a senior product engineer based in Seoul, South Korea with
 ## Pages
 
 - [Home](https://www.jers.dev/): Portfolio in English
+- [한국어 포트폴리오](https://www.jers.dev/ko/): 한국어 경력 소개, 프로젝트 사례 및 인터랙티브 데모
 - [Work](https://www.jers.dev/work/): Professional experience and independent projects, with case studies and interactive demos
 - [Beamo digital-twin viewer](https://www.jers.dev/work/beamo/): React and Three.js case study with an interactive measurement demo
 - [Pivo Meet remote coaching](https://www.jers.dev/work/pivo-meet/): Vue and Agora case study with an interactive sample lesson
@@ -27,7 +28,7 @@ Jérôme Schaeffer is a senior product engineer based in Seoul, South Korea with
 - [Current Korean résumé](https://www.jers.dev/assets/resume-ko.pdf)
 - [Earlier English résumé](https://www.jers.dev/assets/resume-en.pdf)
 
-Legacy /en, /fr and /ko URLs redirect to the English homepage.
+English and Korean pages have matching paths, with /ko/ preceding the Korean path. Legacy /en and /fr URLs redirect to the English homepage.
 
 ## Contact & Social
 

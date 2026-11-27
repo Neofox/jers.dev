@@ -88,9 +88,21 @@ const count = () => Number(store("sessionStorage", KEY.count) ?? 0) || 0
 
 const dock = $("portrait-dock")
 const drawer = $("portrait-dialog")
-if (dock && drawer) init()
+const ko = document.documentElement.lang === "ko"
+if (dock && drawer) {
+  if (ko) import("../i18n/portrait-ko.js").then(init)
+  else init()
+}
 
-function init() {
+function init(korean) {
+  const faceName = name => korean?.faces[name] ?? name
+  const faceAlt = korean?.expressionsAlt ?? ALT
+  function asideFor(response, itemId) {
+    return ko ? korean.asideText(itemId, response.questions?.aside?.choice) : response.questions?.aside?.text
+  }
+  function spokenAside(response, itemId) {
+    return response.asideText && ko ? asideFor(response, itemId) : response.asideText
+  }
   // The intensity pop runs on the bordered face at home and on the whole bubble in the dock.
   const surfaces = [
     { home: true, button: $("portrait-home"), face: $("portrait-home-face"), aside: $("portrait-home-aside") },
@@ -116,7 +128,7 @@ function init() {
   async function swap(surface, expression) {
     const token = ++surface.token
     const img = new Image(960, 960)
-    img.alt = ALT[expression] ?? `Jérôme, ${expression}`
+    img.alt = faceAlt[expression] ?? `Jérôme, ${expression}`
     const { src, srcset } = portraitSources(expression, surface.home)
     img.sizes = surface.home ? portraitSizes.home : portraitSizes.dock
     img.srcset = srcset
@@ -164,7 +176,7 @@ function init() {
         if (!ok) return
         if (surface === surfaces[0]) {
           face = expression
-          if (surface.home) $("portrait-home-tag").textContent = expression
+          if (surface.home) $("portrait-home-tag").textContent = faceName(expression)
           syncNames()
           if (drawer.open) render()
         }
@@ -208,7 +220,7 @@ function init() {
   }
 
   function syncNames() {
-    const name = `Jérôme's reaction: ${shownAside ?? face}`
+    const name = ko ? `Jérôme의 표정 · ${shownAside ?? faceName(face)}` : `Jérôme's reaction: ${shownAside ?? face}`
     for (const surface of surfaces) surface.button.setAttribute("aria-label", name)
   }
 
@@ -250,9 +262,9 @@ function init() {
     if (response.react !== false) {
       store("sessionStorage", "portrait-last-reaction", JSON.stringify(latest))
       if (!response.fallbackReason && !response.fallback) document.dispatchEvent(new Event("portrait:reacted"))
-      shownAside = response.asideText
+      shownAside = spokenAside(response, situation.itemId)
       setFace(response.expression, response.intensity)
-      present(response.asideText)
+      present(shownAside)
       syncNames()
     }
     if (drawer.open) render()
@@ -265,7 +277,7 @@ function init() {
       if (!known(saved?.response?.expression) || !ACTIONS.has(saved.situation?.action) ||
           !Array.isArray(saved.situation.recent) || !Object.hasOwn(catalog.items, saved.situation.itemId)) return
       latest = saved
-      shownAside = saved.response.asideText
+      shownAside = spokenAside(saved.response, saved.situation.itemId)
       setFace(saved.response.expression)
       syncNames()
       if (drawer.open) render()
@@ -421,8 +433,8 @@ function init() {
       if (typeof data.model === "string") $("pd-model").textContent = ` · ${data.model}`
       for (const [name, question] of Object.entries(data.questions ?? {})) {
         if (!$(`pd-q-${name}`) || typeof question?.instructions !== "string") continue
-        $(`pd-q-${name}`).textContent = question.instructions
-        $(`pd-t-${name}`).textContent = String(question.type ?? "")
+        $(`pd-q-${name}`).textContent = korean?.questions[name] ?? question.instructions
+        $(`pd-t-${name}`).textContent = (ko && ({ predicate: "참·거짓", choice: "선택", score: "점수" })[question.type]) || String(question.type ?? "")
       }
       restoreReaction()
       watchCareerEnd()
@@ -551,7 +563,8 @@ function init() {
       const fill = el("i")
       fill.style.setProperty("--p", String(Math.max(0, Math.min(1, p || 0))))
       track.append(fill)
-      row.append(el("span", "", name), track, el("span", "pd-value", fixed(p)))
+      const label = ko ? (korean.faces[name] ?? { react: "반응", subtle: "미세함", light: "약함", clear: "뚜렷함", big: "강함" }[name] ?? name) : name
+      row.append(el("span", "", label), track, el("span", "pd-value", fixed(p)))
       list.append(row)
     }
     return list
@@ -561,12 +574,13 @@ function init() {
     $(`pd-a-${name}`).replaceChildren(...nodes)
   }
 
-  function renderQuestions(response) {
+  function renderQuestions(response, itemId) {
+    const confidence = ko ? "신뢰도" : "confidence"
     const q = response?.questions ?? {}
-    const missing = () => el("p", "pd-none", response ? "No answer." : "Waiting for a first reaction.")
+    const missing = () => el("p", "pd-none", response ? (ko ? "응답이 없어요." : "No answer.") : (ko ? "첫 반응을 기다리고 있어요." : "Waiting for a first reaction."))
     const should = q.should_react
     if (should) {
-      const verdict = response.react === false ? "stayed as it was" : "reacted"
+      const verdict = response.react === false ? (ko ? "표정 유지" : "stayed as it was") : (ko ? "표정 변경" : "reacted")
       answer("should_react", bars([{ name: "react", p: should.probability }], "react"), el("p", "", `→ ${verdict}`))
     } else answer("should_react", missing())
     const expression = q.expression
@@ -577,12 +591,13 @@ function init() {
         p: probability.get(name) ?? 0,
       }))
       rows.sort((a, b) => b.p - a.p)
-      answer("expression", bars(rows, expression.choice), el("p", "", `confidence ${fixed(expression.confidence)}`))
+      answer("expression", bars(rows, expression.choice), el("p", "", `${confidence} ${fixed(expression.confidence)}`))
     } else answer("expression", missing())
     const aside = q.aside
     if (aside) {
-      const said = aside.choice === "none" ? "say nothing" : typeof aside.text === "string" ? `“${aside.text}”` : null
-      const detail = el("p", "pd-meta", `${aside.choice} · confidence ${fixed(aside.confidence)}`)
+      const line = asideFor(response, itemId)
+      const said = aside.choice === "none" ? (ko ? "아무 말도 하지 않음" : "say nothing") : line ? `“${line}”` : null
+      const detail = el("p", "pd-meta", `${aside.choice} · ${confidence} ${fixed(aside.confidence)}`)
       answer("aside", ...(said ? [el("p", "", said), detail] : [detail]))
     } else answer("aside", missing())
     const intensity = q.intensity
@@ -593,7 +608,7 @@ function init() {
       answer(
         "intensity",
         bars(rows, level),
-        el("p", "", `score ${fixed(intensity.score)} · confidence ${fixed(intensity.confidence)}`),
+        el("p", "", `${ko ? "점수" : "score"} ${fixed(intensity.score)} · ${confidence} ${fixed(intensity.confidence)}`),
       )
     } else answer("intensity", missing())
   }
@@ -603,32 +618,32 @@ function init() {
     const { src, srcset } = portraitSources(face)
     $("pd-face").srcset = srcset
     $("pd-face").src = src
-    $("pd-face").alt = ALT[face] ?? ""
-    if (muted) $("pd-trigger").textContent = "Muted. I'll keep a straight face."
-    else if (!situation) $("pd-trigger").textContent = "No reaction yet. Open a project and watch my face."
+    $("pd-face").alt = faceAlt[face] ?? ""
+    if (muted) $("pd-trigger").textContent = ko ? "반응을 껐어요. 차분한 표정을 유지할게요." : "Muted. I'll keep a straight face."
+    else if (!situation) $("pd-trigger").textContent = ko ? "아직 반응이 없어요. 프로젝트를 열고 표정을 살펴보세요." : "No reaction yet. Open a project and watch my face."
     else {
-      const label = catalog?.items[situation.itemId]?.label ?? situation.itemId
-      $("pd-trigger").textContent = TRIGGER_WORDS[situation.action]?.(label) ?? label
+      const label = korean?.labels[situation.itemId] ?? catalog?.items[situation.itemId]?.label ?? situation.itemId
+      $("pd-trigger").textContent = (korean?.triggers ?? TRIGGER_WORDS)[situation.action]?.(label) ?? label
     }
     $("pd-sent").textContent = situation
-      ? `sent: ${situation.action} · ${situation.itemId} · ${situation.recent.length} recent`
+      ? (ko ? `전송 항목 · ${situation.action} · ${situation.itemId} · 최근 활동 ${situation.recent.length}건` : `sent: ${situation.action} · ${situation.itemId} · ${situation.recent.length} recent`)
       : ""
     // The quote belongs to the latest reaction: a quiet decision ("stayed as it was") has none.
-    const quote = muted || response?.react === false ? null : (response?.asideText ?? null)
+    const quote = muted || !response || response.react === false ? null : spokenAside(response, situation.itemId)
     $("pd-quote").hidden = !quote
     $("pd-quote").textContent = quote ?? ""
     const reason = response?.fallbackReason ?? response?.fallback ?? null
     $("pd-fallback").hidden = !reason
-    $("pd-fallback").textContent = FALLBACK_COPY[reason] ?? (reason ? "Fallback, showing the default face" : "")
-    renderQuestions(response)
+    $("pd-fallback").textContent = (korean?.fallbacks ?? FALLBACK_COPY)[reason] ?? (reason ? (ko ? "기본 표정을 보여 드려요." : "Fallback, showing the default face") : "")
+    renderQuestions(response, situation?.itemId)
     const usage = response?.usage
     const cachedTokens = usage?.input_tokens_details?.cached_tokens
     $("pd-latency").textContent = formatLatency(response?.latencyMs)
     $("pd-cost").textContent = formatCost(response?.estimatedCostUsd)
     const noCall = !response || NO_CALL.includes(reason)
-    $("pd-cache").textContent = noCall ? "—" : response.cached ? "hit, no API call" : "miss"
+    $("pd-cache").textContent = noCall ? "—" : response.cached ? (ko ? "적중 · API 호출 없음" : "hit, no API call") : (ko ? "미적중" : "miss")
     $("pd-tokens").textContent = usage
-      ? `${formatCount(cachedTokens ?? 0)} / ${formatCount(usage.input_tokens)} tokens`
+      ? `${formatCount(cachedTokens ?? 0)} / ${formatCount(usage.input_tokens)} ${ko ? "토큰" : "tokens"}`
       : "—"
   }
 

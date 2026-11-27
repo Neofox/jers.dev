@@ -16,6 +16,7 @@ const { demo, label, fallback } = Astro.props
 </div>
 
 <script>
+  import { uiText } from "../demos/demo-locale.js"
   import { demoLoaders } from "../scripts/demo-loaders.js"
 
   for (const stage of document.querySelectorAll<HTMLElement>("[data-study-demo]")) {
@@ -24,7 +25,7 @@ const { demo, label, fallback } = Astro.props
     open.hidden = false
     open.addEventListener("click", async () => {
       open.disabled = true
-      open.textContent = "Loading demo…"
+      open.textContent = uiText("Loading demo…", "데모를 불러오는 중…")
       try {
         const { mount } = await demoLoaders[demo]()
         let dispose: (() => void) | void
@@ -43,7 +44,7 @@ const { demo, label, fallback } = Astro.props
         stage.dispatchEvent(new Event("portrait:demo-open", { bubbles: true }))
       } catch {
         open.disabled = false
-        open.textContent = "Try opening the demo again"
+        open.textContent = uiText("Try opening the demo again", "데모 다시 열기")
         stage.replaceChildren(open)
         open.focus()
       }

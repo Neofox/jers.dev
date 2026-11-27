@@ -2,9 +2,9 @@ import { defineConfig } from "astro/config"
 import { wgslVitePlugin } from "@vgpu/wgsl/loader-vite"
 import vercel from "@astrojs/vercel"
 
-const redirects = {}
+const redirects = { "/ko/case-studies": { status: 308, destination: "/ko/work/" } }
 for (const locale of ["en", "fr", "ko"]) {
-  redirects["/" + locale] = { status: 308, destination: "/" }
+  if (locale !== "ko") redirects["/" + locale] = { status: 308, destination: "/" }
   for (const card of ["opengraph-image", "twitter-image"]) {
     redirects["/" + locale + "/" + card] = { status: 308, destination: "/assets/social/" + locale + ".png" }
   }

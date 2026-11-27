@@ -1,0 +1,17 @@
+---
+import { portfolioPages } from "../../i18n/pages"
+
+export function getStaticPaths() {
+  return portfolioPages.map(({ path, ...props }) => ({
+    params: { path: path || undefined },
+    props,
+  }))
+}
+
+const templates = import.meta.glob<typeof import("../index.astro")>([
+  "../index.astro", "../career.astro", "../work/*.astro", "../work/*/*.astro",
+])
+const { template, ...props } = Astro.props
+const { default: Page } = await templates[`../${template}.astro`]()
+---
+<Page {...props} />

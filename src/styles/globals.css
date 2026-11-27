@@ -3083,7 +3083,7 @@ html[data-motion="on"] .illo.is-live .tr-arrow .ui-icon {
   background: var(--surface);
 }
 .nh-chat:empty::before {
-  content: "Send the sample message to watch one turn.";
+  content: attr(data-empty-label);
   color: var(--faint);
 }
 .nh-msg {
@@ -4970,7 +4970,7 @@ body:not([data-stage="home"]) .site-footer {
   color: var(--fg-soft);
 }
 .pd-fallback::before {
-  content: "fallback  ";
+  content: attr(data-label) "  ";
   font: 500 12px / 1 var(--mono);
   color: var(--accent);
   white-space: pre;
@@ -7056,3 +7056,10 @@ html[data-motion="off"] .eh-product {
 .flick-stars i:first-child { left: 8%; top: 8px; }
 .flick-stars i:nth-child(2) { left: 50%; top: 0; font-size: 12px; }
 .flick-stars i:last-child { right: 0; top: 9px; font-size: 10px; }
+
+/* Keep Korean words together in prose, while letting long names fit a small screen. */
+:lang(ko):is(h1, h2, h3, p, li, figcaption) {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+html:lang(ko) .study h1 { max-width: 19em; line-height: 1.14; }

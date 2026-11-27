@@ -4,18 +4,26 @@ import { portraitSources } from "../../public/portrait-core.mjs"
 import CareerTimeline from "../components/CareerTimeline.astro"
 import PortraitDock from "../components/PortraitDock.astro"
 import PortfolioLayout from "../layouts/PortfolioLayout.astro"
+import { localeFromPath } from "../i18n/locale.js"
+const locale = localeFromPath(Astro.url.pathname)
+const ko = locale === "ko"
+const resumes = [
+  { language: "ko", label: "한국어 이력서 (PDF)" },
+  { language: "en", label: ko ? "영문 이력서 (PDF)" : "English résumé (PDF)" },
+]
+if (!ko) resumes.reverse()
 ---
 
-<PortfolioLayout stage="career" path="/career/" title="Career history — Jérôme Schaeffer"
-  description="Jérôme Schaeffer’s engineering and teaching roles since 2015, from banking and logistics in Europe to AI products and digital twins in Seoul.">
-  <a class="skip" href="#career-title">Skip to career history</a>
+<PortfolioLayout stage="career" path="/career/" title={ko ? "경력 — Jérôme Schaeffer" : "Career history — Jérôme Schaeffer"}
+  description={ko ? "2015년 유럽의 금융·물류 서비스 개발부터 서울의 AI 제품과 디지털 트윈 개발, 웹 개발 교육까지 Jérôme Schaeffer의 경력을 소개합니다." : "Jérôme Schaeffer’s engineering and teaching roles since 2015, from banking and logistics in Europe to AI products and digital twins in Seoul."}>
+  <a class="skip" href="#career-title">{ko ? "경력 바로가기" : "Skip to career history"}</a>
   <div class="career-page">
     <InteriorHeader current="career" />
     <main>
       <div id="page-intro">
         <div class="career-bio">
-          <h1 id="career-title" tabindex="-1" data-career-title>Career history</h1>
-          <p>I’m based in Seoul, with experience in France, Luxembourg and Korea. I’ve built across frontend, backend and AI, led teams, and taught web development.</p>
+          <h1 id="career-title" tabindex="-1" data-career-title>{ko ? "경력" : "Career history"}</h1>
+          <p>{ko ? "프랑스, 룩셈부르크, 한국에서 일했고 지금은 서울에서 개발합니다. 프론트엔드와 백엔드, AI 제품을 만들면서 개발팀을 이끌고 웹 개발을 가르쳤습니다." : "I’m based in Seoul, with experience in France, Luxembourg and Korea. I’ve built across frontend, backend and AI, led teams, and taught web development."}</p>
         </div>
         <div class="career-portrait">
           <img class="career-fallback" {...portraitSources("neutral")} sizes="(max-width: 600px) 64px, 120px" width="120" height="120" alt="Jérôme Schaeffer" />
@@ -24,7 +32,7 @@ import PortfolioLayout from "../layouts/PortfolioLayout.astro"
       </div>
       <CareerTimeline />
     </main>
-    <footer><a class="text-link" href="/assets/resume-en.pdf" hreflang="en">English résumé (PDF)</a><a class="text-link" href="/assets/resume-ko.pdf" hreflang="ko" lang="ko">한국어 이력서 (PDF)</a></footer>
+    <footer>{resumes.map(({language, label}) => <a class="text-link" href={`/assets/resume-${language}.pdf`} hreflang={language} lang={ko ? "ko" : language}>{label}</a>)}</footer>
   </div>
 </PortfolioLayout>
 

@@ -1,8 +1,15 @@
 import { visuals } from "../data/project-visuals.js"
 import { icon } from "./icons.js"
+import { localPath } from "../i18n/locale.js"
 
 ;(function () {
   "use strict"
+  const locale = document.documentElement.lang === "ko" ? "ko" : "en"
+  const ko = locale === "ko"
+  let legacyLinksKo
+  let koreanCaseLoad
+  const homeTitle = document.title
+  const t = (english, korean) => ko ? korean : english
   const projectOrder = ["3i", "enhans", "rubiwin", "translater", "kaltoe-timer", "neoharness", "gleamstral"]
   const projects = {
     translater: {
@@ -565,14 +572,14 @@ import { icon } from "./icons.js"
     if (!on && routeTransition) routeTransition.skipTransition()
     document.documentElement.dataset.motion = on ? "on" : "off"
     $("motion-toggle").setAttribute("aria-pressed", String(on))
-    $("motion-label").textContent = on ? "Motion on" : reducedMotion.matches ? "Reduced motion" : "Motion off"
+    $("motion-label").textContent = on ? t("Motion on", "애니메이션 켜짐") : reducedMotion.matches ? t("Reduced motion", "동작 줄이기") : t("Motion off", "애니메이션 꺼짐")
     $("motion-toggle").setAttribute(
       "aria-label",
       reducedMotion.matches
-        ? "Reduced motion follows your device setting"
+        ? t("Reduced motion follows your device setting", "기기의 동작 줄이기 설정을 따릅니다")
         : on
-          ? "Turn animations off"
-          : "Turn animations on",
+          ? t("Turn animations off", "애니메이션 끄기")
+          : t("Turn animations on", "애니메이션 켜기"),
     )
     if (!on) {
       resetPortrait()
@@ -686,7 +693,11 @@ import { icon } from "./icons.js"
     if (r.stage === "work") {
       const destination = workDestination(r)
       if (destination) {
-        location.replace(destination)
+        location.replace(localPath(destination, locale))
+        return
+      }
+      if (ko && !legacyLinksKo) {
+        koreanCaseLoad ??= loadKoreanCases().then(renderRoute)
         return
       }
     }
@@ -749,11 +760,11 @@ import { icon } from "./icons.js"
       else $("view-title").focus({ preventScroll: true })
     }
     const label = {
-      home: "Home",
+      home: t("Home", "홈"),
       work: $("view-title").textContent || projects[r.project].name,
     }[r.stage]
     $("stage-announcement").textContent = label
-    document.title = label + " — Jérôme Schaeffer"
+    document.title = r.stage === "home" ? homeTitle : label + " — Jérôme Schaeffer"
   }
   function routeChange() {
     if (!motionEnabled() || !document.startViewTransition || (activeStage === "work" && parseRoute(location.hash).stage === "work")) {
@@ -771,7 +782,7 @@ import { icon } from "./icons.js"
   }
   window.addEventListener("hashchange", routeChange)
   function ext(label, url) {
-    return `<a href="${url}" target="_blank" rel="noopener noreferrer" data-focus-id="external-${currentProject}-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}">${label} <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>`
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer" data-focus-id="external-${currentProject}-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}">${label} <span aria-hidden="true">↗</span><span class="sr-only"> ${t("(opens in a new tab)", "(새 탭에서 열림)")}</span></a>`
   }
   // ── Work: scannable summary first, visuals second, full case behind one disclosure ──
   // Short lines are condensed from the vetted story copy above; no new claims.
@@ -913,6 +924,21 @@ import { icon } from "./icons.js"
     ["recorder", "Action recorder", "Make browser actions inspectable.", "Track interactions inside a sample page, inspect the event log and annotate actions, based on the imitation-learning Chrome extension."],
   )
 
+  async function loadKoreanCases() {
+    const copy = await import("../data/legacy-work-ko.js")
+    for (const [id, { chapters, highlights, did, ...article }] of Object.entries(copy.legacyCasesKo)) {
+      const project = projects[id]
+      Object.assign(project, article)
+      for (const chapter of project.chapters) {
+        if (chapters[chapter[0]]) chapter.splice(1, 3, ...chapters[chapter[0]])
+      }
+      extras[id].highlights = highlights
+      extras[id].did = extras[id].did.map(([iconName], index) => [iconName, did[index]])
+    }
+    for (const [id, imageCopy] of Object.entries(copy.legacyImagesKo)) Object.assign(imageAssets[id], imageCopy)
+    legacyLinksKo = copy.legacyLinksKo
+  }
+
   function storyParagraphs(lines) {
     return lines
       .slice(1)
@@ -925,7 +951,7 @@ import { icon } from "./icons.js"
       '<div class="link-group"><p class="link-group-label">' +
       label +
       '</p><ul class="link-list">' +
-      links.map((link) => "<li>" + ext(...link) + "</li>").join("") +
+      links.map(([name, url]) => "<li>" + ext(ko ? (legacyLinksKo[name] || name) : name, url) + "</li>").join("") +
       "</ul></div>"
     )
   }
@@ -933,7 +959,7 @@ import { icon } from "./icons.js"
     { id: "3i", name: "3i", dates: "2025–now" },
     { id: "enhans", name: "Enhans", dates: "2024–25" },
     { id: "rubiwin", name: "Redspher", dates: "2021–23" },
-    { id: "independent", name: "Side projects", dates: "Independent" },
+    { id: "independent", name: t("Side projects", "개인 프로젝트"), dates: "Independent" },
   ]
   // Case and chapter IDs remain the shareable route. Group only genuine sibling views.
   const workProducts = {
@@ -987,6 +1013,10 @@ import { icon } from "./icons.js"
   function viewType(v) {
     return v.demo ? "Demo" : v.illo ? "Overview" : "Capture"
   }
+  function viewTypeLabel(type) {
+    if (!ko) return type
+    return { Demo: "데모", Overview: "개요", Capture: "제품 화면" }[type]
+  }
   function chapterLabel(id, view) {
     return projects[id].chapters.find(([key]) => key === view)[1]
   }
@@ -996,7 +1026,7 @@ import { icon } from "./icons.js"
     const selected = productsHere.find((p) => p.caseId === currentProject && p.views.includes(currentVisual))
     const chapter = projects[currentProject].chapters.find(([key]) => key === currentVisual)
     const multiple = selected.views.length > 1
-    $("view-owner").textContent = place.name + " / " + viewType(visuals[currentProject][currentVisual])
+    $("view-owner").textContent = place.name + " / " + viewTypeLabel(viewType(visuals[currentProject][currentVisual]))
     $("view-title").textContent = selected.name
     const tabs = $("visual-chapters"),
       panel = $("visual-stage")
@@ -1010,7 +1040,7 @@ import { icon } from "./icons.js"
           .map((view) => {
             const active = view === currentVisual,
               type = viewType(visuals[currentProject][view])
-            return `<button type="button" role="tab" id="view-tab-${view}" aria-controls="visual-stage" aria-selected="${active}" tabindex="${active ? 0 : -1}" data-visual="${view}" data-focus-id="visual-${currentProject}-${view}"><i aria-hidden="true" data-type="${type}"></i>${chapterLabel(currentProject, view)}<span class="sr-only"> · ${type}</span></button>`
+            return `<button type="button" role="tab" id="view-tab-${view}" aria-controls="visual-stage" aria-selected="${active}" tabindex="${active ? 0 : -1}" data-visual="${view}" data-focus-id="visual-${currentProject}-${view}"><i aria-hidden="true" data-type="${type}"></i>${chapterLabel(currentProject, view)}<span class="sr-only"> · ${viewTypeLabel(type)}</span></button>`
           })
           .join("")
       : ""
@@ -1033,7 +1063,7 @@ import { icon } from "./icons.js"
     }
     $("visual-annotation").innerHTML = "<strong>" + chapter[2] + "</strong> " + chapter[3]
     if (selected.caseStudy) {
-      $("visual-annotation").insertAdjacentHTML("beforeend", ` <a class="text-link" href="${selected.caseStudy}">Read the ${selected.name} case study</a>`)
+      $("visual-annotation").insertAdjacentHTML("beforeend", ` <a class="text-link" href="${localPath(selected.caseStudy, locale)}">${t(`Read the ${selected.name} case study`, `${selected.name} 개발 사례 읽기`)}</a>`)
     }
   }
   $("visual-chapters").addEventListener("keydown", (e) => {
@@ -1073,11 +1103,12 @@ import { icon } from "./icons.js"
     caseRendered = true
     const workplace = workplaces.find((w) => w.id === activePlace())
     const side = currentFilter === "independent"
-    $("inspector-meta").textContent = side ? p.meta : "Workplace · " + (currentProject === "rubiwin" ? p.meta : p.meta.split(" · ").at(-1))
+    $("inspector-meta").textContent = side ? p.meta : t("Workplace · ", "경력 · ") + (currentProject === "rubiwin" ? p.meta : p.meta.split(" · ").at(-1))
     $("inspector-title").textContent = side ? p.name : workplace.name
     $("inspector-title").closest(".case-head").hidden = side
-    $("case-did-title").textContent = side ? "What I built" : "My work at " + (currentProject === "rubiwin" ? "Flash Europe and Redspher" : workplace.name)
-    $("more-title").textContent = side ? "Read the project story" : "Read the workplace story"
+    const company = currentProject === "rubiwin" ? t("Flash Europe and Redspher", "Flash Europe와 Redspher") : workplace.name
+    $("case-did-title").textContent = side ? t("What I built", "구현한 기능") : t("My work at " + company, company + "에서 맡은 일")
+    $("more-title").textContent = side ? t("Read the project story", "프로젝트 자세히 보기") : t("Read the workplace story", "경력 자세히 보기")
     $("inspector-role").textContent = p.role
     $("case-stack").textContent = p.stack
     $("case-highlights").innerHTML = x.highlights.map((h) => "<li>" + h + "</li>").join("")
@@ -1096,8 +1127,8 @@ import { icon } from "./icons.js"
       '<p class="source-note">' +
       p.note +
       "</p>" +
-      linkGroup("Explore the product", p.links) +
-      linkGroup("Source & context", p.sources)
+      linkGroup(t("Explore the product", "제품과 프로젝트"), p.links) +
+      linkGroup(t("Source & context", "참고 자료"), p.sources)
     $("case-more").open = false
     renderChapters()
     renderVisual()
@@ -1105,7 +1136,7 @@ import { icon } from "./icons.js"
   }
   function imageButton(key, extra = "") {
     const im = imageAssets[key]
-    return `<button class="image-button ${extra}" style="--w:${im.w}px;--ratio:${(im.w / im.h).toFixed(4)}" data-image="${key}" aria-haspopup="dialog" aria-controls="image-dialog" aria-label="Enlarge ${im.title}" data-focus-id="enlarge-${key}"><img src="${im.src}" width="${im.w}" height="${im.h}" alt="${im.alt}"><span class="zoom-affordance" aria-hidden="true">Enlarge</span></button>`
+    return `<button class="image-button ${extra}" style="--w:${im.w}px;--ratio:${(im.w / im.h).toFixed(4)}" data-image="${key}" aria-haspopup="dialog" aria-controls="image-dialog" aria-label="${t(`Enlarge ${im.title}`, `${im.title} 확대`)}" data-focus-id="enlarge-${key}"><img src="${im.src}" width="${im.w}" height="${im.h}" alt="${im.alt}"><span class="zoom-affordance" aria-hidden="true">${t("Enlarge", "확대")}</span></button>`
   }
   // Authentic captures sit in a neutral window frame, sized from the image's own ratio.
   function framedCapture(key) {
@@ -1116,7 +1147,7 @@ import { icon } from "./icons.js"
   // ── Illustrations: line-drawn, on a dotted grid, tagged once. Base styles are the complete still frame;
   // motion is layered on only while the illustration is on screen and motion is enabled.
   function illoShell(name, label, body, focus = "") {
-    return `<div class="illo illo-${name}" role="group" aria-label="Illustration: ${label}" data-focus="${focus}"><span class="illo-tag">Illustration</span>${body}</div>`
+    return `<div class="illo illo-${name}" role="group" aria-label="${t("Illustration: ", "설명 그림 · ")}${label}" data-focus="${focus}"><span class="illo-tag">${t("Illustration", "설명 그림")}</span>${body}</div>`
   }
   function node(title, sub, iconName, extra = "") {
     return `<div class="illo-node ${extra}">${iconName ? icon(iconName) : ""}<strong>${title}</strong>${sub ? `<span>${sub}</span>` : ""}</div>`
@@ -1168,14 +1199,14 @@ import { icon } from "./icons.js"
   function illustration(name, focus) {
     if (name === "beamo") {
       const modes = [
-        ["360° panoramas", "Captured viewpoints", "spark"],
-        ["Gaussian Splatting 3D", "The site, in 3D", "cube"],
-        ["First-person & orbit", "Two ways to move", "cursor"],
-        ["BIM / IMDF", "Waypoint navigation", "layers"],
+        [t("360° panoramas", "360° 파노라마"), t("Captured viewpoints", "촬영 지점"), "spark"],
+        [t("Gaussian Splatting 3D", "3D 가우시안 스플래팅"), t("The site, in 3D", "3D로 재현한 현장"), "cube"],
+        [t("First-person & orbit", "1인칭과 궤도 탐색"), t("Two ways to move", "두 가지 이동 방식"), "cursor"],
+        ["BIM / IMDF", t("Waypoint navigation", "웨이포인트 이동"), "layers"],
       ]
       return illoShell(
         "beamo",
-        "Beamo digital-twin viewer capabilities",
+        t("Beamo digital-twin viewer capabilities", "Beamo 디지털 트윈 뷰어의 기능"),
         `<div class="beamo">${beamoScene()}<ul class="beamo-modes">${modes
           .map(
             ([t, s, ic], i) =>
@@ -1187,14 +1218,14 @@ import { icon } from "./icons.js"
     if (name === "ax") {
       return illoShell(
         "ax",
-        "AI adoption at 3i",
+        t("AI adoption at 3i", "3i의 AI 도입"),
         `${pipeline([
-          node("Teams", "Engineering · HR", "people"),
-          node("Claude", "Skills & plugins", "spark"),
-          node("MCP servers", "Role-based access", "lock", "is-gate"),
-          node("Systems", "Google Workspace · internal", "layers"),
-        ])}<div class="illo-lane"><p class="illo-kicker">Legacy migration</p>${pipeline(
-          [node("Legacy backend", "", "code"), node("Agent-assisted", "", "spark"), node("Migrated", "", "refresh")],
+          node(t("Teams", "사내 팀"), t("Engineering · HR", "개발 · 인사"), "people"),
+          node("Claude", t("Skills & plugins", "스킬과 플러그인"), "spark"),
+          node(t("MCP servers", "MCP 서버"), t("Role-based access", "역할별 접근 권한"), "lock", "is-gate"),
+          node(t("Systems", "업무 시스템"), t("Google Workspace · internal", "Google Workspace · 사내 시스템"), "layers"),
+        ])}<div class="illo-lane"><p class="illo-kicker">${t("Legacy migration", "기존 시스템 이전")}</p>${pipeline(
+          [node(t("Legacy backend", "기존 백엔드"), "", "code"), node(t("Agent-assisted", "에이전트 지원"), "", "spark"), node(t("Migrated", "이전 완료"), "", "refresh")],
           { small: true },
         )}</div>`,
       )
@@ -1202,48 +1233,48 @@ import { icon } from "./icons.js"
     if (name === "gleamstral") {
       return illoShell(
         "gleamstral",
-        "Gleamstral request and response flow",
+        t("Gleamstral request and response flow", "Gleamstral 요청과 응답 흐름"),
         `${pipeline(
           [
-            node("Your app", "Typed calls", "code"),
-            node("Gleamstral", "Prepare · handle", "swap"),
-            node("Your HTTP client", "Any transport", "cloud"),
+            node(t("Your app", "애플리케이션"), t("Typed calls", "타입이 있는 호출"), "code"),
+            node("Gleamstral", t("Prepare · handle", "요청 준비 · 응답 처리"), "swap"),
+            node(t("Your HTTP client", "HTTP 클라이언트"), t("Any transport", "전송 방식 선택"), "cloud"),
             node("Mistral API", "", "spark"),
           ],
           { returns: true },
-        )}<p class="illo-foot">Chat · vision · tools · embeddings · agents · structured output</p>`,
+        )}<p class="illo-foot">${t("Chat · vision · tools · embeddings · agents · structured output", "채팅 · 비전 · 도구 · 임베딩 · 에이전트 · 구조화된 출력")}</p>`,
       )
     }
     if (name === "enhans") {
-      const lanes = ["Model A", "Model B", "Model C"]
+      const lanes = [t("Model A", "모델 A"), t("Model B", "모델 B"), t("Model C", "모델 C")]
         .map((m, i) => `<li style="--i:${i}"><span>${m}</span><i class="enh-bar"><b></b></i></li>`)
         .join("")
-      const log = ["Click", "Type", "Submit"].map((a, i) => `<li style="--i:${i}">${a}</li>`).join("")
+      const log = [t("Click", "클릭"), t("Type", "입력"), t("Submit", "제출")].map((a, i) => `<li style="--i:${i}">${a}</li>`).join("")
       return illoShell(
         "enhans",
-        "Enhans product families",
-        `<div class="enh"><div class="enh-panel"><p class="illo-kicker">AIAP · Enhans Model · Select LLM</p><div class="enh-flow">${node("Prompt", "", "flow")}<svg class="enh-fan" viewBox="0 0 40 96" preserveAspectRatio="none" aria-hidden="true"><path d="M0 48C20 48 20 16 40 16M0 48H40M0 48C20 48 20 80 40 80"/></svg><ul class="enh-lanes">${lanes}</ul></div><p class="illo-foot">Same input · several models · side by side</p></div><div class="enh-panel"><p class="illo-kicker">ACT-1 · Synergy · Chrome extensions</p><div class="enh-browser" aria-hidden="true"><div class="enh-browser-bar"><i></i><i></i><i></i><span></span></div><div class="enh-page"><span class="blk b1"></span><span class="blk b2 target t1"></span><span class="blk b3"></span><span class="blk b4 target t2"></span><span class="blk b5 target t3"></span><svg class="agent-cursor" viewBox="0 0 24 24"><path d="M5 3l14 7.5-6.2 1.6L10 18.5z"/></svg></div></div><div class="enh-log"><p class="illo-kicker">Tracked actions</p><ol>${log}</ol></div></div></div>`,
+        t("Enhans product families", "인핸스의 제품군"),
+        `<div class="enh"><div class="enh-panel"><p class="illo-kicker">AIAP · Enhans Model · Select LLM</p><div class="enh-flow">${node(t("Prompt", "프롬프트"), "", "flow")}<svg class="enh-fan" viewBox="0 0 40 96" preserveAspectRatio="none" aria-hidden="true"><path d="M0 48C20 48 20 16 40 16M0 48H40M0 48C20 48 20 80 40 80"/></svg><ul class="enh-lanes">${lanes}</ul></div><p class="illo-foot">${t("Same input · several models · side by side", "같은 입력으로 여러 모델의 결과 비교")}</p></div><div class="enh-panel"><p class="illo-kicker">${t("ACT-1 · Synergy · Chrome extensions", "ACT-1 · Synergy · Chrome 확장 프로그램")}</p><div class="enh-browser" aria-hidden="true"><div class="enh-browser-bar"><i></i><i></i><i></i><span></span></div><div class="enh-page"><span class="blk b1"></span><span class="blk b2 target t1"></span><span class="blk b3"></span><span class="blk b4 target t2"></span><span class="blk b5 target t3"></span><svg class="agent-cursor" viewBox="0 0 24 24"><path d="M5 3l14 7.5-6.2 1.6L10 18.5z"/></svg></div></div><div class="enh-log"><p class="illo-kicker">${t("Tracked actions", "기록한 동작")}</p><ol>${log}</ol></div></div></div>`,
       )
     }
     if (name === "logistics") {
       const suppliers = [1, 2, 3]
         .map(
           (n, i) =>
-            `<li style="--i:${i}"${n === 2 ? ' class="is-chosen"' : ""}><strong>Supplier ${n}</strong><span class="bid">Bid</span></li>`,
+            `<li style="--i:${i}"${n === 2 ? ' class="is-chosen"' : ""}><strong>${t("Supplier", "운송사")} ${n}</strong><span class="bid">${t("Bid", "입찰")}</span></li>`,
         )
         .join("")
       return illoShell(
         "logistics",
-        "Transport orders, supplier bidding and chat",
-        `<div class="lg">${node("Transport order", "Sent to suppliers", "truck", "lg-order")}<svg class="lg-wires" viewBox="0 0 64 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0 60C32 60 32 16 64 16M0 60H64M0 60C32 60 32 104 64 104"/></svg><ul class="lg-suppliers">${suppliers}</ul><div class="lg-chat"><p class="illo-kicker">Real-time chat</p><span class="bubble" style="--i:0"></span><span class="bubble me" style="--i:1"></span><span class="bubble short" style="--i:2"></span></div></div>`,
+        t("Transport orders, supplier bidding and chat", "운송 주문과 운송사 입찰, 채팅"),
+        `<div class="lg">${node(t("Transport order", "운송 주문"), t("Sent to suppliers", "운송사에 전달"), "truck", "lg-order")}<svg class="lg-wires" viewBox="0 0 64 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0 60C32 60 32 16 64 16M0 60H64M0 60C32 60 32 104 64 104"/></svg><ul class="lg-suppliers">${suppliers}</ul><div class="lg-chat"><p class="illo-kicker">${t("Real-time chat", "실시간 채팅")}</p><span class="bubble" style="--i:0"></span><span class="bubble me" style="--i:1"></span><span class="bubble short" style="--i:2"></span></div></div>`,
       )
     }
     if (name === "neoharness") {
       const sats = [
-        ["memory", "Memory", "Per-agent context", "memory", "a"],
-        ["tools", "Tools + MCP", "Bounded calling", "build", "b"],
-        ["schedules", "Schedules", "Recurring prompts", "clock", "d"],
-        ["reliability", "Supervision", "Isolated failures", "shield", "e"],
+        ["memory", t("Memory", "기억"), t("Per-agent context", "에이전트별 맥락"), "memory", "a"],
+        ["tools", t("Tools + MCP", "도구와 MCP"), t("Bounded calling", "호출 횟수 제한"), "build", "b"],
+        ["schedules", t("Schedules", "일정"), t("Recurring prompts", "반복 프롬프트"), "clock", "d"],
+        ["reliability", t("Supervision", "프로세스 감독"), t("Isolated failures", "오류 격리"), "shield", "e"],
       ]
         .map(
           ([k, t, s, ic, area]) =>
@@ -1252,21 +1283,21 @@ import { icon } from "./icons.js"
         .join("")
       return illoShell(
         "neoharness",
-        "Neoharness agent runtime",
-        `<div class="nh"><svg class="nh-wires" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M18 18L50 50M82 18L50 50M18 82L50 50M82 82L50 50"/></svg>${sats}<div class="nh-core"><i class="beat" aria-hidden="true"></i><strong>Independent<br>agent</strong><span>Elixir / OTP</span></div></div><p class="illo-foot">LiveView · Telegram · Discord</p>`,
+        t("Neoharness agent runtime", "Neoharness 에이전트 런타임"),
+        `<div class="nh"><svg class="nh-wires" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M18 18L50 50M82 18L50 50M18 82L50 50M82 82L50 50"/></svg>${sats}<div class="nh-core"><i class="beat" aria-hidden="true"></i><strong>${t("Independent<br>agent", "독립<br>에이전트")}</strong><span>Elixir / OTP</span></div></div><p class="illo-foot">LiveView · Telegram · Discord</p>`,
         focus,
       )
     }
     if (name === "kaltoe") {
-      const phases = ["Lunch", "Break", "Leave"].map((t, i) => `<span style="--i:${i}">${t}</span>`).join("")
+      const phases = [t("Lunch", "점심"), t("Break", "휴식"), t("Leave", "퇴근")].map((t, i) => `<span style="--i:${i}">${t}</span>`).join("")
       return illoShell(
         "kaltoe",
-        "Kaltoe ring: phase fill and day color",
-        `<div class="kt"><div class="kt-dial"><svg class="kt-ring" viewBox="0 0 160 160" aria-hidden="true"><circle class="kt-base" cx="80" cy="80" r="62"/><circle class="kt-fill" cx="80" cy="80" r="62" pathLength="100"/></svg><div class="kt-center"><small>Phase</small><span class="kt-phases">${phases}</span></div></div><div class="kt-info"><p class="kt-key"><i class="kt-swatch fill"></i><span><strong>Fill</strong> follows the current phase</span></p><p class="kt-key"><i class="kt-swatch day"></i><span><strong>Color</strong> follows the whole day</span></p><div class="kt-bar" aria-hidden="true"><i></i></div><p class="illo-foot">Ring and track · same meaning</p></div></div>`,
+        t("Kaltoe ring: phase fill and day color", "Kaltoe 링의 구간별 채움과 하루 진행 색상"),
+        `<div class="kt"><div class="kt-dial"><svg class="kt-ring" viewBox="0 0 160 160" aria-hidden="true"><circle class="kt-base" cx="80" cy="80" r="62"/><circle class="kt-fill" cx="80" cy="80" r="62" pathLength="100"/></svg><div class="kt-center"><small>${t("Phase", "현재 구간")}</small><span class="kt-phases">${phases}</span></div></div><div class="kt-info"><p class="kt-key"><i class="kt-swatch fill"></i><span>${t("<strong>Fill</strong> follows the current phase", "<strong>채움</strong>은 현재 구간의 진행률")}</span></p><p class="kt-key"><i class="kt-swatch day"></i><span>${t("<strong>Color</strong> follows the whole day", "<strong>색</strong>은 하루 전체의 진행률")}</span></p><div class="kt-bar" aria-hidden="true"><i></i></div><p class="illo-foot">${t("Ring and track · same meaning", "링과 막대는 같은 진행률을 표시합니다")}</p></div></div>`,
       )
     }
     if (name === "translater") {
-      const tones = ["Friends", "Casual", "Professional"]
+      const tones = [t("Friends", "반말"), t("Casual", "해요체"), t("Professional", "격식체")]
         .map((t, i) => `<span style="--i:${i}"${i === 1 ? ' class="is-on"' : ""}>${t}</span>`)
         .join("")
       const chips = [0, 1, 2]
@@ -1274,8 +1305,8 @@ import { icon } from "./icons.js"
         .join("")
       return illoShell(
         "translater",
-        "Translater tone and refinement",
-        `<div class="tr"><div class="tr-card"><p class="illo-kicker">Tone</p><div class="tr-tones">${tones}</div><p class="illo-kicker">Refinements · up to three</p><div class="tr-chips">${chips}</div></div><span class="tr-arrow" aria-hidden="true">${icon("refresh")}</span><div class="tr-card tr-result"><p class="illo-kicker">Result · regenerated</p><span class="line"></span><span class="line"></span><span class="line short"></span><span class="shimmer" aria-hidden="true"></span></div></div>`,
+        t("Translater tone and refinement", "Translater 말투 선택과 번역 다듬기"),
+        `<div class="tr"><div class="tr-card"><p class="illo-kicker">${t("Tone", "말투")}</p><div class="tr-tones">${tones}</div><p class="illo-kicker">${t("Refinements · up to three", "조정 사항 · 최대 세 개")}</p><div class="tr-chips">${chips}</div></div><span class="tr-arrow" aria-hidden="true">${icon("refresh")}</span><div class="tr-card tr-result"><p class="illo-kicker">${t("Result · regenerated", "결과 · 다시 생성됨")}</p><span class="line"></span><span class="line"></span><span class="line short"></span><span class="shimmer" aria-hidden="true"></span></div></div>`,
       )
     }
     return ""
@@ -1311,7 +1342,7 @@ import { icon } from "./icons.js"
     stage.dataset.project = currentProject
     stage.dataset.view = currentVisual
     stage.dataset.kind = v.illo ? "illustration" : "capture"
-    $("visual-caption").textContent = v.source || ""
+    $("visual-caption").textContent = (ko ? v.sourceKo : v.source) || ""
     $("visual-caption").hidden = !v.source
     let html
     if (v.illo) html = illustration(v.illo, currentVisual)
@@ -1320,12 +1351,12 @@ import { icon } from "./icons.js"
         '<div class="multi-image">' +
         imageButton("ring") +
         imageButton("track") +
-        '<p class="micro-explanation">The fill follows the current countdown.<br>The color follows the whole working day.</p></div>'
+        `<p class="micro-explanation">${t("The fill follows the current countdown.<br>The color follows the whole working day.", "채움은 현재 구간의 진행률을 나타냅니다.<br>색은 하루 전체의 진행률을 나타냅니다.")}</p></div>`
     else if (v.custom === "linux")
       html =
         '<div class="linux-image">' +
         imageButton("linux") +
-        '<p class="micro-explanation">A countdown inside the icon.<br>The phase progress around it.</p></div>'
+        `<p class="micro-explanation">${t("A countdown inside the icon.<br>The phase progress around it.", "아이콘 안에는 남은 시간을,<br>테두리에는 현재 구간의 진행률을 표시합니다.")}</p></div>`
     else html = framedCapture(v.image)
     stage.innerHTML = html
     syncIllustration()
@@ -1343,7 +1374,7 @@ import { icon } from "./icons.js"
     $("lightbox-caption").textContent = im.caption
     $("lightbox-viewport").classList.remove("actual")
     $("image-size").setAttribute("aria-pressed", "false")
-    $("image-size").textContent = "Actual size"
+    $("image-size").textContent = t("Actual size", "원본 크기")
     $("image-dialog").showModal()
     $("image-close").focus({ preventScroll: true })
     animateIn($("image-dialog"), true)
@@ -1351,7 +1382,7 @@ import { icon } from "./icons.js"
   $("image-size").addEventListener("click", () => {
     const actual = $("lightbox-viewport").classList.toggle("actual")
     $("image-size").setAttribute("aria-pressed", String(actual))
-    $("image-size").textContent = actual ? "Fit image" : "Actual size"
+    $("image-size").textContent = actual ? t("Fit image", "화면에 맞추기") : t("Actual size", "원본 크기")
   })
   $("image-close").addEventListener("click", () => $("image-dialog").close())
   $("image-dialog").addEventListener("close", () => {
@@ -1360,17 +1391,22 @@ import { icon } from "./icons.js"
   function showDialog(type) {
     dialogOpener = document.activeElement
     if (type === "resume") {
-      $("dialog-label").textContent = "Résumé · English / 한국어"
-      $("dialog-body").innerHTML =
-        '<h2 id="dialog-title" data-focus-id="resume-heading">Experience, in detail.</h2><p>The Korean résumé is the current version. Both PDFs open in a new tab.</p><div class="resume-choices"><a href="/assets/resume-ko.pdf" target="_blank" rel="noopener noreferrer" type="application/pdf" hreflang="ko" data-focus-id="resume-korean"><span>KO · Current</span><strong lang="ko">한국어</strong><small lang="ko">이력서 PDF 열기 ↗</small></a><a href="/assets/resume-en.pdf" target="_blank" rel="noopener noreferrer" type="application/pdf" hreflang="en" data-focus-id="resume-english"><span>EN · Earlier version</span><strong>English</strong><small>Open résumé PDF ↗</small></a></div>'
+      $("dialog-label").textContent = t("Résumé · English / 한국어", "이력서 · 한국어 / English")
+      $("dialog-body").innerHTML = `<h2 id="dialog-title" data-focus-id="resume-heading">${t("Experience, in detail.", "이력서")}</h2>
+        <p>${t("The Korean résumé is the current version. Both PDFs open in a new tab.", "한국어 이력서가 최신본입니다. 두 PDF 모두 새 탭에서 열립니다.")}</p>
+        <div class="resume-choices">
+          <a href="/assets/resume-ko.pdf" target="_blank" rel="noopener noreferrer" type="application/pdf" hreflang="ko" data-focus-id="resume-korean"><span>${t("KO · Current", "KO · 최신본")}</span><strong lang="ko">한국어</strong><small lang="ko">이력서 PDF 열기 ↗</small></a>
+          <a href="/assets/resume-en.pdf" target="_blank" rel="noopener noreferrer" type="application/pdf" hreflang="en" data-focus-id="resume-english"><span>${t("EN · Earlier version", "EN · 이전 버전")}</span><strong lang="en">English</strong><small>${t("Open résumé PDF ↗", "영문 이력서 PDF 열기 ↗")}</small></a>
+        </div>`
     } else {
-      $("dialog-label").textContent = "Let’s connect"
-      $("dialog-body").innerHTML =
-        '<h2 id="dialog-title" data-focus-id="contact-heading">Have an idea<br>worth building?</h2><p>Jérôme Schaeffer<br>Senior product engineer · Seoul</p><div class="detail-links">' +
-        '<a href="mailto:jer.schaeffer@gmail.com">Email me ↗</a>' +
-        ext("LinkedIn", "https://www.linkedin.com/in/jerome-schaeffer/") +
-        ext("GitHub", "https://github.com/Neofox") +
-        "</div>"
+      $("dialog-label").textContent = t("Let’s connect", "연락하기")
+      $("dialog-body").innerHTML = `<h2 id="dialog-title" data-focus-id="contact-heading">${t("Have an idea<br>worth building?", "함께 만들고 싶은<br>아이디어가 있으신가요?")}</h2>
+        <p>Jérôme Schaeffer<br>${t("Senior product engineer · Seoul", "시니어 프로덕트 엔지니어 · 서울")}</p>
+        <div class="detail-links">
+          <a href="mailto:jer.schaeffer@gmail.com">${t("Email me", "이메일 보내기")} ↗</a>
+          ${ext("LinkedIn", "https://www.linkedin.com/in/jerome-schaeffer/")}
+          ${ext("GitHub", "https://github.com/Neofox")}
+        </div>`
     }
     $("detail-dialog").showModal()
     $("dialog-close").focus({ preventScroll: true })
@@ -1470,7 +1506,7 @@ import { icon } from "./icons.js"
   })
 
   function updateClock() {
-    $("seoul-time").textContent = new Intl.DateTimeFormat("en-GB", {
+    $("seoul-time").textContent = new Intl.DateTimeFormat(ko ? "ko-KR" : "en-GB", {
       timeZone: "Asia/Seoul",
       hour: "2-digit",
       minute: "2-digit",

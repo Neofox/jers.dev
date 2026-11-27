@@ -1,23 +1,20 @@
 ---
 import { getImage } from "astro:assets"
-import { enhansStudies } from "../../../data/enhans-studies"
-import { sideStudies } from "../../../data/side-studies"
+import { studyPaths } from "../../../data/study-paths"
 import CaseStudyDemo from "../../../components/CaseStudyDemo.astro"
 import CaseStudyLayout from "../../../layouts/CaseStudyLayout.astro"
+import { studiesKo } from "../../../data/studies.ko"
+import { localeFromPath } from "../../../i18n/locale.js"
 
 export function getStaticPaths() {
-  return [
-    ...enhansStudies.map(study => ({
-      params: { collection: "enhans", project: study.slug },
-      props: { study, employer: "Enhans" as const },
-    })),
-    ...sideStudies.map(study => ({
-      params: { collection: "side-projects", project: study.slug },
-      props: { study, employer: "Independent" as const },
-    })),
-  ]
+  return studyPaths()
 }
 const { study, employer } = Astro.props
+const ko = localeFromPath(Astro.url.pathname) === "ko"
+const copy = ko ? studiesKo[study.slug] : study
+const title = ko
+  ? `${copy.heading} — ${employer === "Enhans" ? "인핸스 개발 사례" : study.name} — Jérôme Schaeffer`
+  : `${copy.heading} — ${employer === "Enhans" ? "Enhans case study" : study.name} — Jérôme Schaeffer`
 const previews = await Promise.all([480, 800].map(width => getImage({ src: study.image, width, format: "webp" })))
 ---
 
@@ -25,28 +22,28 @@ const previews = await Promise.all([480, 800].map(width => getImage({ src: study
   projectName={study.name}
   {employer}
   path={Astro.url.pathname}
-  title={`${study.heading} — ${employer === "Enhans" ? "Enhans case study" : study.name} — Jérôme Schaeffer`}
-  description={study.description}
-  heading={study.heading}
+  {title}
+  description={copy.description}
+  heading={copy.heading}
   image={study.image.src}
   imageWidth={study.image.width}
   imageHeight={study.image.height}
   srcset={`${previews[0].src} 480w, ${previews[1].src} 800w, ${study.image.src} ${study.image.width}w`}
   sizes="(min-width: 1174px) 1080px, (max-width: 500px) calc(100vw - 40px), 92vw"
-  imageAlt={study.alt}
+  imageAlt={copy.alt}
 >
-  <Fragment slot="lead">{study.lead}</Fragment>
-  <Fragment slot="caption">{study.caption}</Fragment>
-  {study.chapters.map(chapter => (
+  <Fragment slot="lead">{copy.lead}</Fragment>
+  <Fragment slot="caption">{copy.caption}</Fragment>
+  {copy.chapters.map(chapter => (
     <section class="chapter">
       <h2>{chapter.title}</h2>
       <div><p>{chapter.text}</p></div>
     </section>
   ))}
   <section class="demo-section" aria-labelledby="demo-title">
-    <h2 id="demo-title">{study.demoHeading}</h2>
-    <p>{study.instructions}</p>
-    {"source" in study && <p><a class="text-link" href={study.source}>{study.sourceLabel}</a></p>}
-    <CaseStudyDemo demo={study.demo} label={study.button} fallback={`Enable JavaScript to try the ${study.name} demo.`} />
+    <h2 id="demo-title">{copy.demoHeading}</h2>
+    <p>{copy.instructions}</p>
+    {"source" in study && "sourceLabel" in copy && <p><a class="text-link" href={study.source}>{copy.sourceLabel}</a></p>}
+    <CaseStudyDemo demo={study.demo} label={copy.button} fallback={ko ? `${study.name} 데모를 사용하려면 자바스크립트를 켜 주세요.` : `Enable JavaScript to try the ${study.name} demo.`} />
   </section>
 </CaseStudyLayout>

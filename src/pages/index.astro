@@ -4,30 +4,36 @@ import PortraitDock from "../components/PortraitDock.astro"
 import SiteBrand from "../components/SiteBrand.astro"
 import Home from "../components/Home.astro"
 import Work from "../components/Work.astro"
-const title = "Jérôme Schaeffer — Senior Product Engineer"
-const description =
-  "Senior product engineer in Seoul with 11+ years across frontend, full-stack, digital twins and AI/AX. Explore Beamo, Pivo, AI products and selected work."
-const socialDescription = "I build the experience. And what makes it work."
+import LanguageLink from "../components/LanguageLink.astro"
+import { localeFromPath, localPath } from "../i18n/locale.js"
+const locale = localeFromPath(Astro.url.pathname)
+const ko = locale === "ko"
+const title = ko ? "Jérôme Schaeffer — 시니어 프로덕트 엔지니어" : "Jérôme Schaeffer — Senior Product Engineer"
+const description = ko
+  ? "서울에서 일하는 시니어 프로덕트 엔지니어 Jérôme Schaeffer의 포트폴리오입니다. 11년 넘게 프론트엔드, 풀스택, 디지털 트윈, AI/AX 분야에서 개발한 Beamo, Pivo 등의 프로젝트를 소개합니다."
+  : "Senior product engineer in Seoul with 11+ years across frontend, full-stack, digital twins and AI/AX. Explore Beamo, Pivo, AI products and selected work."
+const socialDescription = ko ? "사람들이 쓰는 화면과 그 뒤에서 움직이는 시스템을 만듭니다." : "I build the experience. And what makes it work."
 ---
 
 <PortfolioLayout path="/" {title} {description} {socialDescription}>
     <div id="portfolio">
-      <a class="skip" href="#main" data-focus-id="skip-navigation">Skip to content</a>
+      <a class="skip" href="#main" data-focus-id="skip-navigation">{ko ? "본문 바로가기" : "Skip to content"}</a>
       <div class="shell">
         <header class="site-header" data-focus-id="portfolio-header">
           <div class="header-inner">
             <SiteBrand home />
-            <nav class="site-nav" aria-label="Portfolio sections">
-              <a href="/work/" data-nav="work" data-focus-id="nav-work">Work</a><a
-                href="/career/"
+            <nav class="site-nav" aria-label={ko ? "포트폴리오 메뉴" : "Portfolio sections"}>
+              <a href={localPath("/work/", locale)} data-nav="work" data-focus-id="nav-work">{ko ? "프로젝트" : "Work"}</a><a
+                href={localPath("/career/", locale)}
                 data-nav="career"
                 data-focus-id="nav-career"
               >
-                Career
+                {ko ? "경력" : "Career"}
               </a>
             </nav>
             <div class="header-actions">
-              <span class="location">Seoul <time id="seoul-time"></time></span><button
+              <LanguageLink />
+              <span class="location">{ko ? "서울" : "Seoul"} <time id="seoul-time"></time></span><button
                 type="button"
                 class="text-button header-resume"
                 data-dialog="resume"
@@ -35,7 +41,7 @@ const socialDescription = "I build the experience. And what makes it work."
                 aria-haspopup="dialog"
                 aria-controls="detail-dialog"
               >
-                Résumé
+                {ko ? "이력서" : "Résumé"}
               </button><button
                 type="button"
                 class="button button-outline contact-link"
@@ -44,7 +50,7 @@ const socialDescription = "I build the experience. And what makes it work."
                 aria-haspopup="dialog"
                 aria-controls="detail-dialog"
               >
-                Let’s talk
+                {ko ? "연락하기" : "Let’s talk"}
               </button>
             </div>
           </div>
@@ -55,14 +61,14 @@ const socialDescription = "I build the experience. And what makes it work."
         </main>
         <footer class="site-footer" data-focus-id="persistent-navigation">
           <div class="footer-inner">
-            <p class="footer-note">Frontend, backend, AI. Made with curiosity.</p><button
+            <p class="footer-note">{ko ? "프론트엔드부터 백엔드와 AI까지, 호기심을 따라 만들었습니다." : "Frontend, backend, AI. Made with curiosity."}</p><button
               type="button"
               class="motion-toggle"
               id="motion-toggle"
               aria-pressed="true"
               data-focus-id="motion-toggle"
             >
-              <span class="motion-icon" aria-hidden="true"></span><span id="motion-label">Motion on</span>
+              <span class="motion-icon" aria-hidden="true"></span><span id="motion-label">{ko ? "애니메이션 켜짐" : "Motion on"}</span>
             </button>
           </div>
         </footer>
@@ -70,11 +76,11 @@ const socialDescription = "I build the experience. And what makes it work."
       <PortraitDock />
       <dialog id="detail-dialog" aria-labelledby="dialog-title" data-focus-id="context-dialog">
         <div class="dialog-top">
-          <span class="eyebrow" id="dialog-label">Let’s connect</span><button
+          <span class="eyebrow" id="dialog-label">{ko ? "연락하기" : "Let’s connect"}</span><button
             type="button"
             class="icon-button"
             id="dialog-close"
-            aria-label="Close dialog"
+            aria-label={ko ? "대화상자 닫기" : "Close dialog"}
             data-focus-id="close-dialog"
           >
             ×
@@ -89,7 +95,7 @@ const socialDescription = "I build the experience. And what makes it work."
         data-focus-id="image-lightbox"
       >
         <div class="lightbox-toolbar">
-          <h2 id="lightbox-title" data-focus-id="image-title">Product image</h2>
+          <h2 id="lightbox-title" data-focus-id="image-title">{ko ? "제품 이미지" : "Product image"}</h2>
           <div class="lightbox-actions">
             <button
               type="button"
@@ -98,12 +104,12 @@ const socialDescription = "I build the experience. And what makes it work."
               aria-pressed="false"
               data-focus-id="image-size"
             >
-              Actual size
+              {ko ? "원본 크기" : "Actual size"}
             </button><button
               type="button"
               class="icon-button"
               id="image-close"
-              aria-label="Close image"
+              aria-label={ko ? "이미지 닫기" : "Close image"}
               data-focus-id="close-image"
             >
               ×
@@ -114,26 +120,26 @@ const socialDescription = "I build the experience. And what makes it work."
           class="lightbox-viewport"
           id="lightbox-viewport"
           tabindex="0"
-          aria-label="Product image; scroll when viewing actual size"
+          aria-label={ko ? "제품 이미지. 원본 크기에서는 스크롤할 수 있습니다." : "Product image; scroll when viewing actual size"}
         >
           <img
             id="lightbox-image"
             src="/assets/translater-product.jpg"
             width="1280"
             height="720"
-            alt="Translater entry screen"
+            alt={ko ? "Translater 입력 화면" : "Translater entry screen"}
           />
         </div>
-        <p class="lightbox-caption" id="lightbox-caption">Actual product image.</p>
+        <p class="lightbox-caption" id="lightbox-caption">{ko ? "실제 제품 화면입니다." : "Actual product image."}</p>
       </dialog>
       <div class="sr-only" role="status" aria-live="polite" id="stage-announcement"></div>
       <noscript>
         <p class="no-js">
-          This interactive portfolio needs JavaScript. Read my <a href="/assets/resume-en.pdf">English résumé</a> or <a
+          {ko ? <Fragment>인터랙티브 포트폴리오를 보려면 자바스크립트를 켜 주세요. <a href="/assets/resume-ko.pdf">한국어 이력서</a>와 <a href="/assets/resume-en.pdf">영문 이력서</a>를 보거나 <a href="mailto:jer.schaeffer@gmail.com">이메일로 연락</a>하실 수 있습니다.</Fragment> : <Fragment>This interactive portfolio needs JavaScript. Read my <a href="/assets/resume-en.pdf">English résumé</a> or <a
             href="/assets/resume-ko.pdf"
           >
             한국어 이력서
-          </a>, or <a href="mailto:jer.schaeffer@gmail.com">email me</a>.
+          </a>, or <a href="mailto:jer.schaeffer@gmail.com">email me</a>.</Fragment>}
         </p>
       </noscript>
     </div>

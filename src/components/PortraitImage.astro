@@ -1,4 +1,5 @@
 ---
+import { localeFromPath } from "../i18n/locale.js"
 import { portraitSizes, portraitSources } from "../../public/portrait-core.mjs"
 interface Props {
   surface: keyof typeof portraitSizes
@@ -13,7 +14,7 @@ const { surface, id } = Astro.props
   sizes={portraitSizes[surface]}
   width="960"
   height="960"
-  alt="Jérôme, calm"
+  alt={localeFromPath(Astro.url.pathname) === "ko" ? "차분한 표정의 Jérôme" : "Jérôme, calm"}
   loading={surface === "home" ? "eager" : "lazy"}
   fetchpriority={surface === "home" ? "high" : "low"}
 />

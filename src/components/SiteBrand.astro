@@ -1,10 +1,12 @@
 ---
+import { localPath, localeFromPath } from "../i18n/locale.js"
+const locale = localeFromPath(Astro.url.pathname)
 interface Props { home?: boolean }
 const { home = false } = Astro.props
 ---
-<a class="brand" href={home ? "#home" : "/"} aria-label="Jérôme Schaeffer, portfolio home" data-focus-id="home-brand">
+<a class="brand" href={home ? "#home" : localPath("/", locale)} aria-label={locale === "ko" ? "Jérôme Schaeffer 포트폴리오 홈" : "Jérôme Schaeffer, portfolio home"} data-focus-id="home-brand">
   <span class="brand-mark" aria-hidden="true">js.</span>
   <span class="brand-label" aria-hidden="true">
-    <span class="brand-name">Jérôme Schaeffer</span><span class="brand-role">Senior product engineer</span>
+    <span class="brand-name">Jérôme Schaeffer</span><span class="brand-role">{locale === "ko" ? "시니어 프로덕트 엔지니어" : "Senior product engineer"}</span>
   </span>
 </a>

@@ -1,22 +1,25 @@
 ---
 import HomeTerrain from "./HomeTerrain.astro"
 import PortraitImage from "./PortraitImage.astro"
+import { localeFromPath, localPath } from "../i18n/locale.js"
+const locale = localeFromPath(Astro.url.pathname)
+const ko = locale === "ko"
 ---
 <section class="stage" id="stage-home" aria-labelledby="home-title" data-focus-id="home">
   <div class="home-grid">
     <HomeTerrain />
     <div id="page-intro" class="hero-copy" data-reveal>
-      <p class="eyebrow">Senior product engineer · Seoul</p>
+      <p class="eyebrow">{ko ? "시니어 프로덕트 엔지니어 · 서울" : "Senior product engineer · Seoul"}</p>
       <h1 class="hello" id="home-title" data-focus-id="personal-heading">
-        <span class="hello-intro">Hi, I’m</span>
+        <span class="hello-intro">{ko ? "안녕하세요," : "Hi, I’m"}</span>
         <span class="hero-name">Jérôme</span>
         <span class="surname">Schaeffer.</span>
       </h1>
-      <p class="intro">I build the experience.<br />And what makes it work.</p>
+      <p class="intro">{ko ? "사람들이 쓰는 화면과" : "I build the experience."}<br />{ko ? "그 뒤에서 움직이는 시스템을 만듭니다." : "And what makes it work."}</p>
 
       <div class="home-actions">
-        <a class="button button-primary" href="/work/" data-focus-id="home-selected-work">
-          <span>View <span data-work-title>work</span></span> <span aria-hidden="true">→</span>
+        <a class="button button-primary" href={localPath("/work/", locale)} data-focus-id="home-selected-work">
+          <span>{ko ? <span data-work-title>프로젝트 보기</span> : <Fragment>View <span data-work-title>work</span></Fragment>}</span> <span aria-hidden="true">→</span>
         </a>
       </div>
     </div>
@@ -28,49 +31,50 @@ import PortraitImage from "./PortraitImage.astro"
           id="portrait-home"
           aria-haspopup="dialog"
           aria-controls="portrait-dialog"
-          aria-label="Jérôme's reaction: neutral"
+          aria-label={ko ? "Jérôme의 표정 · 평온" : "Jérôme's reaction: neutral"}
         >
           <span class="pf-face" id="portrait-home-face">
             <PortraitImage surface="home" />
           </span><span class="pf-tag" aria-hidden="true">
-            <i></i><span id="portrait-home-tag">neutral</span><span class="pf-why">· why this face?</span>
+            <i></i><span id="portrait-home-tag">{ko ? "평온" : "neutral"}</span><span class="pf-why">{ko ? "· 왜 이런 표정일까요?" : "· why this face?"}</span>
           </span>
         </button>
         <p class="portrait-aside is-home" id="portrait-home-aside" aria-hidden="true"></p>
       </div>
       <figcaption>
         <p class="portrait-hint">
-          An AI model reacts to the projects you explore. <button
+          {ko ? "프로젝트를 둘러보면 AI가 그에 맞춰 표정을 바꿉니다." : "An AI model reacts to the projects you explore."} <button
             type="button"
             class="portrait-hint-button"
             id="portrait-hint"
             aria-haspopup="dialog"
             aria-controls="portrait-dialog"
           >
-            Why this face?
+            {ko ? "왜 이런 표정일까요?" : "Why this face?"}
           </button>
         </p>
         <a
           class="text-link"
-          href="/career/"
+          href={localPath("/career/", locale)}
           data-focus-id="home-about"
         >
-          A little more about me <span aria-hidden="true">→</span>
+          {ko ? "제 경력을 소개합니다" : "A little more about me"} <span aria-hidden="true">→</span>
         </a>
       </figcaption>
     </figure>
     <div class="home-experience">
       <p class="intro-detail">
-        11+ years across frontend, full-stack and AI/AX work: product interfaces, backend systems, 3D viewers and the AI
-        tools teams use. I connect the work people see with the systems and collaboration behind it.
+        {ko
+          ? "11년 넘게 프론트엔드, 풀스택, AI/AX 분야에서 제품 화면과 백엔드 시스템, 3D 뷰어, 팀에서 쓰는 AI 도구를 만들었습니다. 사용자가 만나는 화면부터 이를 뒷받침하는 시스템까지, 여러 팀과 함께 개발합니다."
+          : "11+ years across frontend, full-stack and AI/AX work: product interfaces, backend systems, 3D viewers and the AI tools teams use. I connect the work people see with the systems and collaboration behind it."}
       </p>
       <nav class="home-selection" data-reveal aria-labelledby="home-selection-label">
-        <p class="eyebrow" id="home-selection-label">Selected professional experience</p>
+        <p class="eyebrow" id="home-selection-label">{ko ? "주요 경력" : "Selected professional experience"}</p>
         <ul>
           <li>
-            <a href="/work/#3i" data-project="3i" data-focus-id="home-3i">
-              <span class="selection-company">3i</span><span class="selection-role">
-                Frontend Developer &amp; AX Engineer
+            <a href={localPath("/work/#3i", locale)} data-project="3i" data-focus-id="home-3i">
+              <span class="selection-company">{ko ? "쓰리아이 (3i)" : "3i"}</span><span class="selection-role">
+                {ko ? "프론트엔드 개발자 · AX 엔지니어" : "Frontend Developer & AX Engineer"}
               </span><span class="selection-scope">Beamo · Pivo · AI/AX</span><span
                 class="selection-arrow"
                 aria-hidden="true"
@@ -80,19 +84,19 @@ import PortraitImage from "./PortraitImage.astro"
             </a>
           </li>
           <li>
-            <a href="/work/#enhans" data-project="enhans" data-focus-id="home-enhans">
-              <span class="selection-company">Enhans</span><span class="selection-role">Frontend Developer</span><span
+            <a href={localPath("/work/#enhans", locale)} data-project="enhans" data-focus-id="home-enhans">
+              <span class="selection-company">{ko ? "인핸스 (Enhans)" : "Enhans"}</span><span class="selection-role">{ko ? "프론트엔드 개발자" : "Frontend Developer"}</span><span
                 class="selection-scope"
               >
-                AI products · LLM agents · ACT-1
+                {ko ? "AI 제품 · LLM 에이전트 · ACT-1" : "AI products · LLM agents · ACT-1"}
               </span><span class="selection-arrow" aria-hidden="true">→</span>
             </a>
           </li>
           <li>
-            <a href="/work/#redspher" data-project="rubiwin" data-focus-id="home-rubiwin">
+            <a href={localPath("/work/#redspher", locale)} data-project="rubiwin" data-focus-id="home-rubiwin">
               <span class="selection-company">Redspher</span><span class="selection-role">
-                Full-stack Developer &amp; Team Lead
-              </span><span class="selection-scope">Rubiwin &amp; Supplier Portal</span><span
+                {ko ? "풀스택 개발자 · 팀 리드" : "Full-stack Developer & Team Lead"}
+              </span><span class="selection-scope">{ko ? "Rubiwin · Supplier Portal" : "Rubiwin & Supplier Portal"}</span><span
                 class="selection-arrow"
                 aria-hidden="true"
               >

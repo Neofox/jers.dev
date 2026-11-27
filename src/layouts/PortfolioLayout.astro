@@ -1,4 +1,5 @@
 ---
+import { localeFromPath, localPath } from "../i18n/locale.js"
 import Terrain from "../components/Terrain.astro"
 import Analytics from "@vercel/analytics/astro"
 import SpeedInsights from "@vercel/speed-insights/astro"
@@ -28,12 +29,16 @@ const {
   imageHeight = 960,
   type = "website",
 } = Astro.props
-const canonical = new URL(path, Astro.site)
+const locale = localeFromPath(Astro.url.pathname)
+const pagePath = path.replace(/\/?$/, "/")
+const english = new URL(localPath(pagePath, "en"), Astro.site)
+const korean = new URL(localPath(pagePath, "ko"), Astro.site)
+const canonical = locale === "ko" ? korean : english
 const socialImage = new URL(image, Astro.site)
 ---
 
 <!doctype html>
-<html lang="en" data-motion="off">
+<html lang={locale} data-motion="off">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -55,9 +60,10 @@ const socialImage = new URL(image, Astro.site)
         sync()
         reduced.addEventListener("change", sync)
         window.addEventListener("pageshow", sync)
+        function pagePath(url) { return url.pathname.replace(/^\/ko(?=\/|$)/, "") || "/" }
         function depth(url) {
-          if (url.pathname === "/") return url.hash.startsWith("#work") ? 2 : 0
-          return url.pathname === "/work/" ? 1 : 2
+          if (pagePath(url) === "/") return url.hash.startsWith("#work") ? 2 : 0
+          return pagePath(url) === "/work/" ? 1 : 2
         }
 
         function share(transition, element, name) {
@@ -69,13 +75,13 @@ const socialImage = new URL(image, Astro.site)
         }
 
         function connect(transition, other) {
-          const here = location.pathname
-          const there = other.pathname
+          const here = pagePath(location)
+          const there = pagePath(other)
           const onIndex = here === "/work/"
           const detail = onIndex ? there : here
           if (!onIndex && there !== "/work/") return
           if (detail.startsWith("/work/") && detail !== "/work/") {
-            const row = onIndex ? [...document.querySelectorAll("a.entry")].find(link => link.pathname === detail) : null
+            const row = onIndex ? [...document.querySelectorAll("a.entry")].find(link => pagePath(link) === detail) : null
             share(transition, onIndex ? row?.querySelector("img") : document.querySelector("#study-preview"), "project-preview")
             share(transition, onIndex ? row?.querySelector("strong") : document.querySelector("[data-project-name]"), "project-name")
           } else if (detail === "/career/") {
@@ -88,7 +94,7 @@ const socialImage = new URL(image, Astro.site)
             }
           } else if (detail === "/" && ["#3i", "#enhans", "#redspher"].includes(onIndex ? location.hash : other.hash)) {
             const hash = onIndex ? location.hash : other.hash
-            const company = onIndex ? document.getElementById(hash.slice(1)) : document.querySelector(`.home-selection a[href="/work/${hash}"] .selection-company`)
+            const company = onIndex ? document.getElementById(hash.slice(1)) : document.querySelector(`.home-selection a[href$="/work/${hash}"] .selection-company`)
             share(transition, company, "company-name")
           } else if (detail === "/" && !(onIndex ? other.hash : location.hash)) {
             share(transition, document.querySelector(onIndex ? "h1" : "[data-work-title]"), "work-label")
@@ -105,8 +111,8 @@ const socialImage = new URL(image, Astro.site)
           const previous = new URL(from.url)
           const direction = depth(location) - depth(previous)
           if (direction) transition.types?.add(direction > 0 ? "forward" : "backward")
-          if (location.pathname === "/career/" && previous.pathname === "/work/") transition.types?.add("timeline-in")
-          if (location.pathname.startsWith("/work/") && location.pathname !== "/work/" && previous.pathname === "/work/") {
+          if (pagePath(location) === "/career/" && pagePath(previous) === "/work/") transition.types?.add("timeline-in")
+          if (pagePath(location).startsWith("/work/") && pagePath(location) !== "/work/" && pagePath(previous) === "/work/") {
             transition.types?.add("study-open")
           }
           connect(transition, previous)
@@ -122,6 +128,11 @@ const socialImage = new URL(image, Astro.site)
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="en" href={english} />
+    <link rel="alternate" hreflang="ko" href={korean} />
+    <link rel="alternate" hreflang="x-default" href={english} />
+    <meta property="og:locale" content={locale === "ko" ? "ko_KR" : "en_US"} />
+    <meta property="og:locale:alternate" content={locale === "ko" ? "en_US" : "ko_KR"} />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={socialDescription} />

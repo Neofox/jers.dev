@@ -1,61 +1,10 @@
 ---
-import CaseStudyLayout from "../../layouts/CaseStudyLayout.astro"
-import CaseStudyDemo from "../../components/CaseStudyDemo.astro"
+import ThreeIStudy from "../../components/ThreeIStudy.astro"
 ---
 
-<CaseStudyLayout
-  projectName="Beamo"
-  path="/work/beamo/"
-  title="Building Beamo’s React and Three.js digital-twin viewer — Jérôme Schaeffer"
-  description="Explore Jérôme Schaeffer’s work on Beamo at 3i. Navigate captured sites, measure in 3D, and inspect building elements in an interactive sample room."
-  heading="Building Beamo’s digital-twin viewer"
+<ThreeIStudy
+  slug="beamo"
   image="/assets/beamo-measurement.webp"
   imageWidth={1200}
   imageHeight={630}
-  imageAlt="An orbit view of a sample room with a six-metre floor edge and a two-metre vertical measurement."
->
-  <Fragment slot="lead">
-    At 3i, I develop the React and Three.js viewer for Beamo. It lets people walk through a captured site,
-    measure the space, and inspect the building elements around them.
-  </Fragment>
-  <Fragment slot="caption">Measurement tools in my portfolio demo. The room and its measurements are synthetic.</Fragment>
-  <section class="chapter" aria-labelledby="navigation">
-    <h2 id="navigation">Finding your way around a capture</h2>
-    <div>
-      <p>
-        Beamo brings 360° panoramas, Gaussian splat captures, building information models (BIM), and indoor maps
-        (IMDF) into the viewer. Waypoints connect locations so someone can move from one captured viewpoint to the
-        next.
-      </p>
-      <p>
-        Two camera modes let people ask different questions of the same space. In orbit mode you rotate around a
-        point, which is useful for seeing how a column sits against a wall. In first person you can walk up to the
-        column and look back across the room from eye level.
-      </p>
-    </div>
-  </section>
-  <section class="chapter" aria-labelledby="measurement">
-    <h2 id="measurement">Placing a ruler in three dimensions</h2>
-    <div>
-      <p>
-        A line can look straight from one camera angle and run diagonally into the room. The measurement tool
-        gives feedback before the second click. A dashed line previews the segment, nearby endpoints snap into
-        place, and an axis guide shows when the segment lines up with the room.
-      </p>
-      <p>
-        For a volume, you pick a corner, then set the edge, depth, and height of the box. A section
-        box lets you clip away part of the scene to see inside. In orbit mode, selecting a building element
-        reveals its IFC type and identifier.
-      </p>
-    </div>
-  </section>
-  <section class="demo-section" aria-labelledby="demo-title">
-    <h2 id="demo-title">Measure the sample room</h2>
-    <p>
-      Place two points along the floor, then orbit the camera to see where they landed. You can also use the
-      target controls and the Place point button. I recreated these interactions with a lightweight SVG projection
-      for this portfolio.
-    </p>
-    <CaseStudyDemo demo="beamo" label="Open measurement demo" fallback="Enable JavaScript to use the measurement tools." />
-  </section>
-</CaseStudyLayout>
+/>

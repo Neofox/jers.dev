@@ -1,3 +1,4 @@
+import { uiText } from "./demo-locale.js"
 import { demoShell, motionEnabled } from "./shared.js"
 
 // Enhans demos re-create observed interactions with invented data. See docs/work-demos-evidence.md.
@@ -7,7 +8,7 @@ export const ehQuery = (root) => (key) => root.querySelector(`[data-eh="${key}"]
 // The body gets its own block so the sticky phone controls can never ride up over the demo header (Restart).
 export const ehShell = (label, body) => demoShell("enhans", label, `<div class="eh-body">${body}</div>`)
 export function ehControls(label) {
-  return `<div class="eh-controls"><button type="button" class="button button-primary" data-eh="play">${label}</button><button type="button" class="button button-outline" data-eh="next">Next step</button><span data-eh="status" role="status">Ready to explore</span></div>`
+  return `<div class="eh-controls"><button type="button" class="button button-primary" data-eh="play">${label}</button><button type="button" class="button button-outline" data-eh="next">${uiText("Next step", "다음 단계")}</button><span data-eh="status" role="status">${uiText("Ready to explore", "실행할 준비가 됐습니다.")}</span></div>`
 }
 // Shared stepper. With motion on: Run/Pause/Continue/Replay + Next step. With motion off the run button would only
 // repeat Next step, so it is hidden until Replay. Next stays focusable at the end (aria-disabled), so keyboard focus
@@ -21,7 +22,7 @@ export function ehPlayback(root, { label, length, draw }) {
     draw(step)
     const total = length()
     const done = total > 0 && step >= total
-    q("play").textContent = timer ? "Pause" : done ? "Replay" : step ? "Continue" : label
+    q("play").textContent = timer ? uiText("Pause", "일시 정지") : done ? uiText("Replay", "다시 실행") : step ? uiText("Continue", "이어서 실행") : label
     q("play").hidden = !motionEnabled() && !done
     q("next").setAttribute("aria-disabled", String(!total || done))
     if (had === q("play") && q("play").hidden) q("next").focus()
